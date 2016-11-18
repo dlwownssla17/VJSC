@@ -1,2 +1,2 @@
 # VJSC
-Senio Design Project: Debra - Your Diabuddy
+Senior Design Project: Debra - Your Diabuddy
