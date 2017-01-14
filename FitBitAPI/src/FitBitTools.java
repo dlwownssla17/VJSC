@@ -16,7 +16,7 @@ public class FitBitTools {
 	 */
 	public static String getProfile(User user) {
 		if (!user.hasAccess("profile")) {
-			System.out.println("Error: User does not have access to FitBit content.");
+			System.out.println("Error: temp.User does not have access to FitBit content.");
 			return null;
 		}
 		String targetURL = "https://api.fitbit.com/1/user/-/profile.json";
@@ -159,7 +159,7 @@ public class FitBitTools {
 	 */
 	public static String getActivityForPeriod(User user, String activity, Date endDate, String period) {
 		if (!user.hasAccess(activity)) {
-			System.out.println("Error: User does not have access to FitBit content.");
+			System.out.println("Error: temp.User does not have access to FitBit content.");
 			return null;
 		}
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -174,7 +174,7 @@ public class FitBitTools {
 	 */
 	public static String getActivityForDateRange(User user, String activity, Date startDate, Date endDate) {
 		if (!user.hasAccess(activity)) {
-			System.out.println("Error: User does not have access to FitBit content.");
+			System.out.println("Error: temp.User does not have access to FitBit content.");
 			return null;
 		}
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -189,7 +189,7 @@ public class FitBitTools {
 	 */
 	public static String getSleepForDate(User user, Date date) {
 		if (!user.hasAccess("sleep")) {
-			System.out.println("Error: User does not have access to FitBit content.");
+			System.out.println("Error: temp.User does not have access to FitBit content.");
 			return null;
 		}
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -206,7 +206,7 @@ public class FitBitTools {
 	 */
 	public static String getActivityForIntraDayRange(User user, String activity, Date startDate, Date endDate, String timeDetail) {
 		if (!user.hasAccess(activity)) {
-			System.out.println("Error: User does not have access to FitBit content.");
+			System.out.println("Error: temp.User does not have access to FitBit content.");
 			return null;
 		}
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -224,7 +224,7 @@ public class FitBitTools {
 	 */
 	public static String getActivityForIntraDay(User user, String activity, Date startDate, String timeDetail) {
 		if (!user.hasAccess(activity)) {
-			System.out.println("Error: User does not have access to FitBit content.");
+			System.out.println("Error: temp.User does not have access to FitBit content.");
 			return null;
 		}
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -242,7 +242,7 @@ public class FitBitTools {
 	 */
 	public static String getActivityForIntraDayTimeRange(User user, String activity, Date startDate, Date endDate, String timeDetail) {
 		if (!user.hasAccess(activity)) {
-			System.out.println("Error: User does not have access to FitBit content.");
+			System.out.println("Error: temp.User does not have access to FitBit content.");
 			return null;
 		}
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");

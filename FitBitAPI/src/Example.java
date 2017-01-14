@@ -20,7 +20,7 @@ import java.io.ByteArrayInputStream;
 public class Example {
 	
 	public static void main(String[] args) {
-        //User person = new User("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1NDVROU0iLCJhdWQiOiIyMjg3NVIiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJhY3QgcnNldCBybG9jIHJ3ZWkgcmhyIHJwcm8gcm51dCByc2xlIiwiZXhwIjoxNDgzNTE0OTQzLCJpYXQiOjE0ODM0ODYxNDN9.4yrn6x4zZ-Fn8R-KokrqGBk7HTodf5c-qNptHRJoPvs", "f1ed5e4938a9be86c695bee63cf51c444d6f0460089154eb8ed22f99d4ec3222", "545Q9M");
+        //temp.User person = new temp.User("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1NDVROU0iLCJhdWQiOiIyMjg3NVIiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJhY3QgcnNldCBybG9jIHJ3ZWkgcmhyIHJwcm8gcm51dCByc2xlIiwiZXhwIjoxNDgzNTE0OTQzLCJpYXQiOjE0ODM0ODYxNDN9.4yrn6x4zZ-Fn8R-KokrqGBk7HTodf5c-qNptHRJoPvs", "f1ed5e4938a9be86c695bee63cf51c444d6f0460089154eb8ed22f99d4ec3222", "545Q9M");
         User person = new User("userAuthentication.txt");
         Date today = new Date();
         /*String profile = FitBitTools.getProfile(person);
