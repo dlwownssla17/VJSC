@@ -2,6 +2,7 @@
 *.metadata/
 *.project
 *.classpath
+*/bin/
 *.idea
 *.out
 *.javac
