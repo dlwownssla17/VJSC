@@ -1,6 +1,6 @@
 /**
  * FitBit IntraDay Activities are activities that can return data during the
- * progression of the day.  
+ * progression of the day.
  *
  */
 public class FitBitIntraDayActivities {

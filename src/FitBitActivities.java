@@ -1,6 +1,6 @@
 /**
  * These are the activities that are the input for full day activities.  Full
- * day activities are activities where one value is returned per day.  
+ * day activities are activities where one value is returned per day.
  * IntraDay Activities, however, are activities where values can be returned
  * per time, leading to multiple values per day.
  *

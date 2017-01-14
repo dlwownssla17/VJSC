@@ -1,7 +1,7 @@
 /**
- *  FitBit Periods are used to specify a length of time for the representation 
+ *  FitBit Periods are used to specify a length of time for the representation
  *  of data.  For example, if one wants to obtain data over the span of a month,
- *  the period to select would be month.  
+ *  the period to select would be month.
  */
 public class FitBitPeriods {
     public static String day = "1d";
