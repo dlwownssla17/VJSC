@@ -12,6 +12,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import util.IO;
 
 /* TODO refresh account data involving database, as opposed to metadata file */
@@ -22,21 +25,21 @@ public class FitBitAccount {
 	private String userId;
 	private String scope;
 	private String tokenType;
-	private long expiredIn;
+	private long expiresIn;
 	
-	public boolean hasActivityAccess, hasSleepAccess, hasProfileAccess, hasHeartRateAccess;
+	private boolean hasActivityAccess, hasSleepAccess, hasProfileAccess, hasHeartRateAccess;
 	
 	private String clientSideAccountDataFileName;
 	
 	/* This constructor is currently not used (until TODO above is handled) */
 	public FitBitAccount(String accessToken, String refreshToken, String userId, String scope,
-			String tokenType, long expiredIn) {
+			String tokenType, long expiresIn) {
 		this.accessToken = accessToken;
 		this.refreshToken = refreshToken;
 		this.userId = userId;
 		this.scope = scope;
 		this.tokenType = tokenType;
-		this.expiredIn = expiredIn;
+		this.expiresIn = expiresIn;
 		processScope();
 	}
 	
@@ -49,7 +52,7 @@ public class FitBitAccount {
 		this.userId = accountData[2];
 		this.scope = accountData[3];
 		this.tokenType = accountData[4];
-		this.expiredIn = Long.parseLong(accountData[5]);
+		this.expiresIn = Long.parseLong(accountData[5]);
 		processScope();
 	}
 	
@@ -61,10 +64,27 @@ public class FitBitAccount {
 		this.hasHeartRateAccess = scopeSet.contains("heartrate");
 	}
 	
+	private boolean updateAccountData(String jsonData) {
+		try {
+			JSONObject jsonObj = new JSONObject(jsonData);
+			this.accessToken = jsonObj.getString("access_token");
+			this.refreshToken = jsonObj.getString("refresh_token");
+			this.userId = jsonObj.getString("user_id");
+			this.scope = jsonObj.getString("scope");
+			this.tokenType = jsonObj.getString("token_type");
+			this.expiresIn = jsonObj.getLong("expires_in");
+			
+			return true;
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	/* TODO change this to involve database instead of file */
-	private boolean updateAccountData() {
+	private boolean persistAccountData() {
 		String accountData = String.format("%s\n%s\n%s\n%s\n%s\n%d\n", this.accessToken, this.refreshToken,
-				this.userId, this.scope, this.tokenType, this.expiredIn);
+				this.userId, this.scope, this.tokenType, this.expiresIn);
 		return IO.writeFile(this.clientSideAccountDataFileName, accountData);
 	}
 	
@@ -82,7 +102,7 @@ public class FitBitAccount {
         URL url;
         HttpURLConnection connection = null;
         try {
-        	url = new URL(FitBitTools.OAuth2URL);
+            url = new URL(FitBitTools.OAuth2URL);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             
@@ -113,12 +133,9 @@ public class FitBitAccount {
             	}
             	in.close();
             	
-            	System.out.println(jsonResponseSb.toString());
-            	
-            	return true; // will be changed
+            	return updateAccountData(jsonResponseSb.toString()) && persistAccountData();
             } else {
             	System.out.println("Unexpected connection response code: " + rc);
-            	System.out.println(connection.getResponseMessage());
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
