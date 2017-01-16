@@ -126,4 +126,8 @@ public class FitBitAccount {
 	protected String getAccessToken() {
 		return this.accessToken;
 	}
+	
+	public String getUserId() {
+		return this.userId;
+	}
 }

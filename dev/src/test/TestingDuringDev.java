@@ -87,13 +87,15 @@ public class TestingDuringDev {
 	public static void main(String[] args) {
 		// testFitBitTools();
 		
+		/*
 		try {
 			// System.out.println(IO.readFile("output"));
 			
 			JSONObject jsonObj = new JSONObject(IO.readFile("output"));
-			System.out.println(jsonObj.toString(8));
+			System.out.println(jsonObj.toString(4));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 }
