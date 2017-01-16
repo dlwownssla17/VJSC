@@ -1,4 +1,10 @@
 *.DS_Store
+*.metadata/
+*.recommenders/
+*.settings/
+*.project
+*.classpath
+*/bin/
 *.idea
 *.out
 *.javac
