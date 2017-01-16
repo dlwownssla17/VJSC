@@ -6,12 +6,12 @@ package fitbit;
  *
  */
 
-public enum FitBitIntraDayActivities {
+public enum FitBitIntraDayActivity {
 	CALORIES("calories"), STEPS("steps"), DISTANCE("distance"), FLOORS("floors"), ELEVATION("elevation");
 	
 	private String name;
 	
-	private FitBitIntraDayActivities(String name) {
+	private FitBitIntraDayActivity(String name) {
 		this.name = name;
 	}
 	

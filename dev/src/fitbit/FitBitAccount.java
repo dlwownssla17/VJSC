@@ -1,9 +1,7 @@
 package fitbit;
 
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -59,10 +57,10 @@ public class FitBitAccount {
 	
 	private void processScope() {
 		Set<String> scopeSet = new HashSet<String>(Arrays.asList(this.scope.split(" ")));
-		this.hasActivityAccess = scopeSet.contains("activity");
-		this.hasSleepAccess = scopeSet.contains("sleep");
-		this.hasProfileAccess = scopeSet.contains("profile");
-		this.hasHeartRateAccess = scopeSet.contains("heartrate");
+		this.hasActivityAccess = scopeSet.contains(FitBitAccess.ACTIVITY);
+		this.hasSleepAccess = scopeSet.contains(FitBitAccess.SLEEP);
+		this.hasProfileAccess = scopeSet.contains(FitBitAccess.PROFILE);
+		this.hasHeartRateAccess = scopeSet.contains(FitBitAccess.HEARTRATE);
 	}
 	
 	private boolean updateAccountData(String jsonData) throws JSONException {
