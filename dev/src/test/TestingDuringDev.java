@@ -14,6 +14,7 @@ import fitbit.FitBitIntraDayActivity;
 import fitbit.FitBitIntraDayTimeDetail;
 import fitbit.FitBitPeriod;
 import fitbit.FitBitTools;
+import util.IO;
 
 public class TestingDuringDev {
 	
@@ -84,6 +85,15 @@ public class TestingDuringDev {
 	}
 	
 	public static void main(String[] args) {
-		testFitBitTools();
+		// testFitBitTools();
+		
+		try {
+			// System.out.println(IO.readFile("output"));
+			
+			JSONObject jsonObj = new JSONObject(IO.readFile("output"));
+			System.out.println(jsonObj.toString(8));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
