@@ -1,10 +1,15 @@
 package model;
 
+import java.util.Date;
+
 import fitbit.FitBitAccount;
 
 public class User {
 	private String username;
 	private String password;
+	
+	private Date memberSince;
+	
 	private UserInfo info;
 	private UserSettings settings;
 	private UserDiabetesParams diabetesParams;
@@ -19,6 +24,9 @@ public class User {
 		this.username = username;
 		this.password = password;
 		// TODO username and password validation
+		
+		this.memberSince = new Date();
+		
 		// TODO decide on initialization of all the other fields
 	}
 	
@@ -36,6 +44,18 @@ public class User {
 		this.password = password;
 		// TODO same or different password validation
 		return getPassword();
+	}
+	
+	public Date getMemberSince() {
+		return this.memberSince;
+	}
+	
+	public boolean hasFitBitAccount() {
+		return this.fitBitAccount != null;
+	}
+	
+	public FitBitAccount getFitBitAccount() {
+		return this.fitBitAccount;
 	}
 	
 	public boolean linkFitBitAccount(FitBitAccount fitBitAccount) {
