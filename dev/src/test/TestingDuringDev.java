@@ -8,12 +8,17 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import db.DBTools;
+import db.TeamDB;
+import db.UserDB;
 import fitbit.FitBitAccount;
 import fitbit.FitBitActivity;
 import fitbit.FitBitIntraDayActivity;
 import fitbit.FitBitIntraDayTimeDetail;
 import fitbit.FitBitPeriod;
 import fitbit.FitBitTools;
+import model.Team;
+import model.User;
 import util.IO;
 
 public class TestingDuringDev {
@@ -84,18 +89,66 @@ public class TestingDuringDev {
         }
 	}
 	
-	public static void main(String[] args) {
-		// testFitBitTools();
-		
-		/*
+	private static void testDBTools() {
 		try {
-			// System.out.println(IO.readFile("output"));
+			User vivek = new User("vivekmaster", "vivek_password");
+			User jj = new User("jjmaster", "jj_password");
+			User spiro = new User("spiromaster", "spiro_password");
+			User chad = new User("chadmaster", "chad_password");
 			
-			JSONObject jsonObj = new JSONObject(IO.readFile("output"));
-			System.out.println(jsonObj.toString(4));
+			FitBitAccount spiroFitBitAccount = new FitBitAccount("userAuthentication.txt");
+			
+			spiro.linkFitBitAccount(spiroFitBitAccount);
+			
+			Team teamVJ = new Team("The Voice");
+			teamVJ.addUser(vivek);
+			teamVJ.addUser(jj);
+			Team teamSC = new Team("The Kardashians");
+			teamSC.addUser(spiro);
+			teamSC.addUser(chad);
+			
+			UserDB vivekDB = DBTools.toUserDB(vivek);
+			UserDB jjDB = DBTools.toUserDB(jj);
+			UserDB spiroDB = DBTools.toUserDB(spiro);
+			UserDB chadDB = DBTools.toUserDB(chad);
+			
+			TeamDB teamVJDB = DBTools.toTeamDB(teamVJ);
+			TeamDB teamSCDB = DBTools.toTeamDB(teamSC);
+			
+			DBTools.setUserDB(vivekDB);
+			DBTools.setUserDB(jjDB);
+			DBTools.setUserDB(spiroDB);
+			DBTools.setTeamDB(teamVJDB);
+			DBTools.setUserDB(chadDB);
+			DBTools.setTeamDB(teamSCDB);
+			
+			System.out.println("---Everyone joined!---");
+			System.out.println(IO.readFile("db"));
+			System.out.println();
+			
+			spiroDB = DBTools.getUserDB("spiromaster");
+			System.out.println("---");
+			System.out.println(String.format("Spiro's FitBit display name is = %s", spiroDB.getFitBitDisplayName()));
+			System.out.println();
+			
+			jj.setPassword("jj_with_his_bridgewater_transparency17");
+			jjDB = DBTools.toUserDB(jj);
+			DBTools.setUserDB(jjDB);
+			
+			DBTools.removeTeamDB(teamSCDB);
+			DBTools.removeUserDB(chadDB);
+			
+			System.out.println("---Now what?!---");
+			System.out.println(IO.readFile("db"));
+			System.out.println();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		*/
+	}
+	
+	public static void main(String[] args) {
+		// testFitBitTools();
+		
+		// testDBTools();
 	}
 }

@@ -19,11 +19,15 @@ public class UserDB {
 	// TODO this is temporary
 	private String fitBitDisplayName;
 	
-	public UserDB(String username, String password, Date memberSince) {
+	public UserDB(String username, String password, String memberSince) {
 		this.username = username;
 		this.password = password;
 		
-		this.memberSince = DateFormat.getFormattedString(memberSince, MemberSinceDateTimeFormat);
+		this.memberSince = memberSince;
+	}
+	
+	public UserDB(String username, String password, Date memberSince) {
+		this(username, password, DateFormat.getFormattedString(memberSince, MemberSinceDateTimeFormat));
 	}
 	
 	public String getUsername() {
@@ -54,20 +58,10 @@ public class UserDB {
 		return getFitBitDisplayName();
 	}
 	
-	// TODO this is temporary (fitBitDisplayName)
-	public String toJSONString() {
-		JSONObject userJSON = new JSONObject();
-		userJSON.put("username", this.username);
-		userJSON.put("password",  this.password);
-		userJSON.put("member_since", this.memberSince);
-		userJSON.put("fitbit_display_name", this.fitBitDisplayName);
-		return userJSON.toString(4);
-	}
-	
 	public static void main(String[] args) {
 		long epoch = Long.parseLong("1081157732");
 		UserDB userDB = new UserDB("spiro", "metaxas95", new Date(epoch * 1000));
 		userDB.setFitBitDisplayName("SpiroTheMantaxas");
-		System.out.println(userDB.toJSONString());
+		System.out.println(DBTools.toJSON(userDB).toString(4));
 	}
 }

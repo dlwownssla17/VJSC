@@ -1,0 +1,29 @@
+{
+    "teams": {"The Voice": {
+        "usernames": [
+            "vivekmaster",
+            "jjmaster"
+        ],
+        "team_name": "The Voice"
+    }},
+    "users": {
+        "vivekmaster": {
+            "member_since": "2017-01-16 08:27",
+            "password": "vivek_password",
+            "fitbit_display_name": "{NULL}",
+            "username": "vivekmaster"
+        },
+        "jjmaster": {
+            "member_since": "2017-01-16 08:27",
+            "password": "jj_with_his_bridgewater_transparency17",
+            "fitbit_display_name": "{NULL}",
+            "username": "jjmaster"
+        },
+        "spiromaster": {
+            "member_since": "2017-01-16 08:27",
+            "password": "spiro_password",
+            "fitbit_display_name": "Spiro M.",
+            "username": "spiromaster"
+        }
+    }
+}

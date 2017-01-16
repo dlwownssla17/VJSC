@@ -14,19 +14,20 @@ public class TeamDB {
 		this.usernames = new ArrayList<>();
 	}
 	
-	protected boolean addUsername(String username) {
+	public String getTeamName() {
+		return this.teamName;
+	}
+	
+	public boolean addUsername(String username) {
 		return this.usernames.add(username);
 	}
 	
-	protected boolean removeUsername(String username) {
+	public boolean removeUsername(String username) {
 		return this.usernames.remove(username);
 	}
 	
-	protected String toJSONString() {
-		JSONObject teamJSON = new JSONObject();
-		teamJSON.put("team_name", this.teamName);
-		teamJSON.put("usernames", new JSONArray(this.usernames));
-		return teamJSON.toString(4);
+	public ArrayList<String> getUsernames() {
+		return this.usernames;
 	}
 	
 	public static void main(String[] args) {
@@ -36,6 +37,6 @@ public class TeamDB {
 		teamDB.addUsername("vjsc");
 		teamDB.addUsername("spiro");
 		teamDB.removeUsername("vjsc");
-		System.out.println(teamDB.toJSONString());
+		System.out.println(DBTools.toJSON(teamDB).toString(4));
 	}
 }
