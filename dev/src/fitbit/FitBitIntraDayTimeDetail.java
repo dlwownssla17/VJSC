@@ -7,7 +7,7 @@ package fitbit;
  */
 
 public enum FitBitIntraDayTimeDetail {
-	SECOND("1sec"), MINUTES("1min"), FIFTEEN_MINUTES("15min");
+	SECONDS("1sec"), MINUTES("1min"), FIFTEEN_MINUTES("15min");
 	
 	private String time;
 	

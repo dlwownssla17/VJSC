@@ -57,10 +57,10 @@ public class FitBitAccount {
 	
 	private void processScope() {
 		Set<String> scopeSet = new HashSet<String>(Arrays.asList(this.scope.split(" ")));
-		this.hasActivityAccess = scopeSet.contains(FitBitAccess.ACTIVITY);
-		this.hasSleepAccess = scopeSet.contains(FitBitAccess.SLEEP);
-		this.hasProfileAccess = scopeSet.contains(FitBitAccess.PROFILE);
-		this.hasHeartRateAccess = scopeSet.contains(FitBitAccess.HEARTRATE);
+		this.hasActivityAccess = scopeSet.contains(FitBitAccess.ACTIVITY.toString());
+		this.hasSleepAccess = scopeSet.contains(FitBitAccess.SLEEP.toString());
+		this.hasProfileAccess = scopeSet.contains(FitBitAccess.PROFILE.toString());
+		this.hasHeartRateAccess = scopeSet.contains(FitBitAccess.HEARTRATE.toString());
 	}
 	
 	private boolean updateAccountData(String jsonData) throws JSONException {
