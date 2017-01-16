@@ -50,6 +50,11 @@ public class User {
 		return this.memberSince;
 	}
 	
+	public Date setMemberSince(Date memberSince) {
+		this.memberSince = memberSince;
+		return getMemberSince();
+	}
+	
 	public boolean hasFitBitAccount() {
 		return this.fitBitAccount != null;
 	}

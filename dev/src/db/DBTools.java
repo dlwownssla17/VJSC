@@ -2,22 +2,35 @@ package db;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import fitbit.FitBitAccount;
 import fitbit.FitBitTools;
 import model.Team;
 import model.User;
+import util.DateFormat;
 import util.IO;
 
 public class DBTools {
 	private static String DB = "db";
 	
+	protected static String MemberSinceDateTimeFormat = "yyyy-MM-dd HH:mm";
+	
 	public static UserDB toUserDB(User user) {
 		UserDB userDB = new UserDB(user.getUsername(), user.getPassword(), user.getMemberSince());
 		
 		if (user.hasFitBitAccount()) {
+			userDB.setFitBitAccessToken(user.getFitBitAccount().getAccessToken());
+			userDB.setFitBitRefreshToken(user.getFitBitAccount().getRefreshToken());
+			userDB.setFitBitUserId(user.getFitBitAccount().getUserId());
+			userDB.setFitBitScope(user.getFitBitAccount().getScope());
+			userDB.setFitBitTokenType(user.getFitBitAccount().getTokenType());
+			userDB.setFitBitExpiresIn(Long.toString(user.getFitBitAccount().getExpiresIn()));
+			
 			JSONObject fitBitAccountProfileJSON = new JSONObject(FitBitTools.getProfile(user.getFitBitAccount()));
 			String fitBitDisplayName = fitBitAccountProfileJSON.getJSONObject("user").getString("displayName");
 			userDB.setFitBitDisplayName(fitBitDisplayName);
@@ -36,13 +49,44 @@ public class DBTools {
 		return teamDB;
 	}
 	
-	// TODO we're gonna need fromDBObj as well
+	public static User fromUserDB(UserDB userDB) {
+		try {
+			User user = new User(userDB.getUsername(), userDB.getPassword());
+			
+			Date memberSince = DateFormat.getDate(userDB.getMemberSince(), MemberSinceDateTimeFormat);
+			user.setMemberSince(memberSince);
+			
+			String fitBitAccessToken = userDB.getFitBitAccessToken();
+			String fitBitRefreshToken = userDB.getFitBitRefreshToken();
+			String fitBitUserId = userDB.getFitBitUserId();
+			String fitBitScope = userDB.getFitBitScope();
+			String fitBitTokenType = userDB.getFitBitTokenType();
+			long fitBitExpiresIn = Long.parseLong(userDB.getFitBitExpiresIn());
+			
+			FitBitAccount fitBitAccount = new FitBitAccount(fitBitAccessToken, fitBitRefreshToken, fitBitUserId,
+					fitBitScope, fitBitTokenType, fitBitExpiresIn);
+			user.linkFitBitAccount(fitBitAccount);
+			
+			return user;
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	// TODO fromTeamDB
 	
 	public static JSONObject toJSON(UserDB userDB) {
 		JSONObject userJSON = new JSONObject();
 		userJSON.put("username", userDB.getUsername());
 		userJSON.put("password",  userDB.getPassword());
 		userJSON.put("member_since", userDB.getMemberSince());
+		userJSON.put("fitbit_access_token", userDB.getFitBitAccessToken());
+		userJSON.put("fitbit_refresh_token", userDB.getFitBitRefreshToken());
+		userJSON.put("fitbit_user_id", userDB.getFitBitUserId());
+		userJSON.put("fitbit_scope", userDB.getFitBitScope());
+		userJSON.put("fitbit_token_type", userDB.getFitBitTokenType());
+		userJSON.put("fitbit_expires_in", userDB.getFitBitExpiresIn());
 		userJSON.put("fitbit_display_name", userDB.getFitBitDisplayName());
 		return userJSON;
 	}
@@ -58,9 +102,21 @@ public class DBTools {
 		String username = userDBJSON.getString("username");
 		String password = userDBJSON.getString("password");
 		String memberSince = userDBJSON.getString("member_since");
+		String fitBitAccessToken = userDBJSON.getString("fitbit_access_token");
+		String fitBitRefreshToken = userDBJSON.getString("fitbit_refresh_token");
+		String fitBitUserId = userDBJSON.getString("fitbit_user_id");
+		String fitBitScope = userDBJSON.getString("fitbit_scope");
+		String fitBitTokenType = userDBJSON.getString("fitbit_token_type");
+		String fitBitExpiresIn = userDBJSON.getString("fitbit_expires_in");
 		String fitBitDisplayName = userDBJSON.getString("fitbit_display_name");
 		
 		UserDB userDB = new UserDB(username, password, memberSince);
+		userDB.setFitBitAccessToken(fitBitAccessToken);
+		userDB.setFitBitRefreshToken(fitBitRefreshToken);
+		userDB.setFitBitUserId(fitBitUserId);
+		userDB.setFitBitScope(fitBitScope);
+		userDB.setFitBitTokenType(fitBitTokenType);
+		userDB.setFitBitExpiresIn(fitBitExpiresIn);
 		userDB.setFitBitDisplayName(fitBitDisplayName);
 		return userDB;
 	}

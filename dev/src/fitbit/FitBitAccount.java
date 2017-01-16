@@ -123,11 +123,27 @@ public class FitBitAccount {
     	return updateAccountData(jsonResponseString) && persistAccountData();
 	}
 	
-	protected String getAccessToken() {
+	public String getAccessToken() {
 		return this.accessToken;
+	}
+	
+	public String getRefreshToken() {
+		return this.refreshToken;
 	}
 	
 	public String getUserId() {
 		return this.userId;
+	}
+	
+	public String getScope() {
+		return this.scope;
+	}
+	
+	public String getTokenType() {
+		return this.tokenType;
+	}
+	
+	public long getExpiresIn() {
+		return this.expiresIn;
 	}
 }
