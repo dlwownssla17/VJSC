@@ -1,0 +1,547 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		63C2E3091E2D54B7000C4939 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C2E3081E2D54B7000C4939 /* AppDelegate.swift */; };
+		63C2E30B1E2D54B7000C4939 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C2E30A1E2D54B7000C4939 /* ViewController.swift */; };
+		63C2E30E1E2D54B7000C4939 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63C2E30C1E2D54B7000C4939 /* Main.storyboard */; };
+		63C2E3111E2D54B7000C4939 /* DebraCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 63C2E30F1E2D54B7000C4939 /* DebraCoreData.xcdatamodeld */; };
+		63C2E3131E2D54B7000C4939 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63C2E3121E2D54B7000C4939 /* Assets.xcassets */; };
+		63C2E3161E2D54B7000C4939 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63C2E3141E2D54B7000C4939 /* LaunchScreen.storyboard */; };
+		63C2E3211E2D54B7000C4939 /* DebraCoreDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C2E3201E2D54B7000C4939 /* DebraCoreDataTests.swift */; };
+		63C2E32C1E2D54B7000C4939 /* DebraCoreDataUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C2E32B1E2D54B7000C4939 /* DebraCoreDataUITests.swift */; };
+		63C2E33A1E2D618D000C4939 /* DataLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C2E3391E2D618D000C4939 /* DataLayer.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		63C2E31D1E2D54B7000C4939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 63C2E2FD1E2D54B7000C4939 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 63C2E3041E2D54B7000C4939;
+			remoteInfo = DebraCoreData;
+		};
+		63C2E3281E2D54B7000C4939 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 63C2E2FD1E2D54B7000C4939 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 63C2E3041E2D54B7000C4939;
+			remoteInfo = DebraCoreData;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		63C2E3051E2D54B7000C4939 /* DebraCoreData.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DebraCoreData.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		63C2E3081E2D54B7000C4939 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		63C2E30A1E2D54B7000C4939 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		63C2E30D1E2D54B7000C4939 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		63C2E3101E2D54B7000C4939 /* DebraCoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DebraCoreData.xcdatamodel; sourceTree = "<group>"; };
+		63C2E3121E2D54B7000C4939 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		63C2E3151E2D54B7000C4939 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		63C2E3171E2D54B7000C4939 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		63C2E31C1E2D54B7000C4939 /* DebraCoreDataTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DebraCoreDataTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		63C2E3201E2D54B7000C4939 /* DebraCoreDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebraCoreDataTests.swift; sourceTree = "<group>"; };
+		63C2E3221E2D54B7000C4939 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		63C2E3271E2D54B7000C4939 /* DebraCoreDataUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DebraCoreDataUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		63C2E32B1E2D54B7000C4939 /* DebraCoreDataUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebraCoreDataUITests.swift; sourceTree = "<group>"; };
+		63C2E32D1E2D54B7000C4939 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		63C2E3391E2D618D000C4939 /* DataLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataLayer.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		63C2E3021E2D54B7000C4939 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		63C2E3191E2D54B7000C4939 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		63C2E3241E2D54B7000C4939 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		63C2E2FC1E2D54B7000C4939 = {
+			isa = PBXGroup;
+			children = (
+				63C2E3071E2D54B7000C4939 /* DebraCoreData */,
+				63C2E31F1E2D54B7000C4939 /* DebraCoreDataTests */,
+				63C2E32A1E2D54B7000C4939 /* DebraCoreDataUITests */,
+				63C2E3061E2D54B7000C4939 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		63C2E3061E2D54B7000C4939 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				63C2E3051E2D54B7000C4939 /* DebraCoreData.app */,
+				63C2E31C1E2D54B7000C4939 /* DebraCoreDataTests.xctest */,
+				63C2E3271E2D54B7000C4939 /* DebraCoreDataUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		63C2E3071E2D54B7000C4939 /* DebraCoreData */ = {
+			isa = PBXGroup;
+			children = (
+				63C2E3081E2D54B7000C4939 /* AppDelegate.swift */,
+				63C2E30A1E2D54B7000C4939 /* ViewController.swift */,
+				63C2E30C1E2D54B7000C4939 /* Main.storyboard */,
+				63C2E3121E2D54B7000C4939 /* Assets.xcassets */,
+				63C2E3141E2D54B7000C4939 /* LaunchScreen.storyboard */,
+				63C2E3171E2D54B7000C4939 /* Info.plist */,
+				63C2E30F1E2D54B7000C4939 /* DebraCoreData.xcdatamodeld */,
+				63C2E3391E2D618D000C4939 /* DataLayer.swift */,
+			);
+			path = DebraCoreData;
+			sourceTree = "<group>";
+		};
+		63C2E31F1E2D54B7000C4939 /* DebraCoreDataTests */ = {
+			isa = PBXGroup;
+			children = (
+				63C2E3201E2D54B7000C4939 /* DebraCoreDataTests.swift */,
+				63C2E3221E2D54B7000C4939 /* Info.plist */,
+			);
+			path = DebraCoreDataTests;
+			sourceTree = "<group>";
+		};
+		63C2E32A1E2D54B7000C4939 /* DebraCoreDataUITests */ = {
+			isa = PBXGroup;
+			children = (
+				63C2E32B1E2D54B7000C4939 /* DebraCoreDataUITests.swift */,
+				63C2E32D1E2D54B7000C4939 /* Info.plist */,
+			);
+			path = DebraCoreDataUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		63C2E3041E2D54B7000C4939 /* DebraCoreData */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 63C2E3301E2D54B7000C4939 /* Build configuration list for PBXNativeTarget "DebraCoreData" */;
+			buildPhases = (
+				63C2E3011E2D54B7000C4939 /* Sources */,
+				63C2E3021E2D54B7000C4939 /* Frameworks */,
+				63C2E3031E2D54B7000C4939 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DebraCoreData;
+			productName = DebraCoreData;
+			productReference = 63C2E3051E2D54B7000C4939 /* DebraCoreData.app */;
+			productType = "com.apple.product-type.application";
+		};
+		63C2E31B1E2D54B7000C4939 /* DebraCoreDataTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 63C2E3331E2D54B7000C4939 /* Build configuration list for PBXNativeTarget "DebraCoreDataTests" */;
+			buildPhases = (
+				63C2E3181E2D54B7000C4939 /* Sources */,
+				63C2E3191E2D54B7000C4939 /* Frameworks */,
+				63C2E31A1E2D54B7000C4939 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				63C2E31E1E2D54B7000C4939 /* PBXTargetDependency */,
+			);
+			name = DebraCoreDataTests;
+			productName = DebraCoreDataTests;
+			productReference = 63C2E31C1E2D54B7000C4939 /* DebraCoreDataTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		63C2E3261E2D54B7000C4939 /* DebraCoreDataUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 63C2E3361E2D54B7000C4939 /* Build configuration list for PBXNativeTarget "DebraCoreDataUITests" */;
+			buildPhases = (
+				63C2E3231E2D54B7000C4939 /* Sources */,
+				63C2E3241E2D54B7000C4939 /* Frameworks */,
+				63C2E3251E2D54B7000C4939 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				63C2E3291E2D54B7000C4939 /* PBXTargetDependency */,
+			);
+			name = DebraCoreDataUITests;
+			productName = DebraCoreDataUITests;
+			productReference = 63C2E3271E2D54B7000C4939 /* DebraCoreDataUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		63C2E2FD1E2D54B7000C4939 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0820;
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = "Chad Nachiappan";
+				TargetAttributes = {
+					63C2E3041E2D54B7000C4939 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
+					};
+					63C2E31B1E2D54B7000C4939 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 63C2E3041E2D54B7000C4939;
+					};
+					63C2E3261E2D54B7000C4939 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 63C2E3041E2D54B7000C4939;
+					};
+				};
+			};
+			buildConfigurationList = 63C2E3001E2D54B7000C4939 /* Build configuration list for PBXProject "DebraCoreData" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 63C2E2FC1E2D54B7000C4939;
+			productRefGroup = 63C2E3061E2D54B7000C4939 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				63C2E3041E2D54B7000C4939 /* DebraCoreData */,
+				63C2E31B1E2D54B7000C4939 /* DebraCoreDataTests */,
+				63C2E3261E2D54B7000C4939 /* DebraCoreDataUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		63C2E3031E2D54B7000C4939 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				63C2E3161E2D54B7000C4939 /* LaunchScreen.storyboard in Resources */,
+				63C2E3131E2D54B7000C4939 /* Assets.xcassets in Resources */,
+				63C2E30E1E2D54B7000C4939 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		63C2E31A1E2D54B7000C4939 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		63C2E3251E2D54B7000C4939 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		63C2E3011E2D54B7000C4939 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				63C2E3111E2D54B7000C4939 /* DebraCoreData.xcdatamodeld in Sources */,
+				63C2E33A1E2D618D000C4939 /* DataLayer.swift in Sources */,
+				63C2E30B1E2D54B7000C4939 /* ViewController.swift in Sources */,
+				63C2E3091E2D54B7000C4939 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		63C2E3181E2D54B7000C4939 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				63C2E3211E2D54B7000C4939 /* DebraCoreDataTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		63C2E3231E2D54B7000C4939 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				63C2E32C1E2D54B7000C4939 /* DebraCoreDataUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		63C2E31E1E2D54B7000C4939 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 63C2E3041E2D54B7000C4939 /* DebraCoreData */;
+			targetProxy = 63C2E31D1E2D54B7000C4939 /* PBXContainerItemProxy */;
+		};
+		63C2E3291E2D54B7000C4939 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 63C2E3041E2D54B7000C4939 /* DebraCoreData */;
+			targetProxy = 63C2E3281E2D54B7000C4939 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		63C2E30C1E2D54B7000C4939 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				63C2E30D1E2D54B7000C4939 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		63C2E3141E2D54B7000C4939 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				63C2E3151E2D54B7000C4939 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		63C2E32E1E2D54B7000C4939 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		63C2E32F1E2D54B7000C4939 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		63C2E3311E2D54B7000C4939 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = DebraCoreData/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.chadnach1.DebraCoreData;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		63C2E3321E2D54B7000C4939 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = DebraCoreData/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.chadnach1.DebraCoreData;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+		63C2E3341E2D54B7000C4939 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = DebraCoreDataTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.chadnach1.DebraCoreDataTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DebraCoreData.app/DebraCoreData";
+			};
+			name = Debug;
+		};
+		63C2E3351E2D54B7000C4939 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = DebraCoreDataTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.chadnach1.DebraCoreDataTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DebraCoreData.app/DebraCoreData";
+			};
+			name = Release;
+		};
+		63C2E3371E2D54B7000C4939 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				INFOPLIST_FILE = DebraCoreDataUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.chadnach1.DebraCoreDataUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = DebraCoreData;
+			};
+			name = Debug;
+		};
+		63C2E3381E2D54B7000C4939 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				INFOPLIST_FILE = DebraCoreDataUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.chadnach1.DebraCoreDataUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = DebraCoreData;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		63C2E3001E2D54B7000C4939 /* Build configuration list for PBXProject "DebraCoreData" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				63C2E32E1E2D54B7000C4939 /* Debug */,
+				63C2E32F1E2D54B7000C4939 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		63C2E3301E2D54B7000C4939 /* Build configuration list for PBXNativeTarget "DebraCoreData" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				63C2E3311E2D54B7000C4939 /* Debug */,
+				63C2E3321E2D54B7000C4939 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		63C2E3331E2D54B7000C4939 /* Build configuration list for PBXNativeTarget "DebraCoreDataTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				63C2E3341E2D54B7000C4939 /* Debug */,
+				63C2E3351E2D54B7000C4939 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		63C2E3361E2D54B7000C4939 /* Build configuration list for PBXNativeTarget "DebraCoreDataUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				63C2E3371E2D54B7000C4939 /* Debug */,
+				63C2E3381E2D54B7000C4939 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		63C2E30F1E2D54B7000C4939 /* DebraCoreData.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				63C2E3101E2D54B7000C4939 /* DebraCoreData.xcdatamodel */,
+			);
+			currentVersion = 63C2E3101E2D54B7000C4939 /* DebraCoreData.xcdatamodel */;
+			path = DebraCoreData.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 63C2E2FD1E2D54B7000C4939 /* Project object */;
+}
