@@ -7,34 +7,73 @@
 //
 
 import UIKit
+import DCPathButton
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, DCPathButtonDelegate {
+    
+    var dcPathButton:DCPathButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         
-//        // Colored Gradient
-//        CAGradientLayer *gradient = [CAGradientLayer layer];
-//        gradient.frame = self.view.bounds;
-//        gradient.colors = [NSArray arrayWithObjects: (id)[[UIColor colorWithRed:0.776 green:0.263 blue:0.988 alpha:1] /*#c643fc*/ CGColor], (id)[[UIColor colorWithRed:0.937 green:0.302 blue:0.714 alpha:1] /*#ef4db6*/ CGColor], nil];
-//        [self.view.layer insertSublayer:gradient atIndex:0];
+        
+        configureDCPathButton()
+//        self.title = "FirstVC"
 //        
-//        UILabel *headingLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 240, 300, 30)];
-//        headingLabel.text = @"Not to fear, Debra is here!";
-//        headingLabel.textColor = [UIColor whiteColor];
-//        headingLabel.textAlignment = NSTextAlignmentCenter;
-//        headingLabel.tag = 10;
-//        headingLabel.font = [UIFont fontWithName:@"AppleSDGothicNeo-Regular" size:20.0];
-//        headingLabel.hidden = NO;
-//        [self.view addSubview:headingLabel];
+//        var startFinishButton = UIButton(type: UIButtonType.System) as! UIButton
+//        startFinishButton.frame = CGRectMake(100, 100, 100, 50)
+//        startFinishButton.backgroundColor = UIColor.greenColor()
+//        startFinishButton.setTitle("Test Button", forState: UIControlState.Normal)
+//        startFinishButton.addTarget(self, action: "buttonAction:", forControlEvents: UIControlEvents.TouchUpInside)
+//        
+//        self.view.addSubview(startFinishButton)
+    }
+    
+    func buttonAction(sender:UIButton!)
+    {
+        print("Button tapped")
+        let vc = ViewController()
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func configureDCPathButton() {
+        
+        dcPathButton = DCPathButton(centerImage: UIImage(named: "chooser-button-tab"), highlightedImage: UIImage(named: "chooser-button-tab-highlighted"))
+        
+        dcPathButton.delegate = self
+        dcPathButton.dcButtonCenter = CGPointMake(self.view.bounds.width/2, self.view.bounds.height - 25.5)
+        dcPathButton.allowSounds = true
+        dcPathButton.allowCenterButtonRotation = true
+        dcPathButton.bloomRadius = 105
+        
+        let itemButton_1 = DCPathItemButton(image: UIImage(named: "chooser-moment-icon-music"), highlightedImage: UIImage(named: "chooser-moment-icon-music-highlighted"), backgroundImage: UIImage(named: "chooser-moment-button"), backgroundHighlightedImage: UIImage(named: "chooser-moment-button-highlighted"))
+        let itemButton_2 = DCPathItemButton(image: UIImage(named: "chooser-moment-icon-place"), highlightedImage: UIImage(named: "chooser-moment-icon-place-highlighted"), backgroundImage: UIImage(named: "chooser-moment-button"), backgroundHighlightedImage: UIImage(named: "chooser-moment-button-highlighted"))
+        let itemButton_3 = DCPathItemButton(image: UIImage(named: "chooser-moment-icon-camera"), highlightedImage: UIImage(named: "chooser-moment-icon-camera-highlighted"), backgroundImage: UIImage(named: "chooser-moment-button"), backgroundHighlightedImage: UIImage(named: "chooser-moment-button-highlighted"))
+        let itemButton_4 = DCPathItemButton(image: UIImage(named: "chooser-moment-icon-thought"), highlightedImage: UIImage(named: "chooser-moment-icon-thought-highlighted"), backgroundImage: UIImage(named: "chooser-moment-button"), backgroundHighlightedImage: UIImage(named: "chooser-moment-button-highlighted"))
+        let itemButton_5 = DCPathItemButton(image: UIImage(named: "chooser-moment-icon-sleep"), highlightedImage: UIImage(named: "chooser-moment-icon-sleep-highlighted"), backgroundImage: UIImage(named: "chooser-moment-button"), backgroundHighlightedImage: UIImage(named: "chooser-moment-button-highlighted"))
+        
+        
+        dcPathButton.addPathItems([itemButton_1, itemButton_2, itemButton_3, itemButton_4, itemButton_5])
+        
+        self.view.addSubview(dcPathButton)
+        
+    }
+    
+    // DCPathButton Delegate
+    //
+    func pathButton(dcPathButton: DCPathButton!, clickItemButtonAtIndex itemButtonIndex: UInt) {
+        
+        let alertView = UIAlertView(title: "", message: "You tap at index \(itemButtonIndex)", delegate: nil, cancelButtonTitle: "Ok")
+        
+        alertView.show()
+        
     }
 
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
 
 }
 

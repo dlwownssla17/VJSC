@@ -1,0 +1,21 @@
+# Uncomment the next line to define a global platform for your project
+platform :ios, '7.0'
+
+target 'DebraPrototype' do
+  # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for DebraPrototype
+  pod 'DCPathButton', '~> 2.1.3'
+
+  target 'DebraPrototypeTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'DebraPrototypeUITests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end

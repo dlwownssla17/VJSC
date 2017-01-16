@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01B85D5B3C9EEEBCF94C427A /* Pods_DebraPrototypeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85D83B03FC0B30E025E24AC0 /* Pods_DebraPrototypeUITests.framework */; };
+		326A45084B2A444001ABCE87 /* Pods_DebraPrototypeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 13C9B9E383A8FAC1E1C02DC2 /* Pods_DebraPrototypeTests.framework */; };
+		637F55F31DF3E275009D7498 /* DCPathButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 637F55EC1DF3E275009D7498 /* DCPathButton.m */; };
+		637F55F41DF3E275009D7498 /* DCPathItemButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 637F55EE1DF3E275009D7498 /* DCPathItemButton.m */; };
+		637F55F51DF3E275009D7498 /* bloom.caf in Resources */ = {isa = PBXBuildFile; fileRef = 637F55F01DF3E275009D7498 /* bloom.caf */; };
+		637F55F61DF3E275009D7498 /* fold.caf in Resources */ = {isa = PBXBuildFile; fileRef = 637F55F11DF3E275009D7498 /* fold.caf */; };
+		637F55F71DF3E275009D7498 /* selected.caf in Resources */ = {isa = PBXBuildFile; fileRef = 637F55F21DF3E275009D7498 /* selected.caf */; };
 		63C686551DE649DE000CA473 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C686541DE649DE000CA473 /* AppDelegate.swift */; };
 		63C686571DE649DE000CA473 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C686561DE649DE000CA473 /* ViewController.swift */; };
 		63C6865A1DE649DE000CA473 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63C686581DE649DE000CA473 /* Main.storyboard */; };
@@ -15,6 +22,7 @@
 		63C686621DE649DE000CA473 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63C686601DE649DE000CA473 /* LaunchScreen.storyboard */; };
 		63C6866D1DE649DE000CA473 /* DebraPrototypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C6866C1DE649DE000CA473 /* DebraPrototypeTests.swift */; };
 		63C686781DE649DE000CA473 /* DebraPrototypeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C686771DE649DE000CA473 /* DebraPrototypeUITests.swift */; };
+		EA876F42BD7F1C06F6F9BE4C /* Pods_DebraPrototype.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACBC819C759CD92823A274C4 /* Pods_DebraPrototype.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +43,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		13C9B9E383A8FAC1E1C02DC2 /* Pods_DebraPrototypeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DebraPrototypeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		59D4D37733C8F11FB86370A4 /* Pods-DebraPrototypeUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DebraPrototypeUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DebraPrototypeUITests/Pods-DebraPrototypeUITests.release.xcconfig"; sourceTree = "<group>"; };
+		637F55EB1DF3E275009D7498 /* DCPathButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCPathButton.h; sourceTree = "<group>"; };
+		637F55EC1DF3E275009D7498 /* DCPathButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCPathButton.m; sourceTree = "<group>"; };
+		637F55ED1DF3E275009D7498 /* DCPathItemButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DCPathItemButton.h; sourceTree = "<group>"; };
+		637F55EE1DF3E275009D7498 /* DCPathItemButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DCPathItemButton.m; sourceTree = "<group>"; };
+		637F55F01DF3E275009D7498 /* bloom.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = bloom.caf; sourceTree = "<group>"; };
+		637F55F11DF3E275009D7498 /* fold.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = fold.caf; sourceTree = "<group>"; };
+		637F55F21DF3E275009D7498 /* selected.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = selected.caf; sourceTree = "<group>"; };
+		637F55FA1DF3E3A3009D7498 /* DebraPrototype-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DebraPrototype-Bridging-Header.h"; sourceTree = "<group>"; };
 		63C686511DE649DD000CA473 /* DebraPrototype.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DebraPrototype.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63C686541DE649DE000CA473 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		63C686561DE649DE000CA473 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -49,6 +67,13 @@
 		63C686731DE649DE000CA473 /* DebraPrototypeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DebraPrototypeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		63C686771DE649DE000CA473 /* DebraPrototypeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebraPrototypeUITests.swift; sourceTree = "<group>"; };
 		63C686791DE649DE000CA473 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		85D83B03FC0B30E025E24AC0 /* Pods_DebraPrototypeUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DebraPrototypeUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		943CD94A350167ADF6EA426C /* Pods-DebraPrototypeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DebraPrototypeTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DebraPrototypeTests/Pods-DebraPrototypeTests.debug.xcconfig"; sourceTree = "<group>"; };
+		ACBC819C759CD92823A274C4 /* Pods_DebraPrototype.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DebraPrototype.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BA8FA1D9F406A53171246A38 /* Pods-DebraPrototypeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DebraPrototypeUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DebraPrototypeUITests/Pods-DebraPrototypeUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		CBE4A109D288FA58EFB7CEF9 /* Pods-DebraPrototype.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DebraPrototype.release.xcconfig"; path = "Pods/Target Support Files/Pods-DebraPrototype/Pods-DebraPrototype.release.xcconfig"; sourceTree = "<group>"; };
+		D8F9303651139248E9CE29D0 /* Pods-DebraPrototype.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DebraPrototype.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DebraPrototype/Pods-DebraPrototype.debug.xcconfig"; sourceTree = "<group>"; };
+		E26504324E34B8B93DCDEB88 /* Pods-DebraPrototypeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DebraPrototypeTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DebraPrototypeTests/Pods-DebraPrototypeTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA876F42BD7F1C06F6F9BE4C /* Pods_DebraPrototype.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				326A45084B2A444001ABCE87 /* Pods_DebraPrototypeTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,19 +97,65 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01B85D5B3C9EEEBCF94C427A /* Pods_DebraPrototypeUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		13BA699A23FF1E053971FDD5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				ACBC819C759CD92823A274C4 /* Pods_DebraPrototype.framework */,
+				13C9B9E383A8FAC1E1C02DC2 /* Pods_DebraPrototypeTests.framework */,
+				85D83B03FC0B30E025E24AC0 /* Pods_DebraPrototypeUITests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		637F55E91DF3E275009D7498 /* DCPathButton */ = {
+			isa = PBXGroup;
+			children = (
+				637F55EA1DF3E275009D7498 /* Classes */,
+				637F55EF1DF3E275009D7498 /* Sounds */,
+			);
+			name = DCPathButton;
+			path = "../../../../../../Downloads/DCPathButton-master/Example-Swift/DCPathButton";
+			sourceTree = "<group>";
+		};
+		637F55EA1DF3E275009D7498 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				637F55EB1DF3E275009D7498 /* DCPathButton.h */,
+				637F55EC1DF3E275009D7498 /* DCPathButton.m */,
+				637F55ED1DF3E275009D7498 /* DCPathItemButton.h */,
+				637F55EE1DF3E275009D7498 /* DCPathItemButton.m */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		637F55EF1DF3E275009D7498 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				637F55F01DF3E275009D7498 /* bloom.caf */,
+				637F55F11DF3E275009D7498 /* fold.caf */,
+				637F55F21DF3E275009D7498 /* selected.caf */,
+			);
+			path = Sounds;
+			sourceTree = "<group>";
+		};
 		63C686481DE649DD000CA473 = {
 			isa = PBXGroup;
 			children = (
+				637F55FA1DF3E3A3009D7498 /* DebraPrototype-Bridging-Header.h */,
+				637F55E91DF3E275009D7498 /* DCPathButton */,
 				63C686531DE649DD000CA473 /* DebraPrototype */,
 				63C6866B1DE649DE000CA473 /* DebraPrototypeTests */,
 				63C686761DE649DE000CA473 /* DebraPrototypeUITests */,
 				63C686521DE649DD000CA473 /* Products */,
+				E7EDEF67F65D6C8061409149 /* Pods */,
+				13BA699A23FF1E053971FDD5 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -128,6 +201,19 @@
 			path = DebraPrototypeUITests;
 			sourceTree = "<group>";
 		};
+		E7EDEF67F65D6C8061409149 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D8F9303651139248E9CE29D0 /* Pods-DebraPrototype.debug.xcconfig */,
+				CBE4A109D288FA58EFB7CEF9 /* Pods-DebraPrototype.release.xcconfig */,
+				943CD94A350167ADF6EA426C /* Pods-DebraPrototypeTests.debug.xcconfig */,
+				E26504324E34B8B93DCDEB88 /* Pods-DebraPrototypeTests.release.xcconfig */,
+				BA8FA1D9F406A53171246A38 /* Pods-DebraPrototypeUITests.debug.xcconfig */,
+				59D4D37733C8F11FB86370A4 /* Pods-DebraPrototypeUITests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -135,9 +221,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 63C6867C1DE649DE000CA473 /* Build configuration list for PBXNativeTarget "DebraPrototype" */;
 			buildPhases = (
+				4460AC7E1E33532CAE2F4169 /* [CP] Check Pods Manifest.lock */,
 				63C6864D1DE649DD000CA473 /* Sources */,
 				63C6864E1DE649DD000CA473 /* Frameworks */,
 				63C6864F1DE649DD000CA473 /* Resources */,
+				C74191FF249CA31226012EE2 /* [CP] Embed Pods Frameworks */,
+				CE8C7B71B74937378086F7B6 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -152,9 +241,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 63C6867F1DE649DE000CA473 /* Build configuration list for PBXNativeTarget "DebraPrototypeTests" */;
 			buildPhases = (
+				F02419E906F20548720B8D06 /* [CP] Check Pods Manifest.lock */,
 				63C686641DE649DE000CA473 /* Sources */,
 				63C686651DE649DE000CA473 /* Frameworks */,
 				63C686661DE649DE000CA473 /* Resources */,
+				D254BFAA83374F6A90BFF1CD /* [CP] Embed Pods Frameworks */,
+				2EC34F3EA104E9317CA7401B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -170,9 +262,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 63C686821DE649DE000CA473 /* Build configuration list for PBXNativeTarget "DebraPrototypeUITests" */;
 			buildPhases = (
+				D8A31D441FA88518107659AD /* [CP] Check Pods Manifest.lock */,
 				63C6866F1DE649DE000CA473 /* Sources */,
 				63C686701DE649DE000CA473 /* Frameworks */,
 				63C686711DE649DE000CA473 /* Resources */,
+				EF27ED8AA04524B25782F16F /* [CP] Embed Pods Frameworks */,
+				FF8F6D6BAAEA81C718D030E3 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -233,7 +328,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				63C686621DE649DE000CA473 /* LaunchScreen.storyboard in Resources */,
+				637F55F71DF3E275009D7498 /* selected.caf in Resources */,
 				63C6865F1DE649DE000CA473 /* Assets.xcassets in Resources */,
+				637F55F51DF3E275009D7498 /* bloom.caf in Resources */,
+				637F55F61DF3E275009D7498 /* fold.caf in Resources */,
 				63C6865A1DE649DE000CA473 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -254,13 +352,153 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		2EC34F3EA104E9317CA7401B /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DebraPrototypeTests/Pods-DebraPrototypeTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4460AC7E1E33532CAE2F4169 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		C74191FF249CA31226012EE2 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DebraPrototype/Pods-DebraPrototype-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CE8C7B71B74937378086F7B6 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DebraPrototype/Pods-DebraPrototype-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D254BFAA83374F6A90BFF1CD /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DebraPrototypeTests/Pods-DebraPrototypeTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D8A31D441FA88518107659AD /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		EF27ED8AA04524B25782F16F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DebraPrototypeUITests/Pods-DebraPrototypeUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F02419E906F20548720B8D06 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		FF8F6D6BAAEA81C718D030E3 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DebraPrototypeUITests/Pods-DebraPrototypeUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		63C6864D1DE649DD000CA473 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				63C6865D1DE649DE000CA473 /* DebraPrototype.xcdatamodeld in Sources */,
+				637F55F31DF3E275009D7498 /* DCPathButton.m in Sources */,
 				63C686571DE649DE000CA473 /* ViewController.swift in Sources */,
+				637F55F41DF3E275009D7498 /* DCPathItemButton.m in Sources */,
 				63C686551DE649DE000CA473 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -401,6 +639,7 @@
 		};
 		63C6867D1DE649DE000CA473 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D8F9303651139248E9CE29D0 /* Pods-DebraPrototype.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = DebraPrototype/Info.plist;
@@ -412,6 +651,7 @@
 		};
 		63C6867E1DE649DE000CA473 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CBE4A109D288FA58EFB7CEF9 /* Pods-DebraPrototype.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = DebraPrototype/Info.plist;
@@ -423,6 +663,7 @@
 		};
 		63C686801DE649DE000CA473 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 943CD94A350167ADF6EA426C /* Pods-DebraPrototypeTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = DebraPrototypeTests/Info.plist;
@@ -435,6 +676,7 @@
 		};
 		63C686811DE649DE000CA473 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E26504324E34B8B93DCDEB88 /* Pods-DebraPrototypeTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = DebraPrototypeTests/Info.plist;
@@ -447,6 +689,7 @@
 		};
 		63C686831DE649DE000CA473 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BA8FA1D9F406A53171246A38 /* Pods-DebraPrototypeUITests.debug.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = DebraPrototypeUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -458,6 +701,7 @@
 		};
 		63C686841DE649DE000CA473 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 59D4D37733C8F11FB86370A4 /* Pods-DebraPrototypeUITests.release.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = DebraPrototypeUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -486,6 +730,7 @@
 				63C6867E1DE649DE000CA473 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		63C6867F1DE649DE000CA473 /* Build configuration list for PBXNativeTarget "DebraPrototypeTests" */ = {
 			isa = XCConfigurationList;
@@ -494,6 +739,7 @@
 				63C686811DE649DE000CA473 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		63C686821DE649DE000CA473 /* Build configuration list for PBXNativeTarget "DebraPrototypeUITests" */ = {
 			isa = XCConfigurationList;
@@ -502,6 +748,7 @@
 				63C686841DE649DE000CA473 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
