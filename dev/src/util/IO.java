@@ -7,42 +7,25 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class IO {
-	public static String readFile(String filePath) {
+	public static String readFile(String filePath) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(filePath));
+		
 		StringBuffer sb = new StringBuffer();
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new FileReader(filePath));
-			String currentLine;
-			while ((currentLine = br.readLine()) != null) {
-				sb.append(currentLine).append('\n');
-			}
-		} catch(IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (br != null) br.close();
-			} catch(IOException e) {
-				e.printStackTrace();
-			}
+		String currentLine;
+		while ((currentLine = br.readLine()) != null) {
+			sb.append(currentLine).append('\n');
 		}
+		br.close();
+		
 		return sb.toString();
 	}
 	
-	public static boolean writeFile(String filePath, String text) {
-		BufferedWriter bw = null;
-		try {
-			bw = new BufferedWriter(new FileWriter(filePath));
-			bw.write(text);
-			return true;
-		} catch(IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (bw != null) bw.close();
-			} catch(IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return false;
+	public static boolean writeFile(String filePath, String text) throws IOException {
+		BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
+		
+		bw.write(text);
+		bw.close();
+		
+		return true;
 	}
 }

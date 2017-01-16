@@ -15,6 +15,7 @@ import java.util.Set;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import util.Connection;
 import util.IO;
 
 /* TODO refresh account data involving database, as opposed to metadata file */
@@ -43,7 +44,7 @@ public class FitBitAccount {
 		processScope();
 	}
 	
-	public FitBitAccount(String clientSideAccountDataFileName) {
+	public FitBitAccount(String clientSideAccountDataFileName) throws IOException {
 		this.clientSideAccountDataFileName = clientSideAccountDataFileName;
 		String[] accountData = IO.readFile(clientSideAccountDataFileName).split("\n");
 		
@@ -64,25 +65,20 @@ public class FitBitAccount {
 		this.hasHeartRateAccess = scopeSet.contains("heartrate");
 	}
 	
-	private boolean updateAccountData(String jsonData) {
-		try {
-			JSONObject jsonObj = new JSONObject(jsonData);
-			this.accessToken = jsonObj.getString("access_token");
-			this.refreshToken = jsonObj.getString("refresh_token");
-			this.userId = jsonObj.getString("user_id");
-			this.scope = jsonObj.getString("scope");
-			this.tokenType = jsonObj.getString("token_type");
-			this.expiresIn = jsonObj.getLong("expires_in");
-			
-			return true;
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return false;
+	private boolean updateAccountData(String jsonData) throws JSONException {
+		JSONObject jsonObj = new JSONObject(jsonData);
+		this.accessToken = jsonObj.getString("access_token");
+		this.refreshToken = jsonObj.getString("refresh_token");
+		this.userId = jsonObj.getString("user_id");
+		this.scope = jsonObj.getString("scope");
+		this.tokenType = jsonObj.getString("token_type");
+		this.expiresIn = jsonObj.getLong("expires_in");
+		
+		return true;
 	}
 	
 	/* TODO change this to involve database instead of file */
-	private boolean persistAccountData() {
+	private boolean persistAccountData() throws IOException {
 		String accountData = String.format("%s\n%s\n%s\n%s\n%s\n%d\n", this.accessToken, this.refreshToken,
 				this.userId, this.scope, this.tokenType, this.expiresIn);
 		return IO.writeFile(this.clientSideAccountDataFileName, accountData);
@@ -98,55 +94,38 @@ public class FitBitAccount {
 		}
 	}
 	
-	protected boolean refreshAccessToken() {
-        URL url;
-        HttpURLConnection connection = null;
-        try {
-            url = new URL(FitBitTools.OAuth2URL);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            
-            String authorizationHeader = "Basic " + FitBitTools.DebraAuthorizationHeader;
-            connection.addRequestProperty("Authorization", authorizationHeader);
-            connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            String grantTypeParameter = "grant_type=refresh_token";
-            String refreshTokenParameter = "refresh_token=" + this.refreshToken;
-            String urlParameters = grantTypeParameter + "&" + refreshTokenParameter;
-            byte[] postData = urlParameters.getBytes(StandardCharsets.UTF_8);
-            connection.addRequestProperty("Content-Length", Integer.toString(postData.length));
-            
-            connection.setUseCaches(false);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            
-            try(DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
-                dos.write(postData);
-            }
-            
-            int rc = connection.getResponseCode();
-            if (rc == 200) {
-            	StringBuffer jsonResponseSb = new StringBuffer();
-            	BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            	String currentLine;
-            	while ((currentLine = in.readLine()) != null) {
-            		jsonResponseSb.append(currentLine);
-            	}
-            	in.close();
-            	
-            	return updateAccountData(jsonResponseSb.toString()) && persistAccountData();
-            } else {
-            	System.out.println("Unexpected connection response code: " + rc);
-            }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
+	protected boolean refreshAccessToken() throws MalformedURLException, IOException, JSONException, FitBitException {
+        URL url = new URL(FitBitTools.OAuth2URL);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        
+        connection.setRequestMethod("POST");
+        
+        String authorizationHeader = String.format("Basic %s", FitBitTools.DebraAuthorizationHeader);
+        connection.addRequestProperty("Authorization", authorizationHeader);
+        connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        String grantTypeParameter = "grant_type=refresh_token";
+        String refreshTokenParameter = String.format("refresh_token=%s", this.refreshToken);
+        String urlParameters = String.format("%s&%s", grantTypeParameter, refreshTokenParameter);
+        byte[] postData = urlParameters.getBytes(StandardCharsets.UTF_8);
+        connection.addRequestProperty("Content-Length", Integer.toString(postData.length));
+        
+        connection.setUseCaches(false);
+        connection.setDoInput(true);
+        connection.setDoOutput(true);
+        
+        DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
+        dos.write(postData);
+        
+        int rc = connection.getResponseCode();
+        if (rc != 200) throw new FitBitException(
+    			String.format("refreshAccessToken: Unexpected connection response code = %d.", rc));
+        
+        String jsonResponseString = Connection.getResponseString(connection);
+    	
+    	return updateAccountData(jsonResponseString) && persistAccountData();
 	}
 	
-	public static void main(String[] args) {
-		FitBitAccount acc = new FitBitAccount("userAuthentication.txt");
-		acc.refreshAccessToken();
+	protected String getAccessToken() {
+		return this.accessToken;
 	}
 }
