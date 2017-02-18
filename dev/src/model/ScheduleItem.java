@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class ScheduleItem {
+public class ScheduleItem {	
 	int id;
 	private String description;
 	private User associatedUser;
@@ -53,5 +53,27 @@ public class ScheduleItem {
 	
 	public ScheduleItem(String description) throws IllegalArgumentException {
 		this(description, 0.5, 0.8);
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ScheduleItem other = (ScheduleItem) obj;
+		if (id != other.id)
+			return false;
+		return true;
 	}
 }
