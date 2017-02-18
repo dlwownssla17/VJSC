@@ -28,7 +28,10 @@ public class User {
 		this.memberSince = new Date();
 		
 		// TODO decide on initialization of all the other fields
+		this.schedule = new UserSchedule(this);
 	}
+	
+	public UserAdherenceParams getAdherenceParams() { return adherenceParams; }
 	
 	// TODO decide on how to initialize from initial survey upon registration
 	

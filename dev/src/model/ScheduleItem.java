@@ -1,27 +1,38 @@
 package model;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
-public class ScheduleItem {	
+import util.RecurringTime;
+
+public class ScheduleItem implements Comparable<ScheduleItem> {	
+	public static final String UNIQUE_ID_FILE_NAME = "max_schedule_id";
+	public static final double DEFAULT_YELLOW_THRESHOLD = .5;
+	public static final double DEFAULT_GREEN_THRESHOLD = .8;
+
 	int id;
 	private String description;
-	private User associatedUser;
+	private User user;
 	private Progress progress;
 	private ScheduleItemNotificationParams notificationParams;
+	private Set<RecurringTime> recurringTimes;
 	
 	private double yellowThreshold, greenThreshold;	
 	
 	synchronized int setID() {
 		try {
-			File file = new File("max_schedule_id");
+			File file = new File(UNIQUE_ID_FILE_NAME);
 			Scanner sc = new Scanner(file);
 			int ret = sc.nextInt();
 			sc.close();
-			file = new File("max_schedule_id");
+			file = new File(UNIQUE_ID_FILE_NAME);
 			FileWriter write = new FileWriter(file);
 			write.write("" + (ret+1));
 			write.close();
@@ -34,8 +45,9 @@ public class ScheduleItem {
 		throw new RuntimeException("Error in setting ID for schedule item");
 	}
 	
-	public ScheduleItem(String description, double yellowThreshold, double greenThreshold)
-			throws IllegalArgumentException {
+	/*
+	 * Vivek: @JJ, why did you include this?
+	public ScheduleItem(String description, double yellowThreshold, double greenThreshold) {
 		if (description.length() > 128)
 			throw new IllegalArgumentException("The description should be 128 characters or less.");
 		this.description = description;
@@ -50,10 +62,18 @@ public class ScheduleItem {
 		this.greenThreshold = greenThreshold;
 		id = setID();
 	}
+	*/
 	
-	public ScheduleItem(String description) throws IllegalArgumentException {
-		this(description, 0.5, 0.8);
+	public ScheduleItem(User user, String description, Set<RecurringTime> recurringTimes) {
+		this.id = setID();
+		this.yellowThreshold = DEFAULT_YELLOW_THRESHOLD;
+		this.greenThreshold = DEFAULT_GREEN_THRESHOLD;
+		this.user = user;
+		this.description = description;
+		this.recurringTimes = recurringTimes;
 	}
+	
+	public int getID() { return id; }
 	
 	@Override
 	public int hashCode() {
@@ -76,4 +96,107 @@ public class ScheduleItem {
 			return false;
 		return true;
 	}
+	
+	public boolean happensOnDate(Date d) {
+		for (RecurringTime rt : recurringTimes) {
+			if (rt.happensOnDate(d)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int compareTo(ScheduleItem o) {
+		if (recurringTimes.isEmpty() && o.recurringTimes.isEmpty()) {
+			return 0;
+		} else if (recurringTimes.isEmpty()) {
+			return -1;
+		} else if (o.recurringTimes.isEmpty()) {
+			return 1;
+		}
+		
+		// Get earliest date for recurring times 1
+		Date d1 = recurringTimes.iterator().next().firstDate();
+		for (RecurringTime rt : recurringTimes) {
+			Date d = rt.firstDate();
+			if (d1.compareTo(d) < 0) { d1 = d; }
+		}
+		
+		// Get earliest date for recurring times 2
+		Date d2 = o.recurringTimes.iterator().next().firstDate();
+		for (RecurringTime rt : o.recurringTimes) {
+			Date d = rt.firstDate();
+			if (d2.compareTo(d) < 0) { d2 = d; }
+		}
+		
+		return d1.compareTo(d2);
+	}
+	
+	/*
+	
+	private static class Test implements RecurringTime {
+		DayOfWeek day;
+		
+		Test(DayOfWeek day) {
+			this.day = day;
+		}
+
+		@Override
+		public boolean happensOnDate(Date date) {
+			return date.getDay() == day.getValue() % 7;
+		}
+
+		@Override
+		public Date firstDate() {
+			Date d = new Date(System.currentTimeMillis());
+			while (!happensOnDate(d)) {
+				d.setDate(d.getDate()+1);
+			}
+			return d;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((day == null) ? 0 : day.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Test other = (Test) obj;
+			if (day != other.day)
+				return false;
+			return true;
+		}
+		
+	}
+	
+	public static void main(String[] args) {
+
+		Set<RecurringTime> rt1 = new HashSet<>();
+		rt1.add(new Test(DayOfWeek.SATURDAY));
+		//rt1.add(new Test(DayOfWeek.WEDNESDAY));
+
+		ScheduleItem item1 = new ScheduleItem(null, null, rt1);
+		
+		Set<RecurringTime> rt2 = new HashSet<>();
+		//rt2.add(new Test(DayOfWeek.FRIDAY));
+		rt2.add(new Test(DayOfWeek.TUESDAY));
+		
+		ScheduleItem item2 = new ScheduleItem(null, null, rt2);
+		System.out.println(item1.compareTo(item2));
+	}
+	
+	*/
+	
+	
 }
