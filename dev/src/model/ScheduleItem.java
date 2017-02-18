@@ -1,12 +1,38 @@
 package model;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+
 public class ScheduleItem {
+	int id;
 	private String description;
 	private User associatedUser;
 	private Progress progress;
 	private ScheduleItemNotificationParams notificationParams;
 	
-	private double yellowThreshold, greenThreshold;
+	private double yellowThreshold, greenThreshold;	
+	
+	synchronized int setID() {
+		try {
+			File file = new File("max_schedule_id");
+			Scanner sc = new Scanner(file);
+			int ret = sc.nextInt();
+			sc.close();
+			file = new File("max_schedule_id");
+			FileWriter write = new FileWriter(file);
+			write.write("" + (ret+1));
+			write.close();
+			return ret;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		throw new RuntimeException("Error in setting ID for schedule item");
+	}
 	
 	public ScheduleItem(String description, double yellowThreshold, double greenThreshold)
 			throws IllegalArgumentException {
@@ -22,6 +48,7 @@ public class ScheduleItem {
 			throw new IllegalArgumentException("The yellow threshold must be below the green threshold.");
 		this.yellowThreshold = yellowThreshold;
 		this.greenThreshold = greenThreshold;
+		id = setID();
 	}
 	
 	public ScheduleItem(String description) throws IllegalArgumentException {
