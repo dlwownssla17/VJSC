@@ -29,6 +29,8 @@ public class User {
 		
 		// TODO decide on initialization of all the other fields
 		this.schedule = new UserSchedule(this);
+		
+		adherenceParams = new UserAdherenceParams(this);
 	}
 	
 	public UserAdherenceParams getAdherenceParams() { return adherenceParams; }
@@ -71,7 +73,21 @@ public class User {
 		return true;
 	}
 	
+	/*
+	 * @return if output negative, there was an error.
+	 */
+	public int addScheduleItem(ScheduleItem item) {
+		schedule.addItem(item);
+		adherenceParams.addedTask();
+		return 0;
+	}
+	
 	public static void main(String[] args) {
 		
+	}
+
+	@Override
+	public String toString() {
+		return "User [username=" + username + "]";
 	}
 }

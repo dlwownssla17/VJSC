@@ -20,9 +20,10 @@ public class ScheduleItem implements Comparable<ScheduleItem> {
 	int id;
 	private String description;
 	private User user;
+	private RecurringTime recurringTimes;
+
 	private Progress progress;
 	private ScheduleItemNotificationParams notificationParams;
-	private Set<RecurringTime> recurringTimes;
 	
 	private double yellowThreshold, greenThreshold;	
 	
@@ -64,7 +65,7 @@ public class ScheduleItem implements Comparable<ScheduleItem> {
 	}
 	*/
 	
-	public ScheduleItem(User user, String description, Set<RecurringTime> recurringTimes) {
+	public ScheduleItem(User user, String description, RecurringTime recurringTimes) {
 		this.id = setID();
 		this.yellowThreshold = DEFAULT_YELLOW_THRESHOLD;
 		this.greenThreshold = DEFAULT_GREEN_THRESHOLD;
@@ -98,44 +99,22 @@ public class ScheduleItem implements Comparable<ScheduleItem> {
 	}
 	
 	public boolean happensOnDate(Date d) {
-		for (RecurringTime rt : recurringTimes) {
-			if (rt.happensOnDate(d)) {
-				return true;
-			}
-		}
-		return false;
+		return recurringTimes.happensOnDate(d);
 	}
 
 	@Override
 	public int compareTo(ScheduleItem o) {
-		if (recurringTimes.isEmpty() && o.recurringTimes.isEmpty()) {
-			return 0;
-		} else if (recurringTimes.isEmpty()) {
-			return -1;
-		} else if (o.recurringTimes.isEmpty()) {
-			return 1;
-		}
-		
-		// Get earliest date for recurring times 1
-		Date d1 = recurringTimes.iterator().next().firstDate();
-		for (RecurringTime rt : recurringTimes) {
-			Date d = rt.firstDate();
-			if (d1.compareTo(d) > 0) { d1 = d; }
-		}
-		
-		// Get earliest date for recurring times 2
-		Date d2 = o.recurringTimes.iterator().next().firstDate();
-		for (RecurringTime rt : o.recurringTimes) {
-			Date d = rt.firstDate();
-			if (d2.compareTo(d) > 0) { d2 = d; }
-		}
-		System.out.println(d1.toString());
-		System.out.println(d2.toString());
-		return d1.compareTo(d2);
+		return recurringTimes.firstDate().compareTo(o.recurringTimes.firstDate());
+	}
+
+	@Override
+	public String toString() {
+		return "ScheduleItem [id=" + id + ", description=" + description
+				+ ", user=" + user + ", recurringTimes=" + recurringTimes + "]";
 	}
 	
 	
-	
+	/*
 	private static class Test implements RecurringTime {
 		DayOfWeek day;
 		
@@ -178,6 +157,24 @@ public class ScheduleItem implements Comparable<ScheduleItem> {
 				return false;
 			return true;
 		}
+
+		@Override
+		public boolean happensOnMonth(int month) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean happensOnDay(int day) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean happensAtTime(int time) {
+			// TODO Auto-generated method stub
+			return false;
+		}
 		
 	}
 	
@@ -197,7 +194,7 @@ public class ScheduleItem implements Comparable<ScheduleItem> {
 		System.out.println(item1.compareTo(item2));
 	}
 	
-	
+	*/
 	
 	
 }

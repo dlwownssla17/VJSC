@@ -48,5 +48,8 @@ public class UserSchedule {
 		}
 	}
 	
+	public void addItem(ScheduleItem item) {
+		items.add(item);
+	}
 	
 }

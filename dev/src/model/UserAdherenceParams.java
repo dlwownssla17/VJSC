@@ -7,6 +7,7 @@ public class UserAdherenceParams {
 	public static final int COMPLETED_TASK_SCORE = 100;
 	public static final int INCOMPLETE_TASK_SCORE = -100;
 	public static final int DELETED_TASK_SCORE = -1000;
+	public static final int ADD_TASK_SCORE = 500;
 
 	
 	public UserAdherenceParams(User user) {
@@ -38,5 +39,9 @@ public class UserAdherenceParams {
 	
 	public void didntCompleteTask() {
 		changeScore(INCOMPLETE_TASK_SCORE);
+	}
+	
+	public void addedTask() {
+		changeScore(ADD_TASK_SCORE);
 	}
 }
