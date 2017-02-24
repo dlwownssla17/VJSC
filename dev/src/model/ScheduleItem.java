@@ -120,20 +120,21 @@ public class ScheduleItem implements Comparable<ScheduleItem> {
 		Date d1 = recurringTimes.iterator().next().firstDate();
 		for (RecurringTime rt : recurringTimes) {
 			Date d = rt.firstDate();
-			if (d1.compareTo(d) < 0) { d1 = d; }
+			if (d1.compareTo(d) > 0) { d1 = d; }
 		}
 		
 		// Get earliest date for recurring times 2
 		Date d2 = o.recurringTimes.iterator().next().firstDate();
 		for (RecurringTime rt : o.recurringTimes) {
 			Date d = rt.firstDate();
-			if (d2.compareTo(d) < 0) { d2 = d; }
+			if (d2.compareTo(d) > 0) { d2 = d; }
 		}
-		
+		System.out.println(d1.toString());
+		System.out.println(d2.toString());
 		return d1.compareTo(d2);
 	}
 	
-	/*
+	
 	
 	private static class Test implements RecurringTime {
 		DayOfWeek day;
@@ -183,20 +184,20 @@ public class ScheduleItem implements Comparable<ScheduleItem> {
 	public static void main(String[] args) {
 
 		Set<RecurringTime> rt1 = new HashSet<>();
-		rt1.add(new Test(DayOfWeek.SATURDAY));
-		//rt1.add(new Test(DayOfWeek.WEDNESDAY));
+		rt1.add(new Test(DayOfWeek.MONDAY));
+		rt1.add(new Test(DayOfWeek.WEDNESDAY));
 
 		ScheduleItem item1 = new ScheduleItem(null, null, rt1);
 		
 		Set<RecurringTime> rt2 = new HashSet<>();
-		//rt2.add(new Test(DayOfWeek.FRIDAY));
-		rt2.add(new Test(DayOfWeek.TUESDAY));
+		rt2.add(new Test(DayOfWeek.SUNDAY));
+		rt2.add(new Test(DayOfWeek.SUNDAY));
 		
 		ScheduleItem item2 = new ScheduleItem(null, null, rt2);
 		System.out.println(item1.compareTo(item2));
 	}
 	
-	*/
+	
 	
 	
 }
