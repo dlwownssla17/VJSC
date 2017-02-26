@@ -150,5 +150,7 @@ public class TestingDuringDev {
 		// testFitBitTools();
 		
 		// testDBTools();
+		
+		System.out.println("What's up!");
 	}
 }
