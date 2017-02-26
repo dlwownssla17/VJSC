@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.json.JSONObject;
 
+import model.User;
 import util.DateFormat;
 
 public class UserDB {
@@ -14,6 +15,8 @@ public class UserDB {
 	
 	// TODO a whole lot of other stuff goes in here
 	
+	private int userScheduleCapacity;
+	
 	private String fitBitAccessToken;
 	private String fitBitRefreshToken;
 	private String fitBitUserId;
@@ -21,18 +24,27 @@ public class UserDB {
 	private String fitBitTokenType;
 	private String fitBitExpiresIn;
 	
-	// TODO this is temporary
+	// TODO this is temporary (remove this later)
 	private String fitBitDisplayName;
 	
-	public UserDB(String username, String password, String memberSince) {
+	public UserDB(String username, String password, String memberSince, int userScheduleCapacity) {
 		this.username = username;
 		this.password = password;
 		
 		this.memberSince = memberSince;
+		
+		this.userScheduleCapacity = userScheduleCapacity;
 	}
 	
-	public UserDB(String username, String password, Date memberSince) {
-		this(username, password, DateFormat.getFormattedString(memberSince, DBTools.MemberSinceDateTimeFormat));
+	public UserDB(String username, String password, Date memberSince, int userScheduleCapacity) {
+		this(username, password, DateFormat.getFormattedString(memberSince, DBTools.MemberSinceDateTimeFormat),
+				userScheduleCapacity);
+	}
+	
+	public UserDB(User user) {
+		this(user.getUsername(), user.getPassword(),
+				DateFormat.getFormattedString(user.getMemberSince(), DBTools.MemberSinceDateTimeFormat),
+				user.getSchedule().getCapacity());
 	}
 	
 	public String getUsername() {
@@ -45,7 +57,7 @@ public class UserDB {
 	
 	public String setPassword(String password) {
 		this.password = password;
-		return getPassword();
+		return this.password;
 	}
 	
 	public String getMemberSince() {
@@ -58,7 +70,7 @@ public class UserDB {
 	
 	public String setFitBitAccessToken(String fitBitAccessToken) {
 		this.fitBitAccessToken = fitBitAccessToken;
-		return getFitBitAccessToken();
+		return this.fitBitAccessToken;
 	}
 	
 	public String getFitBitRefreshToken() {
@@ -67,7 +79,7 @@ public class UserDB {
 	
 	public String setFitBitRefreshToken(String fitBitRefreshToken) {
 		this.fitBitRefreshToken = fitBitRefreshToken;
-		return getFitBitRefreshToken();
+		return this.fitBitRefreshToken;
 	}
 	
 	public String getFitBitUserId() {
@@ -76,7 +88,7 @@ public class UserDB {
 	
 	public String setFitBitUserId(String fitBitUserId) {
 		this.fitBitUserId = fitBitUserId;
-		return getFitBitUserId();
+		return this.fitBitUserId;
 	}
 	
 	public String getFitBitScope() {
@@ -85,7 +97,7 @@ public class UserDB {
 	
 	public String setFitBitScope(String fitBitScope) {
 		this.fitBitScope = fitBitScope;
-		return getFitBitScope();
+		return this.fitBitScope;
 	}
 	
 	public String getFitBitTokenType() {
@@ -94,7 +106,7 @@ public class UserDB {
 	
 	public String setFitBitTokenType(String fitBitTokenType) {
 		this.fitBitTokenType = fitBitTokenType;
-		return getFitBitTokenType();
+		return this.fitBitTokenType;
 	}
 	
 	public String getFitBitExpiresIn() {
@@ -103,23 +115,23 @@ public class UserDB {
 	
 	public String setFitBitExpiresIn(String fitBitExpiresIn) {
 		this.fitBitExpiresIn = fitBitExpiresIn;
-		return getFitBitExpiresIn();
+		return this.fitBitExpiresIn;
 	}
 	
-	// TODO this is temporary
+	// TODO this is temporary (remove this later)
 	public String getFitBitDisplayName() {
 		return this.fitBitDisplayName == null ? "{NULL}" : this.fitBitDisplayName;
 	}
 	
-	// TODO this is temporary
+	// TODO this is temporary (remove this later)
 	public String setFitBitDisplayName(String fitBitDisplayName) {
 		this.fitBitDisplayName = fitBitDisplayName;
-		return getFitBitDisplayName();
+		return this.fitBitDisplayName;
 	}
 	
 	public static void main(String[] args) {
 		long epoch = Long.parseLong("1081157732");
-		UserDB userDB = new UserDB("spiro", "metaxas95", new Date(epoch * 1000));
+		UserDB userDB = new UserDB("spiro", "metaxas95", new Date(epoch * 1000), 365);
 		userDB.setFitBitDisplayName("SpiroTheMantaxas");
 		System.out.println(DBTools.toJSON(userDB).toString(4));
 	}

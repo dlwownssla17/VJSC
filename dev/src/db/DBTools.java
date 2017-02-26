@@ -21,7 +21,7 @@ public class DBTools {
 	protected static String MemberSinceDateTimeFormat = "yyyy-MM-dd HH:mm";
 	
 	public static UserDB toUserDB(User user) {
-		UserDB userDB = new UserDB(user.getUsername(), user.getPassword(), user.getMemberSince());
+		UserDB userDB = new UserDB(user);
 		
 		if (user.hasFitBitAccount()) {
 			userDB.setFitBitAccessToken(user.getFitBitAccount().getAccessToken());
@@ -33,7 +33,7 @@ public class DBTools {
 			
 			JSONObject fitBitAccountProfileJSON = new JSONObject(FitBitTools.getProfile(user.getFitBitAccount()));
 			String fitBitDisplayName = fitBitAccountProfileJSON.getJSONObject("user").getString("displayName");
-			userDB.setFitBitDisplayName(fitBitDisplayName);
+			userDB.setFitBitDisplayName(fitBitDisplayName); // remove this later
 		}
 		
 		return userDB;
@@ -87,7 +87,7 @@ public class DBTools {
 		userJSON.put("fitbit_scope", userDB.getFitBitScope());
 		userJSON.put("fitbit_token_type", userDB.getFitBitTokenType());
 		userJSON.put("fitbit_expires_in", userDB.getFitBitExpiresIn());
-		userJSON.put("fitbit_display_name", userDB.getFitBitDisplayName());
+		userJSON.put("fitbit_display_name", userDB.getFitBitDisplayName()); // remove this later
 		return userJSON;
 	}
 	
@@ -102,22 +102,23 @@ public class DBTools {
 		String username = userDBJSON.getString("username");
 		String password = userDBJSON.getString("password");
 		String memberSince = userDBJSON.getString("member_since");
+		int scheduleCapacity = Integer.parseInt(userDBJSON.getString("schedule_capacity"));
 		String fitBitAccessToken = userDBJSON.getString("fitbit_access_token");
 		String fitBitRefreshToken = userDBJSON.getString("fitbit_refresh_token");
 		String fitBitUserId = userDBJSON.getString("fitbit_user_id");
 		String fitBitScope = userDBJSON.getString("fitbit_scope");
 		String fitBitTokenType = userDBJSON.getString("fitbit_token_type");
 		String fitBitExpiresIn = userDBJSON.getString("fitbit_expires_in");
-		String fitBitDisplayName = userDBJSON.getString("fitbit_display_name");
+		String fitBitDisplayName = userDBJSON.getString("fitbit_display_name"); // remove this later
 		
-		UserDB userDB = new UserDB(username, password, memberSince);
+		UserDB userDB = new UserDB(username, password, memberSince, scheduleCapacity);
 		userDB.setFitBitAccessToken(fitBitAccessToken);
 		userDB.setFitBitRefreshToken(fitBitRefreshToken);
 		userDB.setFitBitUserId(fitBitUserId);
 		userDB.setFitBitScope(fitBitScope);
 		userDB.setFitBitTokenType(fitBitTokenType);
 		userDB.setFitBitExpiresIn(fitBitExpiresIn);
-		userDB.setFitBitDisplayName(fitBitDisplayName);
+		userDB.setFitBitDisplayName(fitBitDisplayName); // remove this later
 		return userDB;
 	}
 	

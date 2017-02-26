@@ -16,7 +16,7 @@ public class User {
 	private UserAdherenceParams adherenceParams;
 	private UserCommunityParams communityParams;
 	private UserSchedule schedule;
-	private BehaviorTPM tpm;
+	// private BehaviorTPM tpm;
 	
 	private FitBitAccount fitBitAccount;
 	
@@ -28,6 +28,8 @@ public class User {
 		this.memberSince = new Date();
 		
 		// TODO decide on initialization of all the other fields
+		
+		this.schedule = new UserSchedule(365);
 	}
 	
 	// TODO decide on how to initialize from initial survey upon registration
@@ -43,7 +45,7 @@ public class User {
 	public String setPassword(String password) {
 		this.password = password;
 		// TODO same or different password validation
-		return getPassword();
+		return this.password;
 	}
 	
 	public Date getMemberSince() {
@@ -52,7 +54,11 @@ public class User {
 	
 	public Date setMemberSince(Date memberSince) {
 		this.memberSince = memberSince;
-		return getMemberSince();
+		return this.memberSince;
+	}
+	
+	public UserSchedule getSchedule() {
+		return this.schedule;
 	}
 	
 	public boolean hasFitBitAccount() {
