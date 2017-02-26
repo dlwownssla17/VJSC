@@ -8,22 +8,40 @@
     }},
     "users": {
         "vivekmaster": {
-            "member_since": "2017-01-16 08:27",
+            "member_since": "2017-01-16 17:51",
             "password": "vivek_password",
+            "fitbit_access_token": "{NULL}",
             "fitbit_display_name": "{NULL}",
-            "username": "vivekmaster"
+            "fitbit_refresh_token": "{NULL}",
+            "fitbit_scope": "{NULL}",
+            "fitbit_token_type": "{NULL}",
+            "fitbit_expires_in": "{NULL}",
+            "username": "vivekmaster",
+            "fitbit_user_id": "{NULL}"
         },
         "jjmaster": {
-            "member_since": "2017-01-16 08:27",
+            "member_since": "2017-01-16 17:51",
             "password": "jj_with_his_bridgewater_transparency17",
+            "fitbit_access_token": "{NULL}",
             "fitbit_display_name": "{NULL}",
-            "username": "jjmaster"
+            "fitbit_refresh_token": "{NULL}",
+            "fitbit_scope": "{NULL}",
+            "fitbit_token_type": "{NULL}",
+            "fitbit_expires_in": "{NULL}",
+            "username": "jjmaster",
+            "fitbit_user_id": "{NULL}"
         },
         "spiromaster": {
-            "member_since": "2017-01-16 08:27",
+            "member_since": "2017-01-16 17:51",
             "password": "spiro_password",
+            "fitbit_access_token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1NDVROU0iLCJhdWQiOiIyMjg3NVIiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJyc29jIHJzZXQgcmFjdCBybG9jIHJ3ZWkgcmhyIHJwcm8gcm51dCByc2xlIiwiZXhwIjoxNDg0NjM1ODUxLCJpYXQiOjE0ODQ2MDcwNTF9.6IsuHcGrd54cH2857oSEzD3hxHxENiBFV83HsdXW1vo",
             "fitbit_display_name": "Spiro M.",
-            "username": "spiromaster"
+            "fitbit_refresh_token": "813113ef215d0dd4f8a65a829486cf64cc7c38e22416de4a3eb9fd3f9d8f6579",
+            "fitbit_scope": "settings social location weight heartrate profile nutrition activity sleep",
+            "fitbit_token_type": "Bearer",
+            "fitbit_expires_in": "28800",
+            "username": "spiromaster",
+            "fitbit_user_id": "545Q9M"
         }
     }
 }

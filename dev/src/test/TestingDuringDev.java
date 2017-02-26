@@ -149,8 +149,6 @@ public class TestingDuringDev {
 	public static void main(String[] args) {
 		// testFitBitTools();
 		
-		// testDBTools();
-		
-		System.out.println("What's up!");
+		testDBTools();
 	}
 }
