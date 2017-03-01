@@ -7,10 +7,13 @@ import java.util.HashMap;
 public class UserSchedule {
 	private int capacity;
 	private HashMap<Date, ArrayList<ScheduleItem>> items;
+	private HashMap<Date, Integer> dailyScores;
+	private long scheduleIdCounter;
 	
 	public UserSchedule(int capacity) {
 		this.capacity = capacity;
 		this.items = new HashMap<>();
+		this.scheduleIdCounter = 0;
 	}
 	
 	public int getCapacity() {
@@ -35,12 +38,13 @@ public class UserSchedule {
 		return this.items.get(date);
 	}
 	
-	public void addScheduleItem(Date date, ScheduleItem scheduleItem) {
+	public synchronized void addScheduleItem(Date date, ScheduleItem scheduleItem) {
 		if (!containsDate(date)) this.items.put(date, new ArrayList<>());
 		
 		// make sure that the schedule items are sorted in order of start date time
 		ArrayList<ScheduleItem> listOfScheduleItems = this.items.get(date);
 		boolean scheduleItemAdded = false;
+		scheduleItem.setId(this.scheduleIdCounter++);
 		for (int i = 0; i < listOfScheduleItems.size(); i++) {
 			if (scheduleItem.getStartDateTime().before(listOfScheduleItems.get(i).getStartDateTime())) {
 				listOfScheduleItems.add(i, scheduleItem);

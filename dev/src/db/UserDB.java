@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.json.JSONObject;
 
+import model.Constant;
 import model.User;
 import util.DateFormat;
 
@@ -131,7 +132,7 @@ public class UserDB {
 	
 	public static void main(String[] args) {
 		long epoch = Long.parseLong("1081157732");
-		UserDB userDB = new UserDB("spiro", "metaxas95", new Date(epoch * 1000), 365);
+		UserDB userDB = new UserDB("spiro", "metaxas95", new Date(epoch * 1000), Constant.DEFAULT_CAPACITY);
 		userDB.setFitBitDisplayName("SpiroTheMantaxas");
 		System.out.println(DBTools.toJSON(userDB).toString(4));
 	}

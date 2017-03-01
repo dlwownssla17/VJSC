@@ -9,6 +9,6 @@ public class UserAdherenceParams {
 	
 	protected int setUserScore(int userScore) {
 		this.userScore = userScore;
-		return getUserScore();
+		return this.userScore;
 	}
 }
