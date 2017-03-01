@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class ScheduleItem {
 	private long id;
+	private long recurringId;
 	private String title;
 	private String description;
 	private User associatedUser;
