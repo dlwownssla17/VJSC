@@ -7,7 +7,7 @@ public class UserAdherenceParams {
 	private Date lastUpdated;
 	
 	// This parameter can be freely changed
-	private static final int N = 7;
+	private static int N = 7;
 	
 	private static final double S = 2;
 	private static final double C = 1.5;
