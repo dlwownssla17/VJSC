@@ -1,12 +1,19 @@
 package model;
 
 import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-
-import util.Util;
+import java.util.Map;
+import java.util.Scanner;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+
+import util.Util;
 
 public class ScheduleItem {
 	private long id;
@@ -19,7 +26,50 @@ public class ScheduleItem {
 	private Progress progress;
 	private ScheduleItemNotificationParams notificationParams;
 	private boolean able;
-	private int score;
+	private int category;
+	
+	private static ImmutableMap<Integer, Integer> categoryToScore = getCategoryToScore();
+	
+	private static ImmutableMap<Integer, Integer> getCategoryToScore() {		
+		try {
+			File file = new File("categoryToScore.txt");
+			if (!file.exists()) {
+				System.err.println("categoryToScore file doesn't exist :O");	
+				return ImmutableMap.<Integer,Integer>builder().build(); // empty map
+			}
+			
+			Scanner sc = new Scanner(file);			
+			sc.nextLine(); // remove header line
+			
+			ImmutableMap.Builder<Integer,Integer> builder = ImmutableMap.<Integer,Integer>builder();
+			
+			while (sc.hasNextLine()) {
+				String line = sc.nextLine().trim();
+				String[] arr = line.split("//");
+				
+				if (arr.length != 3) {
+					System.err.println("categoryToScore -- each line must contain 3 entries: " + line);	
+					continue; 
+				}
+				
+				for (int i = 0; i < arr.length; i++) {
+					arr[i] = arr[i].trim();
+				}
+				if (!Util.isNumeric(arr[1]) || !Util.isNumeric(arr[2])) {
+					System.err.println("categoryToScore contains a non-numeric id or score at line: " + line);	
+					continue; 
+				}
+				
+				builder.put(Integer.parseInt(arr[1]), Integer.parseInt(arr[2]));				
+			}
+			
+			sc.close();
+			return builder.build();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ImmutableMap.<Integer,Integer>builder().build(); // empty map
+		}
+	}
 	
 	private ImmutableList<Boolean> daysOfWeekActive; // index 0 = SUNDAY, index 1 = MONDAY, ..., index 6 = SATURDAY
 	
@@ -181,6 +231,6 @@ public class ScheduleItem {
 	}
 	
 	public int getScore() {
-		return this.score;
+		return categoryToScore.get(category);
 	}
 }
