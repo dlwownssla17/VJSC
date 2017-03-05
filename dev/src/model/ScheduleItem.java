@@ -1,6 +1,12 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import util.Util;
+
+import com.google.common.collect.ImmutableList;
 
 public class ScheduleItem {
 	private long id;
@@ -9,16 +15,30 @@ public class ScheduleItem {
 	private String description;
 	private User associatedUser;
 	private Date startDateTime;
+	private Date endDateTime; // can be null
 	private Progress progress;
 	private ScheduleItemNotificationParams notificationParams;
 	private boolean able;
 	private int score;
 	
+	private ImmutableList<Boolean> daysOfWeekActive; // index 0 = SUNDAY, index 1 = MONDAY, ..., index 6 = SATURDAY
+	
 	private double yellowThreshold, greenThreshold;
 	
-	public ScheduleItem(long id, String title, String description, User associatedUser, Date startDateTime,
-			Progress progress, ScheduleItemNotificationParams notificationParams,
-			double yellowThreshold, double greenThreshold) throws IllegalArgumentException {
+	// @vivekaraj: @JJ, is 2 constructors necessary? I prefer not having code duplication.
+	public ScheduleItem(
+		long id, 
+		String title, 
+		String description, 
+		User associatedUser, 
+		Date startDateTime,
+		Date endDateTime,
+		ImmutableList<Boolean> daysOfWeekActive,
+		Progress progress, 
+		ScheduleItemNotificationParams notificationParams,
+		double yellowThreshold, 
+		double greenThreshold
+	) throws IllegalArgumentException {
 		this.id = id;
 		
 		if (title.length() > 128)
@@ -45,11 +65,33 @@ public class ScheduleItem {
 			throw new IllegalArgumentException("The yellow threshold must be below the green threshold.");
 		this.yellowThreshold = yellowThreshold;
 		this.greenThreshold = greenThreshold;
+		
+		this.endDateTime = endDateTime;
+		
+		if (
+			daysOfWeekActive == null 
+			|| daysOfWeekActive.size() != 7 
+			|| Util.containsNull(daysOfWeekActive)
+		) {
+			throw new IllegalArgumentException("ScheduleItem constructor: invalid daysOfWeekActive");
+		}
+		
+		this.daysOfWeekActive = daysOfWeekActive;
+		
 	}
 	
-	public ScheduleItem(long id, String title, String description, User associatedUser, Date startDateTime,
-			Progress progress, ScheduleItemNotificationParams notificationParams) throws IllegalArgumentException {
-		this(id, title, description, associatedUser, startDateTime, progress, notificationParams, 0.5, 0.8);
+	public ScheduleItem(
+		long id, 
+		String title, 
+		String description, 
+		User associatedUser, 
+		Date startDateTime,
+		Date endDateTime,
+		ImmutableList<Boolean> daysOfWeekActive,
+		Progress progress, 
+		ScheduleItemNotificationParams notificationParams
+	) throws IllegalArgumentException {
+		this(id, title, description, associatedUser, startDateTime, endDateTime, daysOfWeekActive, progress, notificationParams, 0.5, 0.8);
 	}
 	
 	@Override
@@ -122,6 +164,15 @@ public class ScheduleItem {
 	
 	private boolean isActive() {
 		Date now = new Date();
+		
+		if (!daysOfWeekActive.get(now.getDay())) {
+			return false;
+		}
+		
+		if (endDateTime != null && now.before(endDateTime)) {
+			return false;
+		}
+		
 		Date acceptableRangeStart = (Date) now.clone();
 		Date acceptableRangeEnd = (Date) now.clone();
 		acceptableRangeStart.setTime(acceptableRangeStart.getTime() - Constant.ACTIVE_MINUTES_BEFORE * 60 * 1000);
