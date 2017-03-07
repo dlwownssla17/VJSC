@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		63323F681E6EFC600003F088 /* ScheduleItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63323F671E6EFC600003F088 /* ScheduleItemViewController.swift */; };
 		D100C09C1E52E1ED00E464D8 /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100C09B1E52E1ED00E464D8 /* CustomTabBar.swift */; };
 		D100C09E1E52E33F00E464D8 /* CustomTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100C09D1E52E33F00E464D8 /* CustomTabs.swift */; };
 		D100C0A01E52E64800E464D8 /* CustomTabBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100C09F1E52E64800E464D8 /* CustomTabBarItem.swift */; };
@@ -37,6 +38,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		63323F671E6EFC600003F088 /* ScheduleItemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleItemViewController.swift; sourceTree = "<group>"; };
 		D100C09B1E52E1ED00E464D8 /* CustomTabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
 		D100C09D1E52E33F00E464D8 /* CustomTabs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTabs.swift; sourceTree = "<group>"; };
 		D100C09F1E52E64800E464D8 /* CustomTabBarItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTabBarItem.swift; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 				D1D21B691E6405CB00D6BF69 /* MasterViewController.swift */,
 				D1D21B6A1E6405CB00D6BF69 /* DetailViewController.swift */,
 				D100C0A11E52FD4C00E464D8 /* DataViewController.swift */,
+				63323F671E6EFC600003F088 /* ScheduleItemViewController.swift */,
 				D1D21B031E62FB6600D6BF69 /* CheckInViewController.swift */,
 				D100C0A31E52FE5400E464D8 /* MoreViewController.swift */,
 				D100C09B1E52E1ED00E464D8 /* CustomTabBar.swift */,
@@ -225,6 +228,7 @@
 			files = (
 				D1D21B041E62FB6600D6BF69 /* CheckInViewController.swift in Sources */,
 				D110B7C31E2D61D300621294 /* SecondViewController.swift in Sources */,
+				63323F681E6EFC600003F088 /* ScheduleItemViewController.swift in Sources */,
 				D100C0A21E52FD4C00E464D8 /* DataViewController.swift in Sources */,
 				D135B53B1E67119E0039718F /* ScheduleItem.swift in Sources */,
 				D110B7E41E2D681300621294 /* PathMenuItem.swift in Sources */,
