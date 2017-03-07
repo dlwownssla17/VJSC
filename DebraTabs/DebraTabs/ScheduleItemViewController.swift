@@ -10,19 +10,48 @@ import UIKit
 
 class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    //    var detailViewController: DetailViewController? = nil
-    //    var objects = [Any]()
     
-    public var Array: NSArray = ["Run","Eat","Code"]
-    public var Array2: NSArray = ["2:00 PM", "1:00 AM", "Forever"]
+    public var ObjectsArray = [ScheduleItem]()
     private var myTableView: UITableView!
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .white
         
+        let jsonString1 = "{" +
+            "\"Language\": {" +
+            "\"Field\":[" +
+            "{" +
+            "\"Number\":\"976\"," +
+            "\"Name\":\"Test\"" +
+            "}," +
+            "{" +
+            "\"Number\":\"977\"," +
+            "\"Name\":\"Test\"" +
+            "}" +
+            "]" +
+            "}" +
+        "}"
+        
+        var act1 = ScheduleItem(jsonString: jsonString1)
+        var act2 = ScheduleItem(jsonString: jsonString1)
+        var act3 = ScheduleItem(jsonString: jsonString1)
+        
+        
+        // For Testing purposes
+        act1.scheduleItemTitle = "Run"
+        act1.scheduleItemStart = Date() as NSDate
+        
+        act2.scheduleItemTitle = "Eat"
+        act2.scheduleItemStart = Date() as NSDate
+        
+        act3.scheduleItemTitle = "Code"
+        act3.scheduleItemStart = Date() as NSDate
+        
+        ObjectsArray.append(act1)
+        ObjectsArray.append(act2)
+        ObjectsArray.append(act3)
         
         let barHeight: CGFloat = UIApplication.shared.statusBarFrame.size.height
         let displayWidth: CGFloat = self.view.frame.width
@@ -37,24 +66,12 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         myTableView.delegate = self
         self.view.addSubview(myTableView)
         
-        
-        
-        //        // Do any additional setup after loading the view, typically from a nib.
-        //        self.navigationItem.leftBarButtonItem = self.editButtonItem
-        //
-        //        //let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject(_:)))
-        //        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewScheduleItemForm(_:)))
-        //        self.navigationItem.rightBarButtonItem = addButton
-        //        if let split = self.splitViewController {
-        //            let controllers = split.viewControllers
-        //            self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
-        //        }
         print("HELLO")
         JSONParser.testJSON()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Array.count
+        return ObjectsArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -64,9 +81,9 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         
         
         let cell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: "MyTestCell")
-        
-        cell.textLabel!.text = "\(Array[indexPath.row])"
-        cell.detailTextLabel?.text = "\(Array2[indexPath.row])"
+
+        cell.textLabel!.text = "\(ObjectsArray[indexPath.row].scheduleItemTitle)"
+        cell.detailTextLabel?.text = "\(ObjectsArray[indexPath.row].scheduleItemStart)"
         
         return cell
     }

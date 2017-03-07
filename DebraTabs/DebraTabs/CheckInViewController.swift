@@ -11,13 +11,48 @@ import UIKit
 
 class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    public var Array: NSArray = ["Run","Eat","Code"]
-    public var Array2: NSArray = ["2:00 PM", "1:00 AM", "Forever"]
-    //    public var indexOfNumbers: NSArray = ["1", "2", "3", "4", "5"]
+    public var ObjectsArray = [ScheduleItem]()
+
     private var myTableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        view.backgroundColor = .white
+        
+        let jsonString1 = "{" +
+            "\"Language\": {" +
+            "\"Field\":[" +
+            "{" +
+            "\"Number\":\"976\"," +
+            "\"Name\":\"Test\"" +
+            "}," +
+            "{" +
+            "\"Number\":\"977\"," +
+            "\"Name\":\"Test\"" +
+            "}" +
+            "]" +
+            "}" +
+        "}"
+        
+        var act1 = ScheduleItem(jsonString: jsonString1)
+        var act2 = ScheduleItem(jsonString: jsonString1)
+        var act3 = ScheduleItem(jsonString: jsonString1)
+        
+        // For Testing purposes
+        act1.scheduleItemTitle = "Run"
+        act1.scheduleItemStart = Date() as NSDate
+        
+        act2.scheduleItemTitle = "Eat"
+        act2.scheduleItemStart = Date() as NSDate
+        
+        act3.scheduleItemTitle = "Code"
+        act3.scheduleItemStart = Date() as NSDate
+        
+        ObjectsArray.append(act1)
+        ObjectsArray.append(act2)
+        ObjectsArray.append(act3)
+
         
         let barHeight: CGFloat = UIApplication.shared.statusBarFrame.size.height
         let displayWidth: CGFloat = self.view.frame.width
@@ -28,15 +63,16 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
         myTableView.dataSource = self
         myTableView.delegate = self
         self.view.addSubview(myTableView)
+        
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Num: \(indexPath.row)")
-        print("Value: \(Array[indexPath.row])")
+        print("Value: \(ObjectsArray[indexPath.row].scheduleItemTitle)")
         
         // http://stackoverflow.com/questions/36394997/uialertview-was-deprecated-in-ios-9-0-use-uialertcontroller-with-a-preferreds
         
-        let alertController = UIAlertController(title: "Congratulations!", message: "You completed this Activity - \(Array[indexPath.row])", preferredStyle: UIAlertControllerStyle.alert)
+        let alertController = UIAlertController(title: "Congratulations!", message: "You completed this Activity - \(ObjectsArray[indexPath.row].scheduleItemTitle)", preferredStyle: UIAlertControllerStyle.alert)
         
         let okAction = UIAlertAction(title: "Done", style: UIAlertActionStyle.default)
         {
@@ -48,7 +84,7 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Array.count
+        return ObjectsArray.count
     }
     
     //    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -86,8 +122,8 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         let cell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: "MyTestCell")
         
-        cell.textLabel!.text = "\(Array[indexPath.row])"
-        cell.detailTextLabel?.text = "\(Array2[indexPath.row])"
+        cell.textLabel!.text = "\(ObjectsArray[indexPath.row].scheduleItemTitle)"
+        cell.detailTextLabel?.text = "\(ObjectsArray[indexPath.row].scheduleItemStart)"
         
         return cell
     }
