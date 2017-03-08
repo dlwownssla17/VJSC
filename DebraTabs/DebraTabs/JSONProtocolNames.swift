@@ -11,11 +11,18 @@ import Foundation
 class JSONProtocolNames {
     // Schedule Item Types
     static let scheduleItemTypeHeaderName:String = "Schedule-Item-Type"
-    static let medication:String = "Medication"
-    static let exercise:String = "Exercise"
-    static let glucoseLevel:String = "GlucoseLevel"
-    static let eating:String = "Eating"
+    static let medication:String = "medication"
+    static let exercise:String = "exercise"
+    static let glucoseLevel:String = "blood_glucose_level"
+    static let eating:String = "eating"
     static let none:String = ""
+    
+    static let scheduleItemTypeMap:Dictionary<ScheduleItemType, String> =
+        [.Medication: "medication",
+         .Exercise: "exercise",
+         .GlucoseLevel: "blood_glucose_level",
+         .Eating: "eating",
+         .None: "none"]
     
     // Recurring Item Types
     static let recurringTypeHeaderName:String = "Recurring-Type"
@@ -26,9 +33,55 @@ class JSONProtocolNames {
     static let weekly:Int = 3
     static let monthly:Int = 4
     
+    static let recurringTypeMap:Dictionary<RecurringType, Int> =
+        [.NotRecurring: -1,
+         .Daily: 0,
+         .EveryXDays: 1,
+         .CertainDaysOfWeek: 2,
+         .Weekly: 3,
+         .Monthly: 4]
+    
     // Ending Type
-    static let endingType:String = "Ending-Type"
+    static let endingTypeHeaderName:String = "Ending-Type"
     static let never:Int = 0
     static let afterYOccurrences:Int = 1
     static let onT:Int = 2
+    static let endingTypeNotNeeded:String = "-1"
+    
+    static let endingTypeMap:Dictionary<EndingType, Int> =
+        [.Never: 0,
+         .AfterYOccurrences: 1,
+         .OnT: 2]
+    
+    // Progress Type
+    static let scheduleItemProgressTypeHeaderName:String = "Schedule-Item-Progress-Type"
+    static let boolean:String = "boolean"
+    static let percentage:String = "percentage"
+    
+    static let durationProgressTypeNotNeeded:Int = -1
+    
+    static let progressTypeMap:Dictionary<ProgressType, String> =
+        [.Boolean: "boolean",
+         .Percentage: "percentage"]
+    
+    static let scheduleItemIDHeaderName:String = "Schedule-Item-ID"
+    static let recurringIDHeaderName:String = "Recurring-ID"
+    static let recurringValueHeaderName:String = "Recurring-Value"
+    static let endingValueHeaderName:String = "Ending-Value"
+    static let scheduleItemTitleHeaderName:String = "Schedule-Item-Title"
+    static let scheduleItemDescriptionHeaderName:String = "Schedule-Item-Description"
+    static let scheduleItemStartHeaderName:String = "Schedule-Item-Start"
+    static let scheduleItemDurationHeaderName:String = "Schedule-Item-Duration"
+    static let scheduleItemProgressHeaderName:String = "Schedule-Item-Progress"
+    static let scheduleItemScoreHeaderName:String = "Schedule-Item-Score"
+    static let scheduleItemActiveHeaderName:String = "Schedule-Item-Active"
+    static let scheduleItemColorHeaderName:String = "Schedule-Item-Color"
+    static let scheduleItemModifiableHeaderName:String = "Schedule-Item-Modifiable"
+    
+    static let scheduleItemsListResponseName:String = "Schedule-Items"
+    
+    static let scheduleItemsAddScheduleItemName:String = "Add-Schedule-Item"
+    
+    static let scheduleItemsEditScheduleItemName:String = "Edit-Schedule-Item"
+    
 }

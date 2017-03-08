@@ -14,28 +14,38 @@ enum EndingType {
     case AfterYOccurrences
     case OnT
     
-    func getJSONCode(type:EndingType)->Int {
-        switch type {
-        case .Never:
+    static func getJSONCode(type:EndingType)->Int {
+        if JSONProtocolNames.endingTypeMap[type] != nil {
+            return JSONProtocolNames.endingTypeMap[type]!
+        } else {
             return JSONProtocolNames.never
-        case .AfterYOccurrences:
-            return JSONProtocolNames.afterYOccurrences
-        case .OnT:
-            return JSONProtocolNames.onT
-        default:
-            return JSONProtocolNames.notRecurring
         }
     }
     
-    func getScheduleItemType(code:Int)->EndingType {
-        if code == JSONProtocolNames.never {
-            return .Never
-        } else if code == JSONProtocolNames.afterYOccurrences {
-            return .AfterYOccurrences
-        } else if code == JSONProtocolNames.onT {
-            return .OnT
-        } else {
-            return .NotRecurring
+    static func getEndingItemType(code:Int)->EndingType {
+        for (type, jsonCode) in JSONProtocolNames.endingTypeMap {
+            if code == jsonCode {
+                return type
+            }
         }
+        return .Never
     }
+    
+    static func getSelectedEndingItemType(item:String)->EndingType {
+        for (type, itemString) in EndingTypeStringMap {
+            if item == itemString {
+                return type
+            }
+        }
+        return .NotRecurring
+    }
+    
+    static let EndingTypeStringMap:Dictionary<EndingType, String> =
+        [.Never: "Ending Never",
+         .AfterYOccurrences: "Ending After X Times",
+         .OnT: "Ending On a Certain Date"]
+    
+    static let EndingTypeOrderedStringMap:Array<String> = ["Ending Never", "Ending After X Times", "Ending On a Certain Date"]
+    
+    static let AfterYOrruccencesOptions:Array<String> = ["1","2","3","4", "5", "6", "7", "8", "9", "10"]
 }

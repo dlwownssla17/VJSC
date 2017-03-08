@@ -14,13 +14,13 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
     var containerView = UIView()
     
     // Pass on
-    var RecurringType: String = String()
+    var ScheduleItemRecurringType: String = String()
     var RecurringValue: String = String()
-    var EndingType: String = String()
+    var ScheduleItemEndingType: String = String()
     var EndingValue: String = String()
     var ScheduleItemTitle: String = String()
     var ScheduleItemDescription: String = String()
-    var ScheduleItemType: String = String()
+    var ScheduleItemTypeVar: String = String()
     var ScheduleItemStart: String = String()
     var ScheduleItemDuration: String = String() // Exercise only
     
@@ -38,11 +38,11 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
     
     // UIPickerView 1
     var frequencyPicker1: UIPickerView! = UIPickerView()
-    var frequencyValues1 = ["Select Frequency:","None","Daily","Every X Days","Certain Days of Week", "Weekly", "Monthly"]
+    var frequencyValues1 = ["Select Frequency:"] + RecurringType.RecurringTypeOrderedStringMap
     var scheduleRecurringType: UITextField = UITextField()
     
     var frequencyPickerOptionEveryXDays: UIPickerView! = UIPickerView()
-    var frequencyValuesOptionEveryXDays = ["Repeat Every How Many Days:","1","2","3","4", "5", "6", "7", "8", "9", "10"]
+    var frequencyValuesOptionEveryXDays = ["Repeat Every How Many Days:"] + RecurringType.EveryXDaysOptions
     var scheduleRecurringOptionEveryXDays: UITextField = UITextField()
     
     // put multi-select days here
@@ -55,21 +55,20 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
     var sunButton: UIButton = UIButton()
     
     var frequencyPickerOption2b: UIPickerView! = UIPickerView()
-    var frequencyValuesOption2b = ["Repeat Once Weekly:","Monday","Tuesday","Wednesday","Thursday", "Friday", "Saturday", "Sunday"]
+    var frequencyValuesOption2b = ["Repeat Once Weekly:"] + RecurringType.DaysOfWeek
     var scheduleRecurringOption2b: UITextField = UITextField()
     
     var frequencyPickerOption2c: UIPickerView! = UIPickerView()
-    var frequencyValuesOption2c = ["Repeat Once Monthly, Day:","1","2","3","4", "5", "6", "7", "8", "9", "10","11","12","13","14", "15", "16", "17", "18", "19", "20",
-                                   "21","22","23","24", "25", "26", "27", "28", "29", "30", "31"]
+    var frequencyValuesOption2c = ["Repeat Once Monthly, Day:"] + RecurringType.MonthlyOptions
     var scheduleRecurringOption2c: UITextField = UITextField()
     
     // Ending Pickers
     var endingPicker1: UIPickerView! = UIPickerView()
-    var endingValues1 = ["Select When Repeats Should End:","Ending Never","Ending After X Times","Ending On a Certain Date"]
+    var endingValues1 = ["Select When Repeats Should End:"] + EndingType.EndingTypeOrderedStringMap
     var scheduleEndingField: UITextField = UITextField()
     
     var endingPicker2a: UIPickerView! = UIPickerView()
-    var endingValues2a = ["Repeats Should End After How Many Times:","1","2","3","4", "5", "6", "7", "8", "9", "10"]
+    var endingValues2a = ["Repeats Should End After How Many Times:"] + EndingType.AfterYOrruccencesOptions
     var scheduleEndingField2a: UITextField = UITextField()
     
     var endingPicker2b: UIDatePicker! = UIDatePicker()
@@ -118,7 +117,7 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         scheduleDesc.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
         self.view.addSubview(scheduleDesc)
         
-        let items = ["Meds", "Exercise", "Food", "Blood Glucose"]
+        let items = ScheduleItemType.ScheduleItemTypeOrderedStringMap
         segmentedControl = UISegmentedControl(items: items)
         segmentedControl.frame = CGRect(x: 0, y: barHeight + 100, width: displayWidth, height: 50)
         segmentedControl.addTarget(self, action: #selector(actTypeTapped(_:)), for: .valueChanged)
@@ -331,6 +330,7 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         // Ending Step2b
         endingPicker2b = UIDatePicker()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
         endingPicker2b.timeZone = NSTimeZone.local
+        endingPicker2b.datePickerMode = UIDatePickerMode.date
         endingPicker2b.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
 //        endingPicker2b.delegate = self
 //        endingPicker2b.dataSource = self
@@ -414,190 +414,109 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         scheduleStartTime.resignFirstResponder()
         
     }
+    
     // MARK: Button Action
     func saveButtonTapped(_ button: UIButton) {
-//        print(scheduleRecurringType.text)
         
+        let newScheduleItem = ScheduleItem()
 
-        
-        
         // Recurring-Type
-        //        "None","Daily","Every X Days","Certain Days of Week", "Weekly", "Monthly"
-        var scheduleRecurringTypeText = scheduleRecurringType.text!
-        switch scheduleRecurringTypeText {
-        case "None":
-            RecurringType = "Recurring Type: -1"
-        case "Daily":
-            RecurringType = "Recurring Type: 0"
-        case "Every X Days":
-            RecurringType = "Recurring Type: 1"
-        case "Certain Days of Week":
-            RecurringType = "Recurring Type: 2"
-        case "Weekly":
-            RecurringType = "Recurring Type: 3"
-        case "Monthly":
-            RecurringType = "Recurring Type: 4"
-        default:
-            RecurringType = "Recurring Type: -1"
-        }
+        // "None","Daily","Every X Days","Certain Days of Week", "Weekly", "Monthly"
+        let scheduleRecurringTypeText = scheduleRecurringType.text!
+        let selectedRecurringType = RecurringType.getSelectedRecurringItemType(item: scheduleRecurringTypeText)
+        newScheduleItem.recurringType = selectedRecurringType
         
         // Recurring-Value
-        switch RecurringType {
-        case "Recurring Type: -1":
-            RecurringValue = "Recurring Value: -1"
-        case "Recurring Type: 0":
-            RecurringValue = "Recurring Value: 0"
-        case "Recurring Type: 1":
-            RecurringValue = "Recurring Value: 1 => {\(scheduleRecurringOptionEveryXDays.text)}"
-        case "Recurring Type: 2":
-            var dayList = [String]()
+        switch selectedRecurringType {
+        case .NotRecurring:
+            newScheduleItem.recurringValue = []
+        case .Daily:
+            newScheduleItem.recurringValue = []
+        case .EveryXDays:
+            let everyXDaysSelected:Int = Int(scheduleRecurringOptionEveryXDays.text!)!
+            newScheduleItem.recurringValue = [everyXDaysSelected]
+        case .CertainDaysOfWeek:
+            var dayList = [Int]()
             if (monButton.isSelected) {
-                dayList.append("0")
+                dayList.append(0)
             }
             if (tueButton.isSelected) {
-                dayList.append("1")
+                dayList.append(1)
             }
             if (wedButton.isSelected) {
-                dayList.append("2")
+                dayList.append(2)
             }
             if (thuButton.isSelected) {
-                dayList.append("3")
+                dayList.append(3)
             }
             if (friButton.isSelected) {
-                dayList.append("4")
+                dayList.append(4)
             }
             if (satButton.isSelected) {
-                dayList.append("5")
+                dayList.append(5)
             }
             if (sunButton.isSelected) {
-                dayList.append("6")
+                dayList.append(6)
             }
-            RecurringValue = "Recurring Value: 2 => {\(dayList)}"
-        case "Recurring Type: 3":
-            var dayList = [String]()
-            switch scheduleRecurringOption2b.text! {
-            case "Monday":
-                dayList.append("0")
-            case "Tuesday":
-                dayList.append("1")
-            case "Wednesday":
-                dayList.append("2")
-            case "Thursday":
-                dayList.append("3")
-            case "Friday":
-                dayList.append("4")
-            case "Saturday":
-                dayList.append("5")
-            case "Sunday":
-                dayList.append("6")
-            default:
-                print("none")
-            }
-            RecurringValue = "Recurring Value: 3 => {\(dayList)}"
-        case "Recurring Type: 4":
-            RecurringValue = "Recurring Value: 4 => {\(scheduleRecurringOption2c.text!)}"
-        default:
-            RecurringValue = "Recurring Value: -1"
+            newScheduleItem.recurringValue = dayList
+        case .Weekly:
+            let pickedDay = scheduleRecurringOption2b.text!
+            newScheduleItem.recurringValue = [RecurringType.DaysOfWeek.index(of: pickedDay)!]
+        case .Monthly:
+            newScheduleItem.recurringValue = [Int(scheduleRecurringOption2c.text!)!]
         }
         
         // Ending-Type
-        switch scheduleEndingField.text! {
-        case "Ending Never":
-            EndingType = "Ending Type: 0"
-        case "Ending After X Times":
-            EndingType = "Ending Type: 1"
-        case "Ending On a Certain Date":
-            EndingType = "Ending Type: 2"
-        default:
-            EndingType = "Ending Type: -1"
-            print("endingtype error")
-        }
+        let selectedEndingType = EndingType.getSelectedEndingItemType(item: scheduleEndingField.text!)
         
-        // Ending-Value
-        switch EndingType {
-        case "Ending Type: -1":
-            EndingValue = "Ending Value: -1 => -1"
-        case "Ending Type: 0":
-            EndingValue = "Ending Value: 0 => -1"
-        case "Ending Type: 1":
-            EndingValue = "Ending Value: 1 => [\(scheduleEndingField2a.text!)]"
-        case "Ending Type: 2":
-            EndingValue = "Ending Value: 2 => [\(scheduleEndingField2b.text!)]"
-        default:
-            print("endingvalue error")
+        // Ending Value
+        switch selectedEndingType {
+        case .NotRecurring:
+            newScheduleItem.endingValue = JSONProtocolNames.endingTypeNotNeeded
+        case .Never:
+            newScheduleItem.endingValue = JSONProtocolNames.endingTypeNotNeeded
+        case .AfterYOccurrences:
+            newScheduleItem.endingValue = scheduleEndingField2a.text!
+        case .OnT:
+            newScheduleItem.endingValue = scheduleEndingField2b.text!
         }
-        
-//        print(scheduleTitle.text)
-//        print(scheduleDesc.text)
-//        print(segmentedControl.selectedSegmentIndex)
-//        print(scheduleDuration.text)
         
         // Schedule-Item-Title
-        ScheduleItemTitle = scheduleTitle.text!
+        newScheduleItem.scheduleItemTitle = scheduleTitle.text!
         
         // Schedule-Item-Description
-        ScheduleItemDescription = scheduleDesc.text!
+        newScheduleItem.scheduleItemDescription = scheduleDesc.text!
         
         // Schedule-Item-Type
+        let selectedScheduleItemString:String = ScheduleItemType.ScheduleItemTypeOrderedStringMap[segmentedControl.selectedSegmentIndex]
+        let selectedScheduleItemType = ScheduleItemType.getSelectedScheduleItemType(item: selectedScheduleItemString)
+        newScheduleItem.scheduleItemType = selectedScheduleItemType
+        
         // Schedule-Item-Duration
-        switch segmentedControl.selectedSegmentIndex {
-        case 0:
-            ScheduleItemType = "medication"
-            ScheduleItemDuration = "False"
-        case 1:
-            ScheduleItemType = "exercise"
-            ScheduleItemDuration = scheduleDuration.text!
-        case 2:
-            ScheduleItemType = "eating"
-            ScheduleItemDuration = "False"
-        case 3:
-            ScheduleItemType = "blood_glucose_measurement"
-            ScheduleItemDuration = "False"
+        switch selectedScheduleItemType {
+        case .Exercise:
+            newScheduleItem.scheduleItemProgressType = .Percentage
+            newScheduleItem.scheduleItemDuration = Int(scheduleDuration.text!)!
         default:
-            print("Schedule-Item-Type error")
+            newScheduleItem.scheduleItemProgressType = .Boolean
+            newScheduleItem.scheduleItemDuration = JSONProtocolNames.durationProgressTypeNotNeeded
         }
         
         // Schedule-Item-Start
         ScheduleItemStart = scheduleStartTime.text!
+        let dateFormatterIn = DateFormatter()
+        let timeZone = NSTimeZone(name: "GMT")
+        dateFormatterIn.timeZone=timeZone as TimeZone!
+        dateFormatterIn.dateFormat = "HH:mm a"
+        newScheduleItem.scheduleItemStart = dateFormatterIn.date(from: ScheduleItemStart)!
         
-        print(RecurringType)
-        print(RecurringValue)
-        print(EndingType)
-        print(EndingValue)
-        print("ScheduleItemTitle: " + ScheduleItemTitle)
-        print("ScheduleItemDescription: " + ScheduleItemDescription)
-        print("ScheduleItemType: " + ScheduleItemType)
-        print("ScheduleItemStart: " + ScheduleItemStart)
-        print("ScheduleItemDuration: " + ScheduleItemDuration) // Exercise only
+        print(Requests.addScheduleItemJSON(item: newScheduleItem))
         
-//        print(monButton.isSelected)
-//        print(tueButton.isSelected)
-//        print(wedButton.isSelected)
-//        print(thuButton.isSelected)
-//        print(friButton.isSelected)
-//        print(satButton.isSelected)
-//        print(sunButton.isSelected)
-//        print(scheduleRecurringOptionEveryXDays.text)
-//        print(scheduleRecurringOption2b.text)
-//        print(scheduleRecurringOption2c.text)
-//        print(scheduleEndingField.text)
-//        print(scheduleEndingField2a.text)
-//        print(scheduleEndingField2b.text)
-//        
-//        button.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
-//        UIView.animate(withDuration: 2.0,
-//                       delay: 0,
-//                       usingSpringWithDamping: 0.2,
-//                       initialSpringVelocity: 6.0,
-//                       options: .allowUserInteraction,
-//                       animations: { [weak self] in
-//                        self?.saveButton.transform = .identity
-//            },
-//                       completion: nil)
         
         print("SaveButton pressed")
         
         // Dismiss VC
+        self.dismiss(animated: true, completion: nil)
         
     }
 
@@ -677,7 +596,7 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         // Create date formatter
         let dateFormatter: DateFormatter = DateFormatter()
         // Set date format
-        dateFormatter.dateFormat = "MM/dd/yyyy hh:mm a"
+        dateFormatter.dateFormat = "yyyy-MM-dd"
         // Apply date format
         let selectedDate: String = dateFormatter.string(from: sender.date)
         print("Selected value \(selectedDate)")

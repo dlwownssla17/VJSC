@@ -11,36 +11,41 @@ import Foundation
 enum ScheduleItemType {
     case None
     case Medication
-    case GlucoseLevel
     case Exercise
     case Eating
+    case GlucoseLevel
     
-    func getJsonCode(type:ScheduleItemType)->String {
-        switch type {
-        case .Medication:
-            return JSONProtocolNames.medication
-        case .Exercise:
-            return JSONProtocolNames.exercise
-        case .GlucoseLevel:
-            return JSONProtocolNames.glucoseLevel
-        case .Eating:
-            return JSONProtocolNames.eating
-        default:
+    static func getJsonCode(type:ScheduleItemType)->String {
+        if JSONProtocolNames.scheduleItemTypeMap[type] != nil {
+            return JSONProtocolNames.scheduleItemTypeMap[type]!
+        } else {
             return JSONProtocolNames.none
         }
     }
     
-    func getScheduleItemType(code:String)->ScheduleItemType {
-        if code == JSONProtocolNames.medication {
-            return .Medication
-        } else if code == JSONProtocolNames.exercise {
-            return .Exercise
-        } else if code == JSONProtocolNames.glucoseLevel {
-            return .GlucoseLevel
-        } else if code == JSONProtocolNames.eating {
-            return .Eating
-        } else {
-            return .None
+    static func getScheduleItemType(code:String)->ScheduleItemType {
+        for (type, jsonCode) in JSONProtocolNames.scheduleItemTypeMap {
+            if code == jsonCode {
+                return type
+            }
         }
+        return .None
     }
+    
+    static func getSelectedScheduleItemType(item:String)->ScheduleItemType {
+        for (type, itemType) in ScheduleItemTypeStringMap {
+            if item == itemType {
+                return type
+            }
+        }
+        return .None
+    }
+    
+    static let ScheduleItemTypeStringMap:Dictionary<ScheduleItemType, String> =
+        [.Medication: "Meds",
+         .Exercise: "Exercise",
+         .Eating: "Food",
+         .GlucoseLevel: "Blood Glucose"]
+    
+    static let ScheduleItemTypeOrderedStringMap:Array<String> = ["Meds", "Exercise", "Food", "Blood Glucose"]
 }
