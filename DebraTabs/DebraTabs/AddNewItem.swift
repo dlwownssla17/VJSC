@@ -1,0 +1,928 @@
+//
+//  AddNewItem.swift
+//  DebraTabs
+//
+//  Created by Chad Nachiappan on 3/7/17.
+//  Copyright © 2017 Spiro Metaxas. All rights reserved.
+//
+
+import UIKit
+
+class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UIScrollViewDelegate {
+    
+    var scrollView: UIScrollView!
+    var containerView = UIView()
+    
+    // Pass on
+    var RecurringType: String = String()
+    var RecurringValue: String = String()
+    var EndingType: String = String()
+    var EndingValue: String = String()
+    var ScheduleItemTitle: String = String()
+    var ScheduleItemDescription: String = String()
+    var ScheduleItemType: String = String()
+    var ScheduleItemStart: String = String()
+    var ScheduleItemDuration: String = String() // Exercise only
+    
+    public var blueColor: UIColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
+    
+    var scheduleTitle: UITextField = UITextField()
+    var scheduleDesc: UITextField = UITextField()
+    var segmentedControl: UISegmentedControl = UISegmentedControl()
+    
+    
+    // Exercise Picker
+    var exercisePicker: UIPickerView! = UIPickerView()
+    var exerciseValues = ["Exercise Duration (minutes):","5","10","15","20", "25", "30", "35", "40", "45", "50", "55", "60"]
+    var scheduleDuration: UITextField = UITextField()
+    
+    // UIPickerView 1
+    var frequencyPicker1: UIPickerView! = UIPickerView()
+    var frequencyValues1 = ["Select Frequency:","None","Daily","Every X Days","Certain Days of Week", "Weekly", "Monthly"]
+    var scheduleRecurringType: UITextField = UITextField()
+    
+    var frequencyPickerOptionEveryXDays: UIPickerView! = UIPickerView()
+    var frequencyValuesOptionEveryXDays = ["Repeat Every How Many Days:","1","2","3","4", "5", "6", "7", "8", "9", "10"]
+    var scheduleRecurringOptionEveryXDays: UITextField = UITextField()
+    
+    // put multi-select days here
+    var monButton: UIButton = UIButton()
+    var tueButton: UIButton = UIButton()
+    var wedButton: UIButton = UIButton()
+    var thuButton: UIButton = UIButton()
+    var friButton: UIButton = UIButton()
+    var satButton: UIButton = UIButton()
+    var sunButton: UIButton = UIButton()
+    
+    var frequencyPickerOption2b: UIPickerView! = UIPickerView()
+    var frequencyValuesOption2b = ["Repeat Once Weekly:","Monday","Tuesday","Wednesday","Thursday", "Friday", "Saturday", "Sunday"]
+    var scheduleRecurringOption2b: UITextField = UITextField()
+    
+    var frequencyPickerOption2c: UIPickerView! = UIPickerView()
+    var frequencyValuesOption2c = ["Repeat Once Monthly, Day:","1","2","3","4", "5", "6", "7", "8", "9", "10","11","12","13","14", "15", "16", "17", "18", "19", "20",
+                                   "21","22","23","24", "25", "26", "27", "28", "29", "30", "31"]
+    var scheduleRecurringOption2c: UITextField = UITextField()
+    
+    // Ending Pickers
+    var endingPicker1: UIPickerView! = UIPickerView()
+    var endingValues1 = ["Select When Repeats Should End:","Ending Never","Ending After X Times","Ending On a Certain Date"]
+    var scheduleEndingField: UITextField = UITextField()
+    
+    var endingPicker2a: UIPickerView! = UIPickerView()
+    var endingValues2a = ["Repeats Should End After How Many Times:","1","2","3","4", "5", "6", "7", "8", "9", "10"]
+    var scheduleEndingField2a: UITextField = UITextField()
+    
+    var endingPicker2b: UIDatePicker! = UIDatePicker()
+    var scheduleEndingField2b: UITextField = UITextField()
+    
+    // Start Time Picker
+    var startTimePicker: UIDatePicker! = UIDatePicker()
+    var scheduleStartTime: UITextField = UITextField()
+    
+    // Save Button
+    var saveButton: UIButton = UIButton()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.hideKeyboardWhenTappedAround()
+        view.backgroundColor = .white
+        let barHeight: CGFloat = UIApplication.shared.statusBarFrame.size.height
+        let displayWidth: CGFloat = self.view.frame.width
+        let displayHeight: CGFloat = self.view.frame.height
+        
+        self.scrollView = UIScrollView()
+        self.scrollView.delegate = self
+        self.scrollView.contentSize = CGSize(width: displayWidth, height: displayHeight)
+        containerView = UIView()
+        self.scrollView.addSubview(containerView)
+        self.view.addSubview(scrollView)
+        
+        scheduleTitle = UITextField(frame: CGRect(x: 0, y: barHeight, width: displayWidth, height: 50))
+        scheduleTitle.textAlignment = NSTextAlignment.center
+        scheduleTitle.textColor = blueColor
+        scheduleTitle.placeholder = "Activity Title"
+        scheduleTitle.borderStyle = UITextBorderStyle.line
+        scheduleTitle.layer.borderWidth = 1
+        scheduleTitle.layer.borderColor = blueColor.cgColor
+        scheduleTitle.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        self.view.addSubview(scheduleTitle)
+        
+        
+        scheduleDesc = UITextField(frame: CGRect(x: 0, y: barHeight + 50, width: displayWidth, height: 50))
+        scheduleDesc.textAlignment = NSTextAlignment.center
+        scheduleDesc.textColor = blueColor
+        scheduleDesc.placeholder = "Activity Description"
+        scheduleDesc.borderStyle = UITextBorderStyle.line
+        scheduleDesc.layer.borderWidth = 1
+        scheduleDesc.layer.borderColor = blueColor.cgColor
+        scheduleDesc.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        self.view.addSubview(scheduleDesc)
+        
+        let items = ["Meds", "Exercise", "Food", "Blood Glucose"]
+        segmentedControl = UISegmentedControl(items: items)
+        segmentedControl.frame = CGRect(x: 0, y: barHeight + 100, width: displayWidth, height: 50)
+        segmentedControl.addTarget(self, action: #selector(actTypeTapped(_:)), for: .valueChanged)
+        segmentedControl.selectedSegmentIndex = 1
+        view.addSubview(segmentedControl)
+        
+        exercisePicker = UIPickerView()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
+        exercisePicker.delegate = self
+        exercisePicker.dataSource = self
+        
+        scheduleDuration = UITextField(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 50))
+        scheduleDuration.textAlignment = NSTextAlignment.center
+        scheduleDuration.textColor = blueColor
+        scheduleDuration.placeholder = "Exercise Duration"
+        scheduleDuration.borderStyle = UITextBorderStyle.line
+        scheduleDuration.layer.borderWidth = 1
+        scheduleDuration.layer.borderColor = blueColor.cgColor
+        scheduleDuration.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        self.scheduleDuration.inputView = self.exercisePicker
+        self.view.addSubview(scheduleDuration)
+        
+        
+        // Event Specific Pickers Below
+        frequencyPicker1 = UIPickerView()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
+        frequencyPicker1.delegate = self
+        frequencyPicker1.dataSource = self
+        frequencyPicker1.tag = 1
+        
+        scheduleRecurringType = UITextField(frame: CGRect(x: 0, y: barHeight + 200, width: displayWidth, height: 50))
+        scheduleRecurringType.textAlignment = NSTextAlignment.center
+        scheduleRecurringType.textColor = blueColor
+        scheduleRecurringType.placeholder = "Activity Frequency"
+        scheduleRecurringType.borderStyle = UITextBorderStyle.line
+        scheduleRecurringType.layer.borderWidth = 1
+        scheduleRecurringType.layer.borderColor = blueColor.cgColor
+        scheduleRecurringType.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        self.scheduleRecurringType.inputView = self.frequencyPicker1
+        self.view.addSubview(scheduleRecurringType)
+        
+        
+        // Frequency 2 Step
+        frequencyPickerOptionEveryXDays = UIPickerView()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
+        frequencyPickerOptionEveryXDays.delegate = self
+        frequencyPickerOptionEveryXDays.dataSource = self
+        
+        scheduleRecurringOptionEveryXDays = UITextField(frame: CGRect(x: 0, y: barHeight + 250, width: displayWidth, height: 50))
+        scheduleRecurringOptionEveryXDays.textAlignment = NSTextAlignment.center
+        scheduleRecurringOptionEveryXDays.textColor = blueColor
+        scheduleRecurringOptionEveryXDays.placeholder = "Activity Frequency Details"
+        scheduleRecurringOptionEveryXDays.borderStyle = UITextBorderStyle.line
+        scheduleRecurringOptionEveryXDays.layer.borderWidth = 1
+        scheduleRecurringOptionEveryXDays.layer.borderColor = blueColor.cgColor
+        scheduleRecurringOptionEveryXDays.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        self.scheduleRecurringOptionEveryXDays.inputView = self.frequencyPickerOptionEveryXDays
+        scheduleRecurringOptionEveryXDays.isHidden = true
+        self.view.addSubview(scheduleRecurringOptionEveryXDays)
+        
+        monButton = UIButton(frame: CGRect(x: 0, y: barHeight + 250, width: displayWidth/7, height: 50))
+        monButton.backgroundColor = .clear
+        monButton.setBackgroundImage(getImageWithColor(color: blueColor, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
+        monButton.layer.borderColor = blueColor.cgColor
+        monButton.layer.borderWidth = 1
+        monButton.setTitle("Mon", for: .normal)
+        monButton.setTitleColor(blueColor, for: .normal)
+        monButton.setTitleColor(.white, for: .selected)
+        monButton.addTarget(self, action:#selector(self.MonButtonClicked), for: .touchUpInside)
+        monButton.isHidden = true
+        self.view.addSubview(monButton)
+        
+        tueButton = UIButton(frame: CGRect(x: displayWidth/7, y: barHeight + 250, width: displayWidth/7, height: 50))
+        tueButton.backgroundColor = .clear
+        tueButton.setBackgroundImage(getImageWithColor(color: blueColor, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
+        tueButton.layer.borderColor = blueColor.cgColor
+        tueButton.layer.borderWidth = 1
+        tueButton.setTitle("Tue", for: .normal)
+        tueButton.setTitleColor(blueColor, for: .normal)
+        tueButton.setTitleColor(.white, for: .selected)
+        tueButton.addTarget(self, action:#selector(self.TueButtonClicked), for: .touchUpInside)
+        tueButton.isHidden = true
+        self.view.addSubview(tueButton)
+        
+        wedButton = UIButton(frame: CGRect(x: (displayWidth/7)*2, y: barHeight + 250, width: displayWidth/7, height: 50))
+        wedButton.backgroundColor = .clear
+        wedButton.setBackgroundImage(getImageWithColor(color: blueColor, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
+        wedButton.layer.borderColor = blueColor.cgColor
+        wedButton.layer.borderWidth = 1
+        wedButton.setTitle("Wed", for: .normal)
+        wedButton.setTitleColor(blueColor, for: .normal)
+        wedButton.setTitleColor(.white, for: .selected)
+        wedButton.addTarget(self, action:#selector(self.WedButtonClicked), for: .touchUpInside)
+        wedButton.isHidden = true
+        self.view.addSubview(wedButton)
+        
+        thuButton = UIButton(frame: CGRect(x: (displayWidth/7)*3, y: barHeight + 250, width: displayWidth/7, height: 50))
+        thuButton.backgroundColor = .clear
+        thuButton.setBackgroundImage(getImageWithColor(color: blueColor, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
+        tueButton.layer.borderColor = blueColor.cgColor
+        thuButton.layer.borderWidth = 1
+        thuButton.setTitle("Thu", for: .normal)
+        thuButton.setTitleColor(blueColor, for: .normal)
+        thuButton.setTitleColor(.white, for: .selected)
+        thuButton.addTarget(self, action:#selector(self.ThuButtonClicked), for: .touchUpInside)
+        thuButton.isHidden = true
+        self.view.addSubview(thuButton)
+        
+        friButton = UIButton(frame: CGRect(x: (displayWidth/7)*4, y: barHeight + 250, width: displayWidth/7, height: 50))
+        friButton.backgroundColor = .clear
+        friButton.setBackgroundImage(getImageWithColor(color: blueColor, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
+        friButton.layer.borderColor = blueColor.cgColor
+        friButton.layer.borderWidth = 1
+        friButton.setTitle("Fri", for: .normal)
+        friButton.setTitleColor(blueColor, for: .normal)
+        friButton.setTitleColor(.white, for: .selected)
+        friButton.addTarget(self, action:#selector(self.FriButtonClicked), for: .touchUpInside)
+        friButton.isHidden = true
+        self.view.addSubview(friButton)
+        
+        satButton = UIButton(frame: CGRect(x: (displayWidth/7)*5, y: barHeight + 250, width: displayWidth/7, height: 50))
+        satButton.backgroundColor = .clear
+        satButton.setBackgroundImage(getImageWithColor(color: blueColor, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
+        satButton.layer.borderColor = blueColor.cgColor
+        satButton.layer.borderWidth = 1
+        satButton.setTitle("Sat", for: .normal)
+        satButton.setTitleColor(blueColor, for: .normal)
+        satButton.setTitleColor(.white, for: .selected)
+        satButton.addTarget(self, action:#selector(self.SatButtonClicked), for: .touchUpInside)
+        satButton.isHidden = true
+        self.view.addSubview(satButton)
+        
+        sunButton = UIButton(frame: CGRect(x: (displayWidth/7)*6, y: barHeight + 250, width: displayWidth/7, height: 50))
+        sunButton.backgroundColor = .clear
+        sunButton.setBackgroundImage(getImageWithColor(color: blueColor, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
+        sunButton.layer.borderColor = blueColor.cgColor
+        sunButton.layer.borderWidth = 1
+        sunButton.setTitle("Sun", for: .normal)
+        sunButton.setTitleColor(blueColor, for: .normal)
+        sunButton.setTitleColor(.white, for: .selected)
+        sunButton.addTarget(self, action:#selector(self.SunButtonClicked), for: .touchUpInside)
+        sunButton.isHidden = true
+        self.view.addSubview(sunButton)
+        
+        frequencyPickerOption2b = UIPickerView()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
+        frequencyPickerOption2b.delegate = self
+        frequencyPickerOption2b.dataSource = self
+        
+        scheduleRecurringOption2b = UITextField(frame: CGRect(x: 0, y: barHeight + 250, width: displayWidth, height: 50))
+        scheduleRecurringOption2b.textAlignment = NSTextAlignment.center
+        scheduleRecurringOption2b.textColor = blueColor
+        scheduleRecurringOption2b.placeholder = "Activity Frequency Details"
+        scheduleRecurringOption2b.borderStyle = UITextBorderStyle.line
+        scheduleRecurringOption2b.layer.borderWidth = 1
+        scheduleRecurringOption2b.layer.borderColor = blueColor.cgColor
+        scheduleRecurringOption2b.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        self.scheduleRecurringOption2b.inputView = self.frequencyPickerOption2b
+        scheduleRecurringOption2b.isHidden = true
+        self.view.addSubview(scheduleRecurringOption2b)
+        
+        frequencyPickerOption2c = UIPickerView()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
+        frequencyPickerOption2c.delegate = self
+        frequencyPickerOption2c.dataSource = self
+        
+        scheduleRecurringOption2c = UITextField(frame: CGRect(x: 0, y: barHeight + 250, width: displayWidth, height: 50))
+        scheduleRecurringOption2c.textAlignment = NSTextAlignment.center
+        scheduleRecurringOption2c.textColor = blueColor
+        scheduleRecurringOption2c.placeholder = "Activity Frequency Details"
+        scheduleRecurringOption2c.borderStyle = UITextBorderStyle.line
+        scheduleRecurringOption2c.layer.borderWidth = 1
+        scheduleRecurringOption2c.layer.borderColor = blueColor.cgColor
+        scheduleRecurringOption2c.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        self.scheduleRecurringOption2c.inputView = self.frequencyPickerOption2c
+        scheduleRecurringOption2c.isHidden = true
+        self.view.addSubview(scheduleRecurringOption2c)
+        
+        
+        
+        // Ending Step
+        endingPicker1 = UIPickerView()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
+        endingPicker1.delegate = self
+        endingPicker1.dataSource = self
+        
+        scheduleEndingField = UITextField(frame: CGRect(x: 0, y: barHeight + 300, width: displayWidth, height: 50))
+        scheduleEndingField.textAlignment = NSTextAlignment.center
+        scheduleEndingField.textColor = blueColor
+        scheduleEndingField.placeholder = "Activity Ending Details"
+        scheduleEndingField.borderStyle = UITextBorderStyle.line
+        scheduleEndingField.layer.borderWidth = 1
+        scheduleEndingField.layer.borderColor = blueColor.cgColor
+        scheduleEndingField.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        self.scheduleEndingField.inputView = self.endingPicker1
+        scheduleEndingField.isHidden = true
+        self.view.addSubview(scheduleEndingField)
+        
+        // Ending Step2a
+        endingPicker2a = UIPickerView()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
+        endingPicker2a.delegate = self
+        endingPicker2a.dataSource = self
+        
+        scheduleEndingField2a = UITextField(frame: CGRect(x: 0, y: barHeight + 350, width: displayWidth, height: 50))
+        scheduleEndingField2a.textAlignment = NSTextAlignment.center
+        scheduleEndingField2a.textColor = blueColor
+        scheduleEndingField2a.placeholder = "Ending After How Many Times?"
+        scheduleEndingField2a.borderStyle = UITextBorderStyle.line
+        scheduleEndingField2a.layer.borderWidth = 1
+        scheduleEndingField2a.layer.borderColor = blueColor.cgColor
+        scheduleEndingField2a.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        self.scheduleEndingField2a.inputView = self.endingPicker2a
+        scheduleEndingField2a.isHidden = true
+        self.view.addSubview(scheduleEndingField2a)
+        
+        // Ending Step2b
+        endingPicker2b = UIDatePicker()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
+        endingPicker2b.timeZone = NSTimeZone.local
+        endingPicker2b.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
+//        endingPicker2b.delegate = self
+//        endingPicker2b.dataSource = self
+        
+        scheduleEndingField2b = UITextField(frame: CGRect(x: 0, y: barHeight + 350, width: displayWidth, height: 50))
+        scheduleEndingField2b.textAlignment = NSTextAlignment.center
+        scheduleEndingField2b.textColor = blueColor
+        scheduleEndingField2b.placeholder = "Ending On What Date?"
+        scheduleEndingField2b.borderStyle = UITextBorderStyle.line
+        scheduleEndingField2b.layer.borderWidth = 1
+        scheduleEndingField2b.layer.borderColor = blueColor.cgColor
+        scheduleEndingField2b.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        self.scheduleEndingField2b.inputView = self.endingPicker2b
+        scheduleEndingField2b.isHidden = true
+        self.view.addSubview(scheduleEndingField2b)
+        
+        // Start Time Picker
+        startTimePicker = UIDatePicker()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
+        startTimePicker.timeZone = NSTimeZone.local
+        startTimePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
+        startTimePicker.datePickerMode = UIDatePickerMode.time
+        //        endingPicker2b.delegate = self
+        //        endingPicker2b.dataSource = self
+        
+        scheduleStartTime = UITextField(frame: CGRect(x: 0, y: barHeight + 400, width: displayWidth, height: 50))
+        scheduleStartTime.textAlignment = NSTextAlignment.center
+        scheduleStartTime.textColor = blueColor
+        scheduleStartTime.placeholder = "Ending On What Date?"
+        scheduleStartTime.borderStyle = UITextBorderStyle.line
+        scheduleStartTime.layer.borderWidth = 1
+        scheduleStartTime.layer.borderColor = blueColor.cgColor
+        scheduleStartTime.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        self.scheduleStartTime.inputView = self.startTimePicker
+        scheduleStartTime.isHidden = false
+        self.view.addSubview(scheduleStartTime)
+        
+        let toolBar = UIToolbar()
+        toolBar.barStyle = UIBarStyle.default
+        toolBar.isTranslucent = true
+        toolBar.tintColor = blueColor //UIColor(red: 76/255, green: 217/255, blue: 100/255, alpha: 1)
+        toolBar.sizeToFit()
+        let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneButtonTapped(_:)))
+        toolBar.setItems([doneButton], animated: false)
+        toolBar.isUserInteractionEnabled = true
+        scheduleStartTime.inputAccessoryView = toolBar
+        scheduleDuration.inputAccessoryView = toolBar
+        scheduleRecurringType.inputAccessoryView = toolBar
+        scheduleRecurringOptionEveryXDays.inputAccessoryView = toolBar
+        scheduleRecurringOption2b.inputAccessoryView = toolBar
+        scheduleRecurringOption2c.inputAccessoryView = toolBar
+        scheduleEndingField.inputAccessoryView = toolBar
+        scheduleEndingField2a.inputAccessoryView = toolBar
+        scheduleEndingField2b.inputAccessoryView = toolBar
+        
+        
+        // Save Button
+        saveButton = UIButton(frame: CGRect(x: displayWidth/2, y: barHeight + 500, width: 100, height: 44))
+        saveButton.setTitle("Save", for: UIControlState.normal)
+        saveButton.setTitleColor(blueColor, for: UIControlState.normal)
+        saveButton.backgroundColor = UIColor.clear
+        saveButton.layer.borderWidth = 1.0
+        let borderAlpha : CGFloat = 0.7
+        let cornerRadius : CGFloat = 5.0
+        saveButton.layer.borderColor = blueColor.cgColor
+        saveButton.layer.cornerRadius = cornerRadius
+        saveButton.addTarget(self, action: #selector(saveButtonTapped(_:)), for: .touchDown)
+        self.view.addSubview(saveButton)
+        
+    }
+    
+    
+    func doneButtonTapped(_ sender:UIBarButtonItem) {
+        scheduleDuration.resignFirstResponder()
+        scheduleRecurringType.resignFirstResponder()
+        scheduleRecurringOptionEveryXDays.resignFirstResponder()
+        scheduleRecurringOption2b.resignFirstResponder()
+        scheduleRecurringOption2c.resignFirstResponder()
+        scheduleEndingField.resignFirstResponder()
+        scheduleEndingField2a.resignFirstResponder()
+        scheduleEndingField2b.resignFirstResponder()
+        scheduleStartTime.resignFirstResponder()
+        
+    }
+    // MARK: Button Action
+    func saveButtonTapped(_ button: UIButton) {
+//        print(scheduleRecurringType.text)
+        
+
+        
+        
+        // Recurring-Type
+        //        "None","Daily","Every X Days","Certain Days of Week", "Weekly", "Monthly"
+        var scheduleRecurringTypeText = scheduleRecurringType.text!
+        switch scheduleRecurringTypeText {
+        case "None":
+            RecurringType = "Recurring Type: -1"
+        case "Daily":
+            RecurringType = "Recurring Type: 0"
+        case "Every X Days":
+            RecurringType = "Recurring Type: 1"
+        case "Certain Days of Week":
+            RecurringType = "Recurring Type: 2"
+        case "Weekly":
+            RecurringType = "Recurring Type: 3"
+        case "Monthly":
+            RecurringType = "Recurring Type: 4"
+        default:
+            RecurringType = "Recurring Type: -1"
+        }
+        
+        // Recurring-Value
+        switch RecurringType {
+        case "Recurring Type: -1":
+            RecurringValue = "Recurring Value: -1"
+        case "Recurring Type: 0":
+            RecurringValue = "Recurring Value: 0"
+        case "Recurring Type: 1":
+            RecurringValue = "Recurring Value: 1 => {\(scheduleRecurringOptionEveryXDays.text)}"
+        case "Recurring Type: 2":
+            var dayList = [String]()
+            if (monButton.isSelected) {
+                dayList.append("0")
+            }
+            if (tueButton.isSelected) {
+                dayList.append("1")
+            }
+            if (wedButton.isSelected) {
+                dayList.append("2")
+            }
+            if (thuButton.isSelected) {
+                dayList.append("3")
+            }
+            if (friButton.isSelected) {
+                dayList.append("4")
+            }
+            if (satButton.isSelected) {
+                dayList.append("5")
+            }
+            if (sunButton.isSelected) {
+                dayList.append("6")
+            }
+            RecurringValue = "Recurring Value: 2 => {\(dayList)}"
+        case "Recurring Type: 3":
+            var dayList = [String]()
+            switch scheduleRecurringOption2b.text! {
+            case "Monday":
+                dayList.append("0")
+            case "Tuesday":
+                dayList.append("1")
+            case "Wednesday":
+                dayList.append("2")
+            case "Thursday":
+                dayList.append("3")
+            case "Friday":
+                dayList.append("4")
+            case "Saturday":
+                dayList.append("5")
+            case "Sunday":
+                dayList.append("6")
+            default:
+                print("none")
+            }
+            RecurringValue = "Recurring Value: 3 => {\(dayList)}"
+        case "Recurring Type: 4":
+            RecurringValue = "Recurring Value: 4 => {\(scheduleRecurringOption2c.text!)}"
+        default:
+            RecurringValue = "Recurring Value: -1"
+        }
+        
+        // Ending-Type
+        switch scheduleEndingField.text! {
+        case "Ending Never":
+            EndingType = "Ending Type: 0"
+        case "Ending After X Times":
+            EndingType = "Ending Type: 1"
+        case "Ending On a Certain Date":
+            EndingType = "Ending Type: 2"
+        default:
+            EndingType = "Ending Type: -1"
+            print("endingtype error")
+        }
+        
+        // Ending-Value
+        switch EndingType {
+        case "Ending Type: -1":
+            EndingValue = "Ending Value: -1 => -1"
+        case "Ending Type: 0":
+            EndingValue = "Ending Value: 0 => -1"
+        case "Ending Type: 1":
+            EndingValue = "Ending Value: 1 => [\(scheduleEndingField2a.text!)]"
+        case "Ending Type: 2":
+            EndingValue = "Ending Value: 2 => [\(scheduleEndingField2b.text!)]"
+        default:
+            print("endingvalue error")
+        }
+        
+//        print(scheduleTitle.text)
+//        print(scheduleDesc.text)
+//        print(segmentedControl.selectedSegmentIndex)
+//        print(scheduleDuration.text)
+        
+        // Schedule-Item-Title
+        ScheduleItemTitle = scheduleTitle.text!
+        
+        // Schedule-Item-Description
+        ScheduleItemDescription = scheduleDesc.text!
+        
+        // Schedule-Item-Type
+        // Schedule-Item-Duration
+        switch segmentedControl.selectedSegmentIndex {
+        case 0:
+            ScheduleItemType = "medication"
+            ScheduleItemDuration = "False"
+        case 1:
+            ScheduleItemType = "exercise"
+            ScheduleItemDuration = scheduleDuration.text!
+        case 2:
+            ScheduleItemType = "eating"
+            ScheduleItemDuration = "False"
+        case 3:
+            ScheduleItemType = "blood_glucose_measurement"
+            ScheduleItemDuration = "False"
+        default:
+            print("Schedule-Item-Type error")
+        }
+        
+        // Schedule-Item-Start
+        ScheduleItemStart = scheduleStartTime.text!
+        
+        print(RecurringType)
+        print(RecurringValue)
+        print(EndingType)
+        print(EndingValue)
+        print("ScheduleItemTitle: " + ScheduleItemTitle)
+        print("ScheduleItemDescription: " + ScheduleItemDescription)
+        print("ScheduleItemType: " + ScheduleItemType)
+        print("ScheduleItemStart: " + ScheduleItemStart)
+        print("ScheduleItemDuration: " + ScheduleItemDuration) // Exercise only
+        
+//        print(monButton.isSelected)
+//        print(tueButton.isSelected)
+//        print(wedButton.isSelected)
+//        print(thuButton.isSelected)
+//        print(friButton.isSelected)
+//        print(satButton.isSelected)
+//        print(sunButton.isSelected)
+//        print(scheduleRecurringOptionEveryXDays.text)
+//        print(scheduleRecurringOption2b.text)
+//        print(scheduleRecurringOption2c.text)
+//        print(scheduleEndingField.text)
+//        print(scheduleEndingField2a.text)
+//        print(scheduleEndingField2b.text)
+//        
+//        button.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+//        UIView.animate(withDuration: 2.0,
+//                       delay: 0,
+//                       usingSpringWithDamping: 0.2,
+//                       initialSpringVelocity: 6.0,
+//                       options: .allowUserInteraction,
+//                       animations: { [weak self] in
+//                        self?.saveButton.transform = .identity
+//            },
+//                       completion: nil)
+        
+        print("SaveButton pressed")
+        
+        // Dismiss VC
+        
+    }
+
+    
+    func checkButtonStatus(){
+        if (monButton.isSelected || tueButton.isSelected || wedButton.isSelected || thuButton.isSelected || friButton.isSelected || satButton.isSelected || sunButton.isSelected) {
+            scheduleEndingField.isHidden = false
+        } else {
+            scheduleEndingField.isHidden = true
+        }
+    }
+    
+    func MonButtonClicked(sender:UIButton) {
+        sender.isSelected = !sender.isSelected;
+        
+        checkButtonStatus()
+        print("Mon Button Clicked")
+    }
+    
+    func TueButtonClicked(sender:UIButton) {
+        sender.isSelected = !sender.isSelected;
+        checkButtonStatus()
+
+        print("Tue Button Clicked")
+    }
+    
+    func WedButtonClicked(sender:UIButton) {
+        sender.isSelected = !sender.isSelected;
+        checkButtonStatus()
+
+        print("Wed Button Clicked")
+    }
+    
+    func ThuButtonClicked(sender:UIButton) {
+        sender.isSelected = !sender.isSelected;
+        checkButtonStatus()
+
+        print("Thu Button Clicked")
+    }
+    
+    func FriButtonClicked(sender:UIButton) {
+        sender.isSelected = !sender.isSelected;
+        checkButtonStatus()
+
+        print("Fri Button Clicked")
+    }
+    
+    func SatButtonClicked(sender:UIButton) {
+        sender.isSelected = !sender.isSelected;
+        checkButtonStatus()
+
+        print("Sat Button Clicked")
+    }
+    
+    func SunButtonClicked(sender:UIButton) {
+        sender.isSelected = !sender.isSelected;
+        checkButtonStatus()
+
+        print("Sun Button Clicked")
+    }
+    
+    func getImageWithColor(color: UIColor, size: CGSize) -> UIImage
+    {
+        let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: size.width, height: size.height))
+        UIGraphicsBeginImageContextWithOptions(size, false, 0)
+        color.setFill()
+        UIRectFill(rect)
+        let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        return image
+    }
+    
+    func datePickerValueChanged(_ sender: UIDatePicker){
+        
+        if (sender == endingPicker2b) {
+        
+        // Create date formatter
+        let dateFormatter: DateFormatter = DateFormatter()
+        // Set date format
+        dateFormatter.dateFormat = "MM/dd/yyyy hh:mm a"
+        // Apply date format
+        let selectedDate: String = dateFormatter.string(from: sender.date)
+        print("Selected value \(selectedDate)")
+        scheduleEndingField2b.text = selectedDate
+        }
+        
+        if (sender == startTimePicker) {
+            
+            // Create date formatter
+            let dateFormatter: DateFormatter = DateFormatter()
+            // Set date format
+            dateFormatter.dateFormat = "hh:mm a"
+            // Apply date format
+            let selectedDate: String = dateFormatter.string(from: sender.date)
+            print("Selected value \(selectedDate)")
+            scheduleStartTime.text = selectedDate
+            
+        }
+    }
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        
+        if (exercisePicker == pickerView) {
+            return exerciseValues.count
+        }
+        
+        if (frequencyPicker1 == pickerView) {
+            return frequencyValues1.count
+        }
+        
+        if (frequencyPickerOptionEveryXDays == pickerView) {
+            return frequencyValuesOptionEveryXDays.count
+        }
+        
+        if (frequencyPickerOption2b == pickerView) {
+            return frequencyValuesOption2b.count
+        }
+        
+        if (frequencyPickerOption2c == pickerView) {
+            return frequencyValuesOption2c.count
+        }
+        
+        if (endingPicker1 == pickerView) {
+            return endingValues1.count
+        }
+        
+        if (endingPicker2a == pickerView) {
+            return endingValues2a.count
+        }
+        
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        
+        if (exercisePicker == pickerView) {
+            return exerciseValues[row]
+        }
+        
+        if (frequencyPicker1 == pickerView) {
+            return frequencyValues1[row]
+        }
+        
+        if (frequencyPickerOptionEveryXDays == pickerView) {
+            return frequencyValuesOptionEveryXDays[row]
+        }
+        
+        if (frequencyPickerOption2b == pickerView) {
+            return frequencyValuesOption2b[row]
+        }
+        
+        if (frequencyPickerOption2c == pickerView) {
+            return frequencyValuesOption2c[row]
+        }
+        
+        if (endingPicker1 == pickerView) {
+            return endingValues1[row]
+        }
+        
+        if (endingPicker2a == pickerView) {
+            return endingValues2a[row]
+        }
+        return ""
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        
+        if (exercisePicker == pickerView) {
+            scheduleDuration.text = exerciseValues[row]
+            if (row == 0) {
+                pickerView.selectRow(row + 1, inComponent:component, animated:true)
+                scheduleDuration.text = exerciseValues[1]
+            }
+        
+        }
+        
+        
+        if (frequencyPicker1 == pickerView) {
+            scheduleRecurringType.text = frequencyValues1[row]
+            if (row == 0) {
+                pickerView.selectRow(row + 1, inComponent:component, animated:true)
+                scheduleRecurringType.text = frequencyValues1[1]
+            }
+            
+            if (row == 1 || row == 2) {
+                if (row == 2) {
+                    scheduleEndingField.isHidden = false
+                } else {
+                    scheduleEndingField.isHidden = true
+                }
+                scheduleEndingField2a.isHidden = true
+                scheduleEndingField2b.isHidden = true
+            }
+            
+            // Selected "Select Frequency: Every X Days"
+            if (row == 3) {
+                scheduleRecurringOptionEveryXDays.isHidden = false
+            } else {
+                scheduleRecurringOptionEveryXDays.isHidden = true
+            }
+            
+            // Selected "Select Frequency: Certain Days of Week"
+            if (row == 4) {
+                monButton.isHidden = false
+                tueButton.isHidden = false
+                wedButton.isHidden = false
+                thuButton.isHidden = false
+                friButton.isHidden = false
+                satButton.isHidden = false
+                sunButton.isHidden = false
+            } else {
+                monButton.isHidden = true
+                tueButton.isHidden = true
+                wedButton.isHidden = true
+                thuButton.isHidden = true
+                friButton.isHidden = true
+                satButton.isHidden = true
+                sunButton.isHidden = true
+            }
+            
+            // Selected "Select Frequency: Weekly"
+            if (row == 5) {
+                scheduleRecurringOption2b.isHidden = false
+            } else {
+                scheduleRecurringOption2b.isHidden = true
+            }
+            
+            // Selected "Select Frequency: Monthly"
+            if (row == 6) {
+                scheduleRecurringOption2c.isHidden = false
+            } else {
+                scheduleRecurringOption2c.isHidden = true
+            }
+        }
+        
+        if (frequencyPickerOptionEveryXDays == pickerView) {
+            scheduleRecurringOptionEveryXDays.text = frequencyValuesOptionEveryXDays[row]
+            if (row == 0) {
+                pickerView.selectRow(row + 1, inComponent:component, animated:true)
+                scheduleRecurringOptionEveryXDays.text = frequencyValuesOptionEveryXDays[1]
+            }
+            
+            scheduleEndingField.isHidden = false
+        }
+        
+        if (frequencyPickerOption2b == pickerView) {
+            scheduleRecurringOption2b.text = frequencyValuesOption2b[row]
+            if (row == 0) {
+                pickerView.selectRow(row + 1, inComponent:component, animated:true)
+                scheduleRecurringOption2b.text = frequencyValuesOption2b[1]
+            }
+            
+            scheduleEndingField.isHidden = false
+        }
+        
+        if (frequencyPickerOption2c == pickerView) {
+            scheduleRecurringOption2c.text = frequencyValuesOption2c[row]
+            if (row == 0) {
+                pickerView.selectRow(row + 1, inComponent:component, animated:true)
+                scheduleRecurringOption2c.text = frequencyValuesOption2c[1]
+            }
+            
+            scheduleEndingField.isHidden = false
+        }
+        
+        if (endingPicker1 == pickerView) {
+            scheduleEndingField.text = endingValues1[row]
+            if (row == 0) {
+                pickerView.selectRow(row + 1, inComponent:component, animated:true)
+                scheduleEndingField.text = endingValues1[1]
+            }
+            
+            // Selected "Repeats Should End: After X Times"
+            if (row == 2) {
+                scheduleEndingField2a.isHidden = false
+            } else {
+                scheduleEndingField2a.isHidden = true
+            }
+            
+            // Selected "Repeats Should End: On a Certain Date"
+            if (row == 3) {
+                scheduleEndingField2b.isHidden = false
+            } else {
+                scheduleEndingField2b.isHidden = true
+            }
+
+        
+        }
+        
+        if (endingPicker2a == pickerView) {
+            scheduleEndingField2a.text = endingValues2a[row]
+            if (row == 0) {
+                pickerView.selectRow(row + 1, inComponent:component, animated:true)
+                scheduleEndingField2a.text = endingValues2a[1]
+            }
+        }
+        
+    }
+    
+    // MARK: Button Action
+    func actTypeTapped(_ sender:UISegmentedControl) {
+        
+        print("SC pressed")
+        if (sender.selectedSegmentIndex == 1) {
+            scheduleDuration.isHidden = false
+        } else {
+            scheduleDuration.isHidden = true
+        }
+        print(sender.selectedSegmentIndex)
+        
+    }
+
+}
+
+extension UIViewController {
+    func hideKeyboardWhenTappedAround() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
+        view.addGestureRecognizer(tap)
+    }
+    
+    func dismissKeyboard() {
+        view.endEditing(true)
+    }
+}
