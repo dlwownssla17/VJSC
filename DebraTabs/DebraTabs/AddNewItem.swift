@@ -8,7 +8,28 @@
 
 import UIKit
 
-class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UIScrollViewDelegate {
+    
+    var scrollView: UIScrollView!
+    var containerView = UIView()
+    
+    // Pass on
+    var RecurringType: String = String()
+    var RecurringValue: String = String()
+    var EndingType: String = String()
+    var EndingValue: String = String()
+    var ScheduleItemTitle: String = String()
+    var ScheduleItemDescription: String = String()
+    var ScheduleItemType: String = String()
+    var ScheduleItemStart: String = String()
+    var ScheduleItemDuration: String = String() // Exercise only
+    
+    public var blueColor: UIColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
+    
+    var scheduleTitle: UITextField = UITextField()
+    var scheduleDesc: UITextField = UITextField()
+    var segmentedControl: UISegmentedControl = UISegmentedControl()
+    
     
     // Exercise Picker
     var exercisePicker: UIPickerView! = UIPickerView()
@@ -54,38 +75,51 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
     var endingPicker2b: UIDatePicker! = UIDatePicker()
     var scheduleEndingField2b: UITextField = UITextField()
     
+    // Start Time Picker
+    var startTimePicker: UIDatePicker! = UIDatePicker()
+    var scheduleStartTime: UITextField = UITextField()
+    
+    // Save Button
+    var saveButton: UIButton = UIButton()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.hideKeyboardWhenTappedAround()
         view.backgroundColor = .white
-
         let barHeight: CGFloat = UIApplication.shared.statusBarFrame.size.height
         let displayWidth: CGFloat = self.view.frame.width
         let displayHeight: CGFloat = self.view.frame.height
         
-        let scheduleTitle = UITextField(frame: CGRect(x: 0, y: barHeight, width: displayWidth, height: 50))
+        self.scrollView = UIScrollView()
+        self.scrollView.delegate = self
+        self.scrollView.contentSize = CGSize(width: displayWidth, height: displayHeight)
+        containerView = UIView()
+        self.scrollView.addSubview(containerView)
+        self.view.addSubview(scrollView)
+        
+        scheduleTitle = UITextField(frame: CGRect(x: 0, y: barHeight, width: displayWidth, height: 50))
         scheduleTitle.textAlignment = NSTextAlignment.center
-        scheduleTitle.textColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
+        scheduleTitle.textColor = blueColor
         scheduleTitle.placeholder = "Activity Title"
         scheduleTitle.borderStyle = UITextBorderStyle.line
         scheduleTitle.layer.borderWidth = 1
-        scheduleTitle.layer.borderColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)).cgColor
+        scheduleTitle.layer.borderColor = blueColor.cgColor
         scheduleTitle.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
         self.view.addSubview(scheduleTitle)
         
         
-        let scheduleDesc = UITextField(frame: CGRect(x: 0, y: barHeight + 50, width: displayWidth, height: 50))
+        scheduleDesc = UITextField(frame: CGRect(x: 0, y: barHeight + 50, width: displayWidth, height: 50))
         scheduleDesc.textAlignment = NSTextAlignment.center
-        scheduleDesc.textColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
+        scheduleDesc.textColor = blueColor
         scheduleDesc.placeholder = "Activity Description"
         scheduleDesc.borderStyle = UITextBorderStyle.line
         scheduleDesc.layer.borderWidth = 1
-        scheduleDesc.layer.borderColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)).cgColor
+        scheduleDesc.layer.borderColor = blueColor.cgColor
         scheduleDesc.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
         self.view.addSubview(scheduleDesc)
         
         let items = ["Meds", "Exercise", "Food", "Blood Glucose"]
-        let segmentedControl = UISegmentedControl(items: items)
+        segmentedControl = UISegmentedControl(items: items)
         segmentedControl.frame = CGRect(x: 0, y: barHeight + 100, width: displayWidth, height: 50)
         segmentedControl.addTarget(self, action: #selector(actTypeTapped(_:)), for: .valueChanged)
         segmentedControl.selectedSegmentIndex = 1
@@ -97,11 +131,11 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         
         scheduleDuration = UITextField(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 50))
         scheduleDuration.textAlignment = NSTextAlignment.center
-        scheduleDuration.textColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
+        scheduleDuration.textColor = blueColor
         scheduleDuration.placeholder = "Exercise Duration"
         scheduleDuration.borderStyle = UITextBorderStyle.line
         scheduleDuration.layer.borderWidth = 1
-        scheduleDuration.layer.borderColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)).cgColor
+        scheduleDuration.layer.borderColor = blueColor.cgColor
         scheduleDuration.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
         self.scheduleDuration.inputView = self.exercisePicker
         self.view.addSubview(scheduleDuration)
@@ -115,11 +149,11 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         
         scheduleRecurringType = UITextField(frame: CGRect(x: 0, y: barHeight + 200, width: displayWidth, height: 50))
         scheduleRecurringType.textAlignment = NSTextAlignment.center
-        scheduleRecurringType.textColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
+        scheduleRecurringType.textColor = blueColor
         scheduleRecurringType.placeholder = "Activity Frequency"
         scheduleRecurringType.borderStyle = UITextBorderStyle.line
         scheduleRecurringType.layer.borderWidth = 1
-        scheduleRecurringType.layer.borderColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)).cgColor
+        scheduleRecurringType.layer.borderColor = blueColor.cgColor
         scheduleRecurringType.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
         self.scheduleRecurringType.inputView = self.frequencyPicker1
         self.view.addSubview(scheduleRecurringType)
@@ -132,11 +166,11 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         
         scheduleRecurringOptionEveryXDays = UITextField(frame: CGRect(x: 0, y: barHeight + 250, width: displayWidth, height: 50))
         scheduleRecurringOptionEveryXDays.textAlignment = NSTextAlignment.center
-        scheduleRecurringOptionEveryXDays.textColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
+        scheduleRecurringOptionEveryXDays.textColor = blueColor
         scheduleRecurringOptionEveryXDays.placeholder = "Activity Frequency Details"
         scheduleRecurringOptionEveryXDays.borderStyle = UITextBorderStyle.line
         scheduleRecurringOptionEveryXDays.layer.borderWidth = 1
-        scheduleRecurringOptionEveryXDays.layer.borderColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)).cgColor
+        scheduleRecurringOptionEveryXDays.layer.borderColor = blueColor.cgColor
         scheduleRecurringOptionEveryXDays.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
         self.scheduleRecurringOptionEveryXDays.inputView = self.frequencyPickerOptionEveryXDays
         scheduleRecurringOptionEveryXDays.isHidden = true
@@ -144,93 +178,99 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         
         monButton = UIButton(frame: CGRect(x: 0, y: barHeight + 250, width: displayWidth/7, height: 50))
         monButton.backgroundColor = .clear
-        monButton.setBackgroundImage(getImageWithColor(color: UIColor.blue, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
-        monButton.layer.borderColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)).cgColor
+        monButton.setBackgroundImage(getImageWithColor(color: blueColor, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
+        monButton.layer.borderColor = blueColor.cgColor
         monButton.layer.borderWidth = 1
         monButton.setTitle("Mon", for: .normal)
-        monButton.setTitleColor(UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)), for: .normal)
+        monButton.setTitleColor(blueColor, for: .normal)
+        monButton.setTitleColor(.white, for: .selected)
         monButton.addTarget(self, action:#selector(self.MonButtonClicked), for: .touchUpInside)
         monButton.isHidden = true
         self.view.addSubview(monButton)
         
         tueButton = UIButton(frame: CGRect(x: displayWidth/7, y: barHeight + 250, width: displayWidth/7, height: 50))
         tueButton.backgroundColor = .clear
-        tueButton.setBackgroundImage(getImageWithColor(color: UIColor.blue, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
-        tueButton.layer.borderColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)).cgColor
+        tueButton.setBackgroundImage(getImageWithColor(color: blueColor, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
+        tueButton.layer.borderColor = blueColor.cgColor
         tueButton.layer.borderWidth = 1
         tueButton.setTitle("Tue", for: .normal)
-        tueButton.setTitleColor(UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)), for: .normal)
+        tueButton.setTitleColor(blueColor, for: .normal)
+        tueButton.setTitleColor(.white, for: .selected)
         tueButton.addTarget(self, action:#selector(self.TueButtonClicked), for: .touchUpInside)
         tueButton.isHidden = true
         self.view.addSubview(tueButton)
         
         wedButton = UIButton(frame: CGRect(x: (displayWidth/7)*2, y: barHeight + 250, width: displayWidth/7, height: 50))
         wedButton.backgroundColor = .clear
-        wedButton.setBackgroundImage(getImageWithColor(color: UIColor.blue, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
-        wedButton.layer.borderColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)).cgColor
+        wedButton.setBackgroundImage(getImageWithColor(color: blueColor, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
+        wedButton.layer.borderColor = blueColor.cgColor
         wedButton.layer.borderWidth = 1
         wedButton.setTitle("Wed", for: .normal)
-        wedButton.setTitleColor(UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)), for: .normal)
+        wedButton.setTitleColor(blueColor, for: .normal)
+        wedButton.setTitleColor(.white, for: .selected)
         wedButton.addTarget(self, action:#selector(self.WedButtonClicked), for: .touchUpInside)
         wedButton.isHidden = true
         self.view.addSubview(wedButton)
         
         thuButton = UIButton(frame: CGRect(x: (displayWidth/7)*3, y: barHeight + 250, width: displayWidth/7, height: 50))
         thuButton.backgroundColor = .clear
-        thuButton.setBackgroundImage(getImageWithColor(color: UIColor.blue, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
-        tueButton.layer.borderColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)).cgColor
+        thuButton.setBackgroundImage(getImageWithColor(color: blueColor, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
+        tueButton.layer.borderColor = blueColor.cgColor
         thuButton.layer.borderWidth = 1
         thuButton.setTitle("Thu", for: .normal)
-        thuButton.setTitleColor(UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)), for: .normal)
+        thuButton.setTitleColor(blueColor, for: .normal)
+        thuButton.setTitleColor(.white, for: .selected)
         thuButton.addTarget(self, action:#selector(self.ThuButtonClicked), for: .touchUpInside)
         thuButton.isHidden = true
         self.view.addSubview(thuButton)
         
         friButton = UIButton(frame: CGRect(x: (displayWidth/7)*4, y: barHeight + 250, width: displayWidth/7, height: 50))
         friButton.backgroundColor = .clear
-        friButton.setBackgroundImage(getImageWithColor(color: UIColor.blue, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
-        friButton.layer.borderColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)).cgColor
+        friButton.setBackgroundImage(getImageWithColor(color: blueColor, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
+        friButton.layer.borderColor = blueColor.cgColor
         friButton.layer.borderWidth = 1
         friButton.setTitle("Fri", for: .normal)
-        friButton.setTitleColor(UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)), for: .normal)
+        friButton.setTitleColor(blueColor, for: .normal)
+        friButton.setTitleColor(.white, for: .selected)
         friButton.addTarget(self, action:#selector(self.FriButtonClicked), for: .touchUpInside)
         friButton.isHidden = true
         self.view.addSubview(friButton)
         
         satButton = UIButton(frame: CGRect(x: (displayWidth/7)*5, y: barHeight + 250, width: displayWidth/7, height: 50))
         satButton.backgroundColor = .clear
-        satButton.setBackgroundImage(getImageWithColor(color: UIColor.blue, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
-        satButton.layer.borderColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)).cgColor
+        satButton.setBackgroundImage(getImageWithColor(color: blueColor, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
+        satButton.layer.borderColor = blueColor.cgColor
         satButton.layer.borderWidth = 1
         satButton.setTitle("Sat", for: .normal)
-        satButton.setTitleColor(UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)), for: .normal)
+        satButton.setTitleColor(blueColor, for: .normal)
+        satButton.setTitleColor(.white, for: .selected)
         satButton.addTarget(self, action:#selector(self.SatButtonClicked), for: .touchUpInside)
         satButton.isHidden = true
         self.view.addSubview(satButton)
         
         sunButton = UIButton(frame: CGRect(x: (displayWidth/7)*6, y: barHeight + 250, width: displayWidth/7, height: 50))
         sunButton.backgroundColor = .clear
-        sunButton.setBackgroundImage(getImageWithColor(color: UIColor.blue, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
-        sunButton.layer.borderColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)).cgColor
+        sunButton.setBackgroundImage(getImageWithColor(color: blueColor, size: CGSize(width: displayWidth/7, height: 50)), for: .selected)
+        sunButton.layer.borderColor = blueColor.cgColor
         sunButton.layer.borderWidth = 1
         sunButton.setTitle("Sun", for: .normal)
-        sunButton.setTitleColor(UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)), for: .normal)
+        sunButton.setTitleColor(blueColor, for: .normal)
+        sunButton.setTitleColor(.white, for: .selected)
         sunButton.addTarget(self, action:#selector(self.SunButtonClicked), for: .touchUpInside)
         sunButton.isHidden = true
         self.view.addSubview(sunButton)
         
-    
         frequencyPickerOption2b = UIPickerView()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
         frequencyPickerOption2b.delegate = self
         frequencyPickerOption2b.dataSource = self
         
         scheduleRecurringOption2b = UITextField(frame: CGRect(x: 0, y: barHeight + 250, width: displayWidth, height: 50))
         scheduleRecurringOption2b.textAlignment = NSTextAlignment.center
-        scheduleRecurringOption2b.textColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
+        scheduleRecurringOption2b.textColor = blueColor
         scheduleRecurringOption2b.placeholder = "Activity Frequency Details"
         scheduleRecurringOption2b.borderStyle = UITextBorderStyle.line
         scheduleRecurringOption2b.layer.borderWidth = 1
-        scheduleRecurringOption2b.layer.borderColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)).cgColor
+        scheduleRecurringOption2b.layer.borderColor = blueColor.cgColor
         scheduleRecurringOption2b.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
         self.scheduleRecurringOption2b.inputView = self.frequencyPickerOption2b
         scheduleRecurringOption2b.isHidden = true
@@ -242,11 +282,11 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         
         scheduleRecurringOption2c = UITextField(frame: CGRect(x: 0, y: barHeight + 250, width: displayWidth, height: 50))
         scheduleRecurringOption2c.textAlignment = NSTextAlignment.center
-        scheduleRecurringOption2c.textColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
+        scheduleRecurringOption2c.textColor = blueColor
         scheduleRecurringOption2c.placeholder = "Activity Frequency Details"
         scheduleRecurringOption2c.borderStyle = UITextBorderStyle.line
         scheduleRecurringOption2c.layer.borderWidth = 1
-        scheduleRecurringOption2c.layer.borderColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)).cgColor
+        scheduleRecurringOption2c.layer.borderColor = blueColor.cgColor
         scheduleRecurringOption2c.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
         self.scheduleRecurringOption2c.inputView = self.frequencyPickerOption2c
         scheduleRecurringOption2c.isHidden = true
@@ -261,11 +301,11 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         
         scheduleEndingField = UITextField(frame: CGRect(x: 0, y: barHeight + 300, width: displayWidth, height: 50))
         scheduleEndingField.textAlignment = NSTextAlignment.center
-        scheduleEndingField.textColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
+        scheduleEndingField.textColor = blueColor
         scheduleEndingField.placeholder = "Activity Ending Details"
         scheduleEndingField.borderStyle = UITextBorderStyle.line
         scheduleEndingField.layer.borderWidth = 1
-        scheduleEndingField.layer.borderColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)).cgColor
+        scheduleEndingField.layer.borderColor = blueColor.cgColor
         scheduleEndingField.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
         self.scheduleEndingField.inputView = self.endingPicker1
         scheduleEndingField.isHidden = true
@@ -278,11 +318,11 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         
         scheduleEndingField2a = UITextField(frame: CGRect(x: 0, y: barHeight + 350, width: displayWidth, height: 50))
         scheduleEndingField2a.textAlignment = NSTextAlignment.center
-        scheduleEndingField2a.textColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
+        scheduleEndingField2a.textColor = blueColor
         scheduleEndingField2a.placeholder = "Ending After How Many Times?"
         scheduleEndingField2a.borderStyle = UITextBorderStyle.line
         scheduleEndingField2a.layer.borderWidth = 1
-        scheduleEndingField2a.layer.borderColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)).cgColor
+        scheduleEndingField2a.layer.borderColor = blueColor.cgColor
         scheduleEndingField2a.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
         self.scheduleEndingField2a.inputView = self.endingPicker2a
         scheduleEndingField2a.isHidden = true
@@ -297,17 +337,270 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         
         scheduleEndingField2b = UITextField(frame: CGRect(x: 0, y: barHeight + 350, width: displayWidth, height: 50))
         scheduleEndingField2b.textAlignment = NSTextAlignment.center
-        scheduleEndingField2b.textColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
+        scheduleEndingField2b.textColor = blueColor
         scheduleEndingField2b.placeholder = "Ending On What Date?"
         scheduleEndingField2b.borderStyle = UITextBorderStyle.line
         scheduleEndingField2b.layer.borderWidth = 1
-        scheduleEndingField2b.layer.borderColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0)).cgColor
+        scheduleEndingField2b.layer.borderColor = blueColor.cgColor
         scheduleEndingField2b.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
         self.scheduleEndingField2b.inputView = self.endingPicker2b
         scheduleEndingField2b.isHidden = true
         self.view.addSubview(scheduleEndingField2b)
         
+        // Start Time Picker
+        startTimePicker = UIDatePicker()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
+        startTimePicker.timeZone = NSTimeZone.local
+        startTimePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
+        startTimePicker.datePickerMode = UIDatePickerMode.time
+        //        endingPicker2b.delegate = self
+        //        endingPicker2b.dataSource = self
+        
+        scheduleStartTime = UITextField(frame: CGRect(x: 0, y: barHeight + 400, width: displayWidth, height: 50))
+        scheduleStartTime.textAlignment = NSTextAlignment.center
+        scheduleStartTime.textColor = blueColor
+        scheduleStartTime.placeholder = "Ending On What Date?"
+        scheduleStartTime.borderStyle = UITextBorderStyle.line
+        scheduleStartTime.layer.borderWidth = 1
+        scheduleStartTime.layer.borderColor = blueColor.cgColor
+        scheduleStartTime.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        self.scheduleStartTime.inputView = self.startTimePicker
+        scheduleStartTime.isHidden = false
+        self.view.addSubview(scheduleStartTime)
+        
+        let toolBar = UIToolbar()
+        toolBar.barStyle = UIBarStyle.default
+        toolBar.isTranslucent = true
+        toolBar.tintColor = blueColor //UIColor(red: 76/255, green: 217/255, blue: 100/255, alpha: 1)
+        toolBar.sizeToFit()
+        let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneButtonTapped(_:)))
+        toolBar.setItems([doneButton], animated: false)
+        toolBar.isUserInteractionEnabled = true
+        scheduleStartTime.inputAccessoryView = toolBar
+        scheduleDuration.inputAccessoryView = toolBar
+        scheduleRecurringType.inputAccessoryView = toolBar
+        scheduleRecurringOptionEveryXDays.inputAccessoryView = toolBar
+        scheduleRecurringOption2b.inputAccessoryView = toolBar
+        scheduleRecurringOption2c.inputAccessoryView = toolBar
+        scheduleEndingField.inputAccessoryView = toolBar
+        scheduleEndingField2a.inputAccessoryView = toolBar
+        scheduleEndingField2b.inputAccessoryView = toolBar
+        
+        
+        // Save Button
+        saveButton = UIButton(frame: CGRect(x: displayWidth/2, y: barHeight + 500, width: 100, height: 44))
+        saveButton.setTitle("Save", for: UIControlState.normal)
+        saveButton.setTitleColor(blueColor, for: UIControlState.normal)
+        saveButton.backgroundColor = UIColor.clear
+        saveButton.layer.borderWidth = 1.0
+        let borderAlpha : CGFloat = 0.7
+        let cornerRadius : CGFloat = 5.0
+        saveButton.layer.borderColor = blueColor.cgColor
+        saveButton.layer.cornerRadius = cornerRadius
+        saveButton.addTarget(self, action: #selector(saveButtonTapped(_:)), for: .touchDown)
+        self.view.addSubview(saveButton)
+        
     }
+    
+    
+    func doneButtonTapped(_ sender:UIBarButtonItem) {
+        scheduleDuration.resignFirstResponder()
+        scheduleRecurringType.resignFirstResponder()
+        scheduleRecurringOptionEveryXDays.resignFirstResponder()
+        scheduleRecurringOption2b.resignFirstResponder()
+        scheduleRecurringOption2c.resignFirstResponder()
+        scheduleEndingField.resignFirstResponder()
+        scheduleEndingField2a.resignFirstResponder()
+        scheduleEndingField2b.resignFirstResponder()
+        scheduleStartTime.resignFirstResponder()
+        
+    }
+    // MARK: Button Action
+    func saveButtonTapped(_ button: UIButton) {
+//        print(scheduleRecurringType.text)
+        
+
+        
+        
+        // Recurring-Type
+        //        "None","Daily","Every X Days","Certain Days of Week", "Weekly", "Monthly"
+        var scheduleRecurringTypeText = scheduleRecurringType.text!
+        switch scheduleRecurringTypeText {
+        case "None":
+            RecurringType = "Recurring Type: -1"
+        case "Daily":
+            RecurringType = "Recurring Type: 0"
+        case "Every X Days":
+            RecurringType = "Recurring Type: 1"
+        case "Certain Days of Week":
+            RecurringType = "Recurring Type: 2"
+        case "Weekly":
+            RecurringType = "Recurring Type: 3"
+        case "Monthly":
+            RecurringType = "Recurring Type: 4"
+        default:
+            RecurringType = "Recurring Type: -1"
+        }
+        
+        // Recurring-Value
+        switch RecurringType {
+        case "Recurring Type: -1":
+            RecurringValue = "Recurring Value: -1"
+        case "Recurring Type: 0":
+            RecurringValue = "Recurring Value: 0"
+        case "Recurring Type: 1":
+            RecurringValue = "Recurring Value: 1 => {\(scheduleRecurringOptionEveryXDays.text)}"
+        case "Recurring Type: 2":
+            var dayList = [String]()
+            if (monButton.isSelected) {
+                dayList.append("0")
+            }
+            if (tueButton.isSelected) {
+                dayList.append("1")
+            }
+            if (wedButton.isSelected) {
+                dayList.append("2")
+            }
+            if (thuButton.isSelected) {
+                dayList.append("3")
+            }
+            if (friButton.isSelected) {
+                dayList.append("4")
+            }
+            if (satButton.isSelected) {
+                dayList.append("5")
+            }
+            if (sunButton.isSelected) {
+                dayList.append("6")
+            }
+            RecurringValue = "Recurring Value: 2 => {\(dayList)}"
+        case "Recurring Type: 3":
+            var dayList = [String]()
+            switch scheduleRecurringOption2b.text! {
+            case "Monday":
+                dayList.append("0")
+            case "Tuesday":
+                dayList.append("1")
+            case "Wednesday":
+                dayList.append("2")
+            case "Thursday":
+                dayList.append("3")
+            case "Friday":
+                dayList.append("4")
+            case "Saturday":
+                dayList.append("5")
+            case "Sunday":
+                dayList.append("6")
+            default:
+                print("none")
+            }
+            RecurringValue = "Recurring Value: 3 => {\(dayList)}"
+        case "Recurring Type: 4":
+            RecurringValue = "Recurring Value: 4 => {\(scheduleRecurringOption2c.text!)}"
+        default:
+            RecurringValue = "Recurring Value: -1"
+        }
+        
+        // Ending-Type
+        switch scheduleEndingField.text! {
+        case "Ending Never":
+            EndingType = "Ending Type: 0"
+        case "Ending After X Times":
+            EndingType = "Ending Type: 1"
+        case "Ending On a Certain Date":
+            EndingType = "Ending Type: 2"
+        default:
+            EndingType = "Ending Type: -1"
+            print("endingtype error")
+        }
+        
+        // Ending-Value
+        switch EndingType {
+        case "Ending Type: -1":
+            EndingValue = "Ending Value: -1 => -1"
+        case "Ending Type: 0":
+            EndingValue = "Ending Value: 0 => -1"
+        case "Ending Type: 1":
+            EndingValue = "Ending Value: 1 => [\(scheduleEndingField2a.text!)]"
+        case "Ending Type: 2":
+            EndingValue = "Ending Value: 2 => [\(scheduleEndingField2b.text!)]"
+        default:
+            print("endingvalue error")
+        }
+        
+//        print(scheduleTitle.text)
+//        print(scheduleDesc.text)
+//        print(segmentedControl.selectedSegmentIndex)
+//        print(scheduleDuration.text)
+        
+        // Schedule-Item-Title
+        ScheduleItemTitle = scheduleTitle.text!
+        
+        // Schedule-Item-Description
+        ScheduleItemDescription = scheduleDesc.text!
+        
+        // Schedule-Item-Type
+        // Schedule-Item-Duration
+        switch segmentedControl.selectedSegmentIndex {
+        case 0:
+            ScheduleItemType = "medication"
+            ScheduleItemDuration = "False"
+        case 1:
+            ScheduleItemType = "exercise"
+            ScheduleItemDuration = scheduleDuration.text!
+        case 2:
+            ScheduleItemType = "eating"
+            ScheduleItemDuration = "False"
+        case 3:
+            ScheduleItemType = "blood_glucose_measurement"
+            ScheduleItemDuration = "False"
+        default:
+            print("Schedule-Item-Type error")
+        }
+        
+        // Schedule-Item-Start
+        ScheduleItemStart = scheduleStartTime.text!
+        
+        print(RecurringType)
+        print(RecurringValue)
+        print(EndingType)
+        print(EndingValue)
+        print("ScheduleItemTitle: " + ScheduleItemTitle)
+        print("ScheduleItemDescription: " + ScheduleItemDescription)
+        print("ScheduleItemType: " + ScheduleItemType)
+        print("ScheduleItemStart: " + ScheduleItemStart)
+        print("ScheduleItemDuration: " + ScheduleItemDuration) // Exercise only
+        
+//        print(monButton.isSelected)
+//        print(tueButton.isSelected)
+//        print(wedButton.isSelected)
+//        print(thuButton.isSelected)
+//        print(friButton.isSelected)
+//        print(satButton.isSelected)
+//        print(sunButton.isSelected)
+//        print(scheduleRecurringOptionEveryXDays.text)
+//        print(scheduleRecurringOption2b.text)
+//        print(scheduleRecurringOption2c.text)
+//        print(scheduleEndingField.text)
+//        print(scheduleEndingField2a.text)
+//        print(scheduleEndingField2b.text)
+//        
+//        button.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+//        UIView.animate(withDuration: 2.0,
+//                       delay: 0,
+//                       usingSpringWithDamping: 0.2,
+//                       initialSpringVelocity: 6.0,
+//                       options: .allowUserInteraction,
+//                       animations: { [weak self] in
+//                        self?.saveButton.transform = .identity
+//            },
+//                       completion: nil)
+        
+        print("SaveButton pressed")
+        
+        // Dismiss VC
+        
+    }
+
     
     func checkButtonStatus(){
         if (monButton.isSelected || tueButton.isSelected || wedButton.isSelected || thuButton.isSelected || friButton.isSelected || satButton.isSelected || sunButton.isSelected) {
@@ -379,6 +672,8 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
     
     func datePickerValueChanged(_ sender: UIDatePicker){
         
+        if (sender == endingPicker2b) {
+        
         // Create date formatter
         let dateFormatter: DateFormatter = DateFormatter()
         // Set date format
@@ -387,6 +682,20 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         let selectedDate: String = dateFormatter.string(from: sender.date)
         print("Selected value \(selectedDate)")
         scheduleEndingField2b.text = selectedDate
+        }
+        
+        if (sender == startTimePicker) {
+            
+            // Create date formatter
+            let dateFormatter: DateFormatter = DateFormatter()
+            // Set date format
+            dateFormatter.dateFormat = "hh:mm a"
+            // Apply date format
+            let selectedDate: String = dateFormatter.string(from: sender.date)
+            print("Selected value \(selectedDate)")
+            scheduleStartTime.text = selectedDate
+            
+        }
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -478,7 +787,11 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
             }
             
             if (row == 1 || row == 2) {
-                scheduleEndingField.isHidden = true
+                if (row == 2) {
+                    scheduleEndingField.isHidden = false
+                } else {
+                    scheduleEndingField.isHidden = true
+                }
                 scheduleEndingField2a.isHidden = true
                 scheduleEndingField2b.isHidden = true
             }
