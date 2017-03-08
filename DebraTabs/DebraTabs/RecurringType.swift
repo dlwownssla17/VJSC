@@ -16,36 +16,20 @@ enum RecurringType {
     case Weekly
     case Monthly
     
-    func getJSONCode(type:RecurringType)->Int {
-        switch type {
-        case .Daily:
-            return JSONProtocolNames.daily
-        case .EveryXDays:
-            return JSONProtocolNames.everyXDays
-        case .CertainDaysOfWeek:
-            return JSONProtocolNames.certainDaysOfWeek
-        case .Weekly:
-            return JSONProtocolNames.weekly
-        case .Monthly:
-            return JSONProtocolNames.monthly
-        default:
+    static func getJsonCode(type:RecurringType)->Int {
+        if JSONProtocolNames.recurringTypeMap[type] != nil {
+            return JSONProtocolNames.recurringTypeMap[type]!
+        } else {
             return JSONProtocolNames.notRecurring
         }
     }
     
-    func getScheduleItemType(code:Int)->RecurringType {
-        if code == JSONProtocolNames.daily {
-            return .Daily
-        } else if code == JSONProtocolNames.everyXDays {
-            return .EveryXDays
-        } else if code == JSONProtocolNames.certainDaysOfWeek {
-            return .CertainDaysOfWeek
-        } else if code == JSONProtocolNames.weekly {
-            return .Weekly
-        } else if code == JSONProtocolNames.monthly {
-            return .Monthly
-        } else {
-            return .NotRecurring
+    static func getRecurringItemType(code:Int)->RecurringType {
+        for (type, jsonCode) in JSONProtocolNames.recurringTypeMap {
+            if code == jsonCode {
+                return type
+            }
         }
+        return .NotRecurring
     }
 }
