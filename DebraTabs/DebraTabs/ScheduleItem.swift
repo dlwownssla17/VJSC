@@ -16,7 +16,7 @@ class ScheduleItem {
     var recurringType:RecurringType = .NotRecurring
     var recurringValue:Array<Int> = []
     var endingType:EndingType = .Never
-    var endingValue:Int = -1
+    var endingValue:String = ""
     var scheduleItemTitle:String = ""
     var scheduleItemDescription:String = ""
     var scheduleItemType:ScheduleItemType = .None
@@ -50,7 +50,7 @@ class ScheduleItem {
         recurringValue = recurringValueArray
         let endingTypeCode = json[JSONProtocolNames.endingTypeHeaderName].intValue
         endingType = EndingType.getEndingItemType(code: endingTypeCode)
-        endingValue = json[JSONProtocolNames.endingValueHeaderName].intValue
+        endingValue = json[JSONProtocolNames.endingValueHeaderName].stringValue
         scheduleItemTitle = json[JSONProtocolNames.scheduleItemTitleHeaderName].stringValue
         scheduleItemDescription = json[JSONProtocolNames.scheduleItemDescriptionHeaderName].stringValue
         let scheduleItemTypeCode = json[JSONProtocolNames.scheduleItemTypeHeaderName].stringValue

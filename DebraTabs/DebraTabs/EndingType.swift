@@ -30,4 +30,22 @@ enum EndingType {
         }
         return .Never
     }
+    
+    static func getSelectedEndingItemType(item:String)->EndingType {
+        for (type, itemString) in EndingTypeStringMap {
+            if item == itemString {
+                return type
+            }
+        }
+        return .NotRecurring
+    }
+    
+    static let EndingTypeStringMap:Dictionary<EndingType, String> =
+        [.Never: "Ending Never",
+         .AfterYOccurrences: "Ending After X Times",
+         .OnT: "Ending On a Certain Date"]
+    
+    static let EndingTypeOrderedStringMap:Array<String> = ["Ending Never", "Ending After X Times", "Ending On a Certain Date"]
+    
+    static let AfterYOrruccencesOptions:Array<String> = ["1","2","3","4", "5", "6", "7", "8", "9", "10"]
 }

@@ -42,13 +42,13 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         
         // For Testing purposes
         act1.scheduleItemTitle = "Run"
-        act1.scheduleItemStart = Date() as NSDate
+        act1.scheduleItemStart = (Date() as NSDate) as Date
         
         act2.scheduleItemTitle = "Eat"
-        act2.scheduleItemStart = Date() as NSDate
+        act2.scheduleItemStart = (Date() as NSDate) as Date
         
         act3.scheduleItemTitle = "Code"
-        act3.scheduleItemStart = Date() as NSDate
+        act3.scheduleItemStart = (Date() as NSDate) as Date
         
         ObjectsArray.append(act1)
         ObjectsArray.append(act2)

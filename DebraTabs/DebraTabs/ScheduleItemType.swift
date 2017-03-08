@@ -11,9 +11,9 @@ import Foundation
 enum ScheduleItemType {
     case None
     case Medication
-    case GlucoseLevel
     case Exercise
     case Eating
+    case GlucoseLevel
     
     static func getJsonCode(type:ScheduleItemType)->String {
         if JSONProtocolNames.scheduleItemTypeMap[type] != nil {
@@ -31,4 +31,21 @@ enum ScheduleItemType {
         }
         return .None
     }
+    
+    static func getSelectedScheduleItemType(item:String)->ScheduleItemType {
+        for (type, itemType) in ScheduleItemTypeStringMap {
+            if item == itemType {
+                return type
+            }
+        }
+        return .None
+    }
+    
+    static let ScheduleItemTypeStringMap:Dictionary<ScheduleItemType, String> =
+        [.Medication: "Meds",
+         .Exercise: "Exercise",
+         .Eating: "Food",
+         .GlucoseLevel: "Blood Glucose"]
+    
+    static let ScheduleItemTypeOrderedStringMap:Array<String> = ["Meds", "Exercise", "Food", "Blood Glucose"]
 }

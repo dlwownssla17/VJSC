@@ -39,7 +39,7 @@ class JSONParser {
             "]" +
             "}" +
         "}"
-        let testGetScheduleItemResponse = "{\"Schedule-Items\": [{\"Schedule-Item-ID\": 1, \"Recurring-ID\": 2, \"Recurring-Type\": 3, \"Recurring-Value\":[1,3,4], \"Ending-Type\": 1, \"Ending-Value\": 5, \"Schedule-Item-Title\": \"TEST\", \"Schedule-Item-Description\": \"DESCRIPTION\", \"Schedule-Item-Type\": \"medication\", \"Schedule-Item-Start\": \"12:00:00\", \"Schedule-Item-Progress-Type\": \"boolean\", \"Schedule-Item-Duration\": -1, \"Schedule-Item-Progress\": 0.0, \"Schedule-Item-Score\": 2.0, \"Schedule-Item-Active\": true, \"Schedule-Item-Color\": [150, 150, 150, 255], \"Schedule-Item-Modifiable\": true}]}"
+        let testGetScheduleItemResponse = "{\"Schedule-Items\": [{\"Schedule-Item-ID\": 1, \"Recurring-ID\": 2, \"Recurring-Type\": 3, \"Recurring-Value\":[1,3,4], \"Ending-Type\": 1, \"Ending-Value\": \"5\", \"Schedule-Item-Title\": \"TEST\", \"Schedule-Item-Description\": \"DESCRIPTION\", \"Schedule-Item-Type\": \"medication\", \"Schedule-Item-Start\": \"12:00:00\", \"Schedule-Item-Progress-Type\": \"boolean\", \"Schedule-Item-Duration\": -1, \"Schedule-Item-Progress\": 0.0, \"Schedule-Item-Score\": 2.0, \"Schedule-Item-Active\": true, \"Schedule-Item-Color\": [150, 150, 150, 255], \"Schedule-Item-Modifiable\": true}]}"
         let json = getJSONObjectFromString(jsonString: testGetScheduleItemResponse)
         print(json["Schedule-Items"].count)
         let scheduleItem = (json["Schedule-Items"].arrayValue)[0]

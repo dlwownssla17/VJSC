@@ -46,6 +46,7 @@ class JSONProtocolNames {
     static let never:Int = 0
     static let afterYOccurrences:Int = 1
     static let onT:Int = 2
+    static let endingTypeNotNeeded:String = "-1"
     
     static let endingTypeMap:Dictionary<EndingType, Int> =
         [.Never: 0,
@@ -56,6 +57,8 @@ class JSONProtocolNames {
     static let scheduleItemProgressTypeHeaderName:String = "Schedule-Item-Progress-Type"
     static let boolean:String = "boolean"
     static let percentage:String = "percentage"
+    
+    static let durationProgressTypeNotNeeded:Int = -1
     
     static let progressTypeMap:Dictionary<ProgressType, String> =
         [.Boolean: "boolean",
