@@ -16,6 +16,7 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     public var ActivityTypeIndex: Int = Int()
     public var ActivityDuration: String = String()
     public var ActivityStartTime: String = String()
+    public var ActivityID: Int = Int()
     
     public var blueColor: UIColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
     
@@ -143,7 +144,27 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         // Type Index in segmentedControl.selectedSegmentIndex
         // Exercise Duration in scheduleDuration.text!
         // Start Time in scheduleStartTime.text!
-        
+        let editScheduleItem = ScheduleItem()
+        editScheduleItem.scheduleItemTitle = scheduleTitle.text!
+        editScheduleItem.scheduleItemDescription = scheduleDesc.text!
+        let selectedScheduleItemString:String = ScheduleItemType.ScheduleItemTypeOrderedStringMap[segmentedControl.selectedSegmentIndex]
+        let selectedScheduleItemType = ScheduleItemType.getSelectedScheduleItemType(item: selectedScheduleItemString)
+        editScheduleItem.scheduleItemType = selectedScheduleItemType
+        switch selectedScheduleItemType {
+        case .Exercise:
+            editScheduleItem.scheduleItemProgressType = .Percentage
+            editScheduleItem.scheduleItemDuration = Int(scheduleDuration.text!)!
+        default:
+            editScheduleItem.scheduleItemProgressType = .Boolean
+            editScheduleItem.scheduleItemDuration = JSONProtocolNames.durationProgressTypeNotNeeded
+        }
+        let ScheduleItemStart = scheduleStartTime.text!
+        let dateFormatterIn = DateFormatter()
+        let timeZone = NSTimeZone(name: "GMT")
+        dateFormatterIn.timeZone=timeZone as TimeZone!
+        dateFormatterIn.dateFormat = "HH:mm a"
+        editScheduleItem.scheduleItemStart = dateFormatterIn.date(from: ScheduleItemStart)!
+        editScheduleItem.itemID = ActivityID
     }
     
     func doneButtonTapped(_ sender:UIBarButtonItem) {

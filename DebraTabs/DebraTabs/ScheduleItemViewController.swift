@@ -218,6 +218,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
             secondViewController.ActivityTitle = self.ObjectsArray[indexPath.row].scheduleItemTitle
             secondViewController.ActivityDescription = self.ObjectsArray[indexPath.row].scheduleItemDescription
             secondViewController.ActivityTypeIndex = 0
+            secondViewController.ActivityID = self.ObjectsArray[indexPath.row].itemID
             if (secondViewController.ActivityTypeIndex == 1) {
                 secondViewController.ActivityDuration = "5"
             }
