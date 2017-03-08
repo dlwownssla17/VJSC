@@ -14,6 +14,13 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
     public var ObjectsArray = [ScheduleItem]()
     private var myTableView: UITableView!
     public var button: UIButton = UIButton()
+    var currentDate: UITextField = UITextField()
+    public var calendarButton: UIButton = UIButton()
+    
+    public var blueColor: UIColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
+    
+    var calendarPicker: UIDatePicker! = UIDatePicker()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,6 +65,35 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         let displayWidth: CGFloat = self.view.frame.width
         let displayHeight: CGFloat = self.view.frame.height
         
+        calendarPicker = UIDatePicker()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
+        calendarPicker.timeZone = NSTimeZone.local
+        calendarPicker.datePickerMode = UIDatePickerMode.date
+
+        calendarPicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
+        //        calendarPicker.delegate = self
+        //        calendarPicker.dataSource = self
+        let toolBar = UIToolbar()
+        toolBar.barStyle = UIBarStyle.default
+        toolBar.isTranslucent = true
+        toolBar.tintColor = blueColor //UIColor(red: 76/255, green: 217/255, blue: 100/255, alpha: 1)
+        toolBar.sizeToFit()
+        let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(calendarButtonTapped(_:)))
+        toolBar.setItems([doneButton], animated: false)
+        toolBar.isUserInteractionEnabled = true
+        
+        
+        currentDate = UITextField(frame: CGRect(x: 0, y: barHeight, width: displayWidth, height: 50))
+        currentDate.textAlignment = NSTextAlignment.center
+        currentDate.textColor = UIColor.black
+        currentDate.text = "Today's Date (tap to change day)"
+        currentDate.borderStyle = UITextBorderStyle.line
+        currentDate.layer.borderWidth = 1
+        currentDate.layer.borderColor = blueColor.cgColor
+        currentDate.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        self.currentDate.inputView = self.calendarPicker
+        currentDate.inputAccessoryView = toolBar
+        self.view.addSubview(currentDate)
+        
         myTableView = UITableView(frame: CGRect(x: 0, y: barHeight + 50, width: displayWidth, height: displayHeight - 200))//barHeight*1.5))
         print("yo")
         print(displayHeight)
@@ -65,6 +101,11 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         myTableView.register(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
         myTableView.dataSource = self
         myTableView.delegate = self
+        
+        myTableView.layer.masksToBounds = true
+        myTableView.layer.borderColor = blueColor.cgColor
+        myTableView.layer.borderWidth = 2.0
+        
         self.view.addSubview(myTableView)
         
         // Buttons
@@ -79,6 +120,16 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         button.layer.cornerRadius = cornerRadius
         button.addTarget(self, action: #selector(addButtonTapped(_:)), for: .touchDown)
         self.view.addSubview(button)
+        
+//        calendarButton = UIButton(frame: CGRect(x: 50, y: displayHeight - 110, width: 100, height: 44))
+//        calendarButton.setTitle("Calendar", for: UIControlState.normal)
+//        calendarButton.setTitleColor(UIColor.blue, for: UIControlState.normal)
+//        calendarButton.backgroundColor = UIColor.clear
+//        calendarButton.layer.borderWidth = 1.0
+//        calendarButton.layer.borderColor = blueColor.cgColor
+//        calendarButton.layer.cornerRadius = cornerRadius
+//        calendarButton.addTarget(self, action: #selector(calendarButtonTapped(_:)), for: .touchDown)
+//        self.view.addSubview(calendarButton)
         
         print("HELLO")
         JSONParser.testJSON()
@@ -104,6 +155,32 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         self.present(secondViewController, animated: true, completion: nil)
         
     }
+    
+    // MARK: Button Action
+    func calendarButtonTapped(_ button: UIButton) {
+        
+        currentDate.resignFirstResponder()
+        
+        print("Calendar Button pressed")
+        
+        
+        // view for picker
+        
+    }
+    
+    func datePickerValueChanged(_ sender: UIDatePicker){
+        if (sender == calendarPicker) {
+            // Create date formatter
+            let dateFormatter: DateFormatter = DateFormatter()
+            // Set date format
+            dateFormatter.dateFormat = "MMM d, yyyy"
+            // Apply date format
+            let selectedDate: String = dateFormatter.string(from: sender.date)
+            print("Selected value \(selectedDate)")
+            currentDate.text = selectedDate
+        }
+    }
+
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return ObjectsArray.count
