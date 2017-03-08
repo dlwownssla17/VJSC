@@ -13,6 +13,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
     
     public var ObjectsArray = [ScheduleItem]()
     private var myTableView: UITableView!
+    public var button: UIButton = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,13 +67,88 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         myTableView.delegate = self
         self.view.addSubview(myTableView)
         
+        // Buttons
+        button = UIButton(frame: CGRect(x: displayWidth/2, y: displayHeight - 110, width: 100, height: 44))
+        button.setTitle("Add Item", for: UIControlState.normal)
+        button.setTitleColor(UIColor.blue, for: UIControlState.normal)
+        button.backgroundColor = UIColor.clear
+        button.layer.borderWidth = 1.0
+        let borderAlpha : CGFloat = 0.7
+        let cornerRadius : CGFloat = 5.0
+        button.layer.borderColor = UIColor.blue.cgColor
+        button.layer.cornerRadius = cornerRadius
+        button.addTarget(self, action: #selector(addButtonTapped(_:)), for: .touchDown)
+        self.view.addSubview(button)
+        
         print("HELLO")
         JSONParser.testJSON()
+    }
+    
+    // MARK: Button Action
+    func addButtonTapped(_ button: UIButton) {
+        button.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+        UIView.animate(withDuration: 2.0,
+                       delay: 0,
+                       usingSpringWithDamping: 0.2,
+                       initialSpringVelocity: 6.0,
+                       options: .allowUserInteraction,
+                       animations: { [weak self] in
+                        self?.button.transform = .identity
+            },
+                       completion: nil)
+        
+        print("Add Schedule Item Button pressed")
+        
+        
+        let secondViewController:AddNewItem = AddNewItem()
+        self.present(secondViewController, animated: true, completion: nil)
+        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return ObjectsArray.count
     }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt: IndexPath) -> [UITableViewRowAction]? {
+        
+        let edit = UITableViewRowAction(style: .normal, title: "Edit") { action, index in
+            print("edit button tapped")
+        }
+        edit.backgroundColor = .orange
+        
+        let delete = UITableViewRowAction(style: .normal, title: "Delete") { action, index in
+            print("delete button tapped")
+            // handle delete (by removing the data from your array and updating the tableview)
+            //            // SEND DELETE COMMAND TO BACKEND
+            //
+            ////            myTableView.beginUpdates()
+            ////            ObjectsArray.remove(at: indexPath.row)
+            ////            myTableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.automatic)
+            ////            myTableView.endUpdates()
+
+        }
+        delete.backgroundColor = .red
+    
+        
+        return [delete, edit]
+    }
+    
+//    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+//        if (editingStyle == UITableViewCellEditingStyle.delete) {
+//            // handle delete (by removing the data from your array and updating the tableview)
+//            // SEND DELETE COMMAND TO BACKEND
+//            
+////            myTableView.beginUpdates()
+////            ObjectsArray.remove(at: indexPath.row)
+////            myTableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.automatic)
+////            myTableView.endUpdates()
+//        }
+//    }
+    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //        let cell = tableView.dequeueReusableCell(withIdentifier: "MyCell", for: indexPath as IndexPath)
