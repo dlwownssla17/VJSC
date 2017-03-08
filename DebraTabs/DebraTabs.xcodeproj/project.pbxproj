@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		63323F681E6EFC600003F088 /* ScheduleItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63323F671E6EFC600003F088 /* ScheduleItemViewController.swift */; };
 		63323FCF1E6F2E970003F088 /* AddNewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63323FCE1E6F2E970003F088 /* AddNewItem.swift */; };
+		63323FD11E70B1070003F088 /* EditItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63323FD01E70B1070003F088 /* EditItemViewController.swift */; };
 		D100C09C1E52E1ED00E464D8 /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100C09B1E52E1ED00E464D8 /* CustomTabBar.swift */; };
 		D100C09E1E52E33F00E464D8 /* CustomTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100C09D1E52E33F00E464D8 /* CustomTabs.swift */; };
 		D100C0A01E52E64800E464D8 /* CustomTabBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100C09F1E52E64800E464D8 /* CustomTabBarItem.swift */; };
@@ -44,6 +45,7 @@
 /* Begin PBXFileReference section */
 		63323F671E6EFC600003F088 /* ScheduleItemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleItemViewController.swift; sourceTree = "<group>"; };
 		63323FCE1E6F2E970003F088 /* AddNewItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddNewItem.swift; sourceTree = "<group>"; };
+		63323FD01E70B1070003F088 /* EditItemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditItemViewController.swift; sourceTree = "<group>"; };
 		D100C09B1E52E1ED00E464D8 /* CustomTabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
 		D100C09D1E52E33F00E464D8 /* CustomTabs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTabs.swift; sourceTree = "<group>"; };
 		D100C09F1E52E64800E464D8 /* CustomTabBarItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTabBarItem.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 				D100C0A11E52FD4C00E464D8 /* DataViewController.swift */,
 				63323F671E6EFC600003F088 /* ScheduleItemViewController.swift */,
 				63323FCE1E6F2E970003F088 /* AddNewItem.swift */,
+				63323FD01E70B1070003F088 /* EditItemViewController.swift */,
 				D1D21B031E62FB6600D6BF69 /* CheckInViewController.swift */,
 				D100C0A31E52FE5400E464D8 /* MoreViewController.swift */,
 				D100C09B1E52E1ED00E464D8 /* CustomTabBar.swift */,
@@ -263,6 +266,7 @@
 				D1D21B6B1E6405CB00D6BF69 /* MasterViewController.swift in Sources */,
 				D135B5451E6F1BEF0039718F /* ProgressType.swift in Sources */,
 				D1D21B6E1E64068100D6BF69 /* NewScheduleItemForm.swift in Sources */,
+				63323FD11E70B1070003F088 /* EditItemViewController.swift in Sources */,
 				D135B5431E6730570039718F /* EndingType.swift in Sources */,
 				D100C0A01E52E64800E464D8 /* CustomTabBarItem.swift in Sources */,
 			);

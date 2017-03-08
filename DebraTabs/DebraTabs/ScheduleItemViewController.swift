@@ -14,6 +14,13 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
     public var ObjectsArray = [ScheduleItem]()
     private var myTableView: UITableView!
     public var button: UIButton = UIButton()
+    var currentDate: UITextField = UITextField()
+    public var calendarButton: UIButton = UIButton()
+    
+    public var blueColor: UIColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
+    
+    var calendarPicker: UIDatePicker! = UIDatePicker()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,6 +65,33 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         let displayWidth: CGFloat = self.view.frame.width
         let displayHeight: CGFloat = self.view.frame.height
         
+        calendarPicker = UIDatePicker()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
+        calendarPicker.timeZone = NSTimeZone.local
+        calendarPicker.datePickerMode = UIDatePickerMode.date
+
+        calendarPicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
+        let toolBar = UIToolbar()
+        toolBar.barStyle = UIBarStyle.default
+        toolBar.isTranslucent = true
+        toolBar.tintColor = blueColor //UIColor(red: 76/255, green: 217/255, blue: 100/255, alpha: 1)
+        toolBar.sizeToFit()
+        let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(calendarButtonTapped(_:)))
+        toolBar.setItems([doneButton], animated: false)
+        toolBar.isUserInteractionEnabled = true
+        
+        
+        currentDate = UITextField(frame: CGRect(x: 0, y: barHeight, width: displayWidth, height: 50))
+        currentDate.textAlignment = NSTextAlignment.center
+        currentDate.textColor = UIColor.black
+        currentDate.text = "Today's Date (tap to change day)"
+        currentDate.borderStyle = UITextBorderStyle.line
+        currentDate.layer.borderWidth = 1
+        currentDate.layer.borderColor = blueColor.cgColor
+        currentDate.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        self.currentDate.inputView = self.calendarPicker
+        currentDate.inputAccessoryView = toolBar
+        self.view.addSubview(currentDate)
+        
         myTableView = UITableView(frame: CGRect(x: 0, y: barHeight + 50, width: displayWidth, height: displayHeight - 200))//barHeight*1.5))
         print("yo")
         print(displayHeight)
@@ -65,6 +99,11 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         myTableView.register(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
         myTableView.dataSource = self
         myTableView.delegate = self
+        
+        myTableView.layer.masksToBounds = true
+        myTableView.layer.borderColor = blueColor.cgColor
+        myTableView.layer.borderWidth = 2.0
+        
         self.view.addSubview(myTableView)
         
         // Buttons
@@ -105,6 +144,62 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         
     }
     
+    // MARK: Button Action
+    func calendarButtonTapped(_ button: UIButton) {
+        
+        currentDate.resignFirstResponder()
+        
+        print("Calendar Button pressed")
+        
+        
+        // view for picker
+        
+    }
+    
+    func datePickerValueChanged(_ sender: UIDatePicker){
+        if (sender == calendarPicker) {
+            // Create date formatter
+            let dateFormatter: DateFormatter = DateFormatter()
+            // Set date format
+            dateFormatter.dateFormat = "MMM d, yyyy"
+            // Apply date format
+            let selectedDate: String = dateFormatter.string(from: sender.date)
+            print("Selected value \(selectedDate)")
+            currentDate.text = selectedDate
+        }
+    }
+    
+    func textFieldDidBeginEditing(textField: UITextField) { // became first responder
+        
+        //move textfields up
+        let myScreenRect: CGRect = UIScreen.main.bounds
+        let keyboardHeight : CGFloat = 216
+        
+        UIView.beginAnimations( "animateView", context: nil)
+        var movementDuration:TimeInterval = 0.35
+        var needToMove: CGFloat = 0
+        
+        var frame : CGRect = self.view.frame
+        if (textField.frame.origin.y + textField.frame.size.height + /*self.navigationController.navigationBar.frame.size.height + */UIApplication.shared.statusBarFrame.size.height > (myScreenRect.size.height - keyboardHeight)) {
+            needToMove = (textField.frame.origin.y + textField.frame.size.height + /*self.navigationController.navigationBar.frame.size.height +*/ UIApplication.shared.statusBarFrame.size.height) - (myScreenRect.size.height - keyboardHeight);
+        }
+        
+        frame.origin.y = -needToMove
+        self.view.frame = frame
+        UIView.commitAnimations()
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField) {
+        //move textfields back down
+        UIView.beginAnimations( "animateView", context: nil)
+        var movementDuration:TimeInterval = 0.35
+        var frame : CGRect = self.view.frame
+        frame.origin.y = 0
+        self.view.frame = frame
+        UIView.commitAnimations()
+    }
+
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return ObjectsArray.count
     }
@@ -113,10 +208,25 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         return true
     }
     
-    func tableView(_ tableView: UITableView, editActionsForRowAt: IndexPath) -> [UITableViewRowAction]? {
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         
         let edit = UITableViewRowAction(style: .normal, title: "Edit") { action, index in
             print("edit button tapped")
+            print(self.ObjectsArray[indexPath.row].scheduleItemType)
+            var secondViewController:EditItemViewController = EditItemViewController()
+            // activity title
+            secondViewController.ActivityTitle = self.ObjectsArray[indexPath.row].scheduleItemTitle
+            secondViewController.ActivityDescription = self.ObjectsArray[indexPath.row].scheduleItemDescription
+            secondViewController.ActivityTypeIndex = 0
+            if (secondViewController.ActivityTypeIndex == 1) {
+                secondViewController.ActivityDuration = "5"
+            }
+            let dateFormatter: DateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "hh:mm a"
+            let selectedDate: String = dateFormatter.string(from: self.ObjectsArray[indexPath.row].scheduleItemStart as Date)
+            secondViewController.ActivityStartTime = selectedDate
+            // activity start time
+            self.present(secondViewController, animated: true, completion: nil)
         }
         edit.backgroundColor = .orange
         
