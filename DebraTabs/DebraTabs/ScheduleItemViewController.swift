@@ -48,7 +48,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         
         
         // For Testing purposes
-        act1.scheduleItemTitle = "Run"
+        act1.scheduleItemTitle = "RunFaster"
         act1.scheduleItemStart = (Date() as NSDate) as Date
         
         act2.scheduleItemTitle = "Eat"
