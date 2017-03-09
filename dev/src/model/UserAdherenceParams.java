@@ -3,6 +3,10 @@ package model;
 import java.util.Arrays;
 import java.util.Date;
 
+/* 
+ * changeScore and getScore should be the only non-private methods. Score should only be change-able
+ * by making a call to changeScore.	
+*/
 public class UserAdherenceParams {
 	private Date lastUpdated;
 	
@@ -20,20 +24,30 @@ public class UserAdherenceParams {
 	
 	private double globalScore;
 	
+	protected void changeScore(double delta) {
+		updateDate();
+		lastNDaysLocalScore[N-1] += delta;
+	}
+	
+	protected double getScore() {
+		updateGlobalScore();
+		return globalScore;
+	}
+	
 	/*
-	 * Returns the number of days between d1 and d2. If dateDiff >= NUM_PREV_DAYS, outputs -1
+	 * Returns the number of days between d1 and d2. If dateDiff >= N, outputs -1
 	 * This is a O(1) method
 	 */
 	private int absoluteDateDiff(Date d1, Date d2) {
+		// Ensures the inputs aren't corrupted by this function
+		d1 = (Date) d1.clone();
+		d2 = (Date) d2.clone();
+
 		if (d1.compareTo(d2) > 0) {
 			Date temp = d1;
 			d1 = d2;
 			d2 = temp;
-		}
-		
-		// Ensures the inputs aren't corrupted by this function
-		d1 = (Date) d1.clone();
-		d2 = (Date) d2.clone();
+		}		
 		
 		for (int i = 0; i < N; i++) {
 			if (d1.getYear() == d2.getYear() && d1.getMonth() == d2.getMonth() && d1.getDate() == d2.getDate()) {
@@ -67,13 +81,8 @@ public class UserAdherenceParams {
 		lastUpdated = today;
 		return true;
 	}
-	
-	protected double getScore() {
-		updateGlobalScore();
-		return globalScore;
-	}
-	
-	// Note: do not include today in global score yet. Wait for all results
+		
+	// Note: do not include today in global score.
 	private void updateGlobalScore() {
 		if (!updateDate()) {
 			return;
@@ -100,11 +109,7 @@ public class UserAdherenceParams {
 		}
 	}
 	
-	// Only change score by making a call to this method
-	protected void changeScore(double delta) {
-		updateDate();
-		lastNDaysLocalScore[N-1] += delta;
-	}
+	
 	
 	public static void main(String[] args) {
 		// for testing
