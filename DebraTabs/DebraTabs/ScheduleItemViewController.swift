@@ -125,6 +125,10 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
     
     // MARK: Button Action
     func addButtonTapped(_ button: UIButton) {
+        
+        let thirdiewController:LogInViewController = LogInViewController()
+        self.present(thirdiewController, animated: true, completion: nil)
+        
         button.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
         UIView.animate(withDuration: 2.0,
                        delay: 0,

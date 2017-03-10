@@ -12,6 +12,8 @@
 		63323FD11E70B1070003F088 /* EditItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63323FD01E70B1070003F088 /* EditItemViewController.swift */; };
 		63323FEB1E70CD650003F088 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63323FDE1E70CCDF0003F088 /* Alamofire.framework */; };
 		63323FEC1E70CD650003F088 /* Alamofire.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63323FDE1E70CCDF0003F088 /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		63CB40731E73100100182C8F /* LogInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CB40721E73100100182C8F /* LogInViewController.swift */; };
+		63CB407C1E7318A800182C8F /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CB407B1E7318A800182C8F /* RegisterViewController.swift */; };
 		D100C09C1E52E1ED00E464D8 /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100C09B1E52E1ED00E464D8 /* CustomTabBar.swift */; };
 		D100C09E1E52E33F00E464D8 /* CustomTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100C09D1E52E33F00E464D8 /* CustomTabs.swift */; };
 		D100C0A01E52E64800E464D8 /* CustomTabBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D100C09F1E52E64800E464D8 /* CustomTabBarItem.swift */; };
@@ -122,6 +124,8 @@
 		63323FCE1E6F2E970003F088 /* AddNewItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddNewItem.swift; sourceTree = "<group>"; };
 		63323FD01E70B1070003F088 /* EditItemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditItemViewController.swift; sourceTree = "<group>"; };
 		63323FD21E70CCDF0003F088 /* Alamofire.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Alamofire.xcodeproj; path = Alamofire/Alamofire.xcodeproj; sourceTree = "<group>"; };
+		63CB40721E73100100182C8F /* LogInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogInViewController.swift; sourceTree = "<group>"; };
+		63CB407B1E7318A800182C8F /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		D100C09B1E52E1ED00E464D8 /* CustomTabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
 		D100C09D1E52E33F00E464D8 /* CustomTabs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTabs.swift; sourceTree = "<group>"; };
 		D100C09F1E52E64800E464D8 /* CustomTabBarItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTabBarItem.swift; sourceTree = "<group>"; };
@@ -206,6 +210,8 @@
 			children = (
 				D110B7DB1E2D667700621294 /* Images.xcassets */,
 				D110B7BE1E2D61D300621294 /* AppDelegate.swift */,
+				63CB40721E73100100182C8F /* LogInViewController.swift */,
+				63CB407B1E7318A800182C8F /* RegisterViewController.swift */,
 				D110B7C01E2D61D300621294 /* FirstViewController.swift */,
 				D110B7C21E2D61D300621294 /* SecondViewController.swift */,
 				D1D21B691E6405CB00D6BF69 /* MasterViewController.swift */,
@@ -413,6 +419,8 @@
 				D110B7C11E2D61D300621294 /* FirstViewController.swift in Sources */,
 				D135B5491E6FF37C0039718F /* Requests.swift in Sources */,
 				D1D21B6C1E6405CB00D6BF69 /* DetailViewController.swift in Sources */,
+				63CB40731E73100100182C8F /* LogInViewController.swift in Sources */,
+				63CB407C1E7318A800182C8F /* RegisterViewController.swift in Sources */,
 				D135B5471E6F26820039718F /* SwiftyJSON.swift in Sources */,
 				D135B53D1E6713690039718F /* ScheduleItemType.swift in Sources */,
 				D1D21B6B1E6405CB00D6BF69 /* MasterViewController.swift in Sources */,
