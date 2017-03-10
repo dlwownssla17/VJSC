@@ -161,9 +161,8 @@ public class UserAdherenceParams {
 	private boolean isLying(ScheduleItem item, double completionStatus) {
 		if (item == null) {
 			throw new IllegalArgumentException("isLying: null input");		
-		}
-		
-		// TODO(vivekaraj)
+		}		
+		// vivekaraj will incorporate this in a separate branch. This will not be needed for user test.
 		
 		return false;
 	}
