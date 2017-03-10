@@ -28,54 +28,13 @@ public class ScheduleItem {
 	private boolean able;
 	private int category;
 	
-	private static ImmutableMap<Integer, Integer> categoryToScore = getCategoryToScore();
+	DebraStatistic completionStat;
 	
-	private static ImmutableMap<Integer, Integer> getCategoryToScore() {		
-		try {
-			File file = new File("categoryToScore.txt");
-			if (!file.exists()) {
-				System.err.println("categoryToScore file doesn't exist :O");	
-				return ImmutableMap.<Integer,Integer>builder().build(); // empty map
-			}
-			
-			Scanner sc = new Scanner(file);			
-			sc.nextLine(); // remove header line
-			
-			ImmutableMap.Builder<Integer,Integer> builder = ImmutableMap.<Integer,Integer>builder();
-			
-			while (sc.hasNextLine()) {
-				String line = sc.nextLine().trim();
-				String[] arr = line.split("//");
-				
-				if (arr.length != 3) {
-					System.err.println("categoryToScore -- each line must contain 3 entries: " + line);	
-					continue; 
-				}
-				
-				for (int i = 0; i < arr.length; i++) {
-					arr[i] = arr[i].trim();
-				}
-				if (!Util.isNumeric(arr[1]) || !Util.isNumeric(arr[2])) {
-					System.err.println("categoryToScore contains a non-numeric id or score at line: " + line);	
-					continue; 
-				}
-				
-				builder.put(Integer.parseInt(arr[1]), Integer.parseInt(arr[2]));				
-			}
-			
-			sc.close();
-			return builder.build();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return ImmutableMap.<Integer,Integer>builder().build(); // empty map
-		}
-	}
-	
-	private ImmutableList<Boolean> daysOfWeekActive; // index 0 = SUNDAY, index 1 = MONDAY, ..., index 6 = SATURDAY
+	private boolean[] daysOfWeekActive; // index 0 = SUNDAY, index 1 = MONDAY, ..., index 6 = SATURDAY
 	
 	private double yellowThreshold, greenThreshold;
 	
-	// @vivekaraj: @JJ, is 2 constructors necessary? I prefer not having code duplication.
+	// Every schedule item will eventually invoke this constructor.
 	public ScheduleItem(
 		long id, 
 		String title, 
@@ -83,7 +42,9 @@ public class ScheduleItem {
 		User associatedUser, 
 		Date startDateTime,
 		Date endDateTime,
-		ImmutableList<Boolean> daysOfWeekActive,
+		boolean[] daysOfWeekActive,
+		int category,
+		DebraStatistic completionStat,
 		Progress progress, 
 		ScheduleItemNotificationParams notificationParams,
 		double yellowThreshold, 
@@ -120,14 +81,16 @@ public class ScheduleItem {
 		
 		if (
 			daysOfWeekActive == null 
-			|| daysOfWeekActive.size() != 7 
-			|| Util.containsNull(daysOfWeekActive)
+			|| daysOfWeekActive.length != 7 
 		) {
 			throw new IllegalArgumentException("ScheduleItem constructor: invalid daysOfWeekActive");
 		}
 		
 		this.daysOfWeekActive = daysOfWeekActive;
 		
+		this.category = category;
+		
+		this.completionStat = completionStat;
 	}
 	
 	public ScheduleItem(
@@ -137,12 +100,14 @@ public class ScheduleItem {
 		User associatedUser, 
 		Date startDateTime,
 		Date endDateTime,
-		ImmutableList<Boolean> daysOfWeekActive,
+		boolean[] daysOfWeekActive,
+		int category,
+		DebraStatistic completionStat,
 		Progress progress, 
 		ScheduleItemNotificationParams notificationParams
 	) throws IllegalArgumentException {
-		this(id, title, description, associatedUser, startDateTime, endDateTime, daysOfWeekActive, progress, notificationParams, 0.5, 0.8);
-	}
+		this(id, title, description, associatedUser, startDateTime, endDateTime, daysOfWeekActive, category, completionStat, progress, notificationParams, 0.5, 0.8);
+	}	
 	
 	@Override
 	public boolean equals(Object o) {
@@ -215,7 +180,7 @@ public class ScheduleItem {
 	private boolean isActive() {
 		Date now = new Date();
 		
-		if (!daysOfWeekActive.get(now.getDay())) {
+		if (!daysOfWeekActive[now.getDay()]) {
 			return false;
 		}
 		
@@ -230,7 +195,11 @@ public class ScheduleItem {
 		return now.after(acceptableRangeStart) && now.before(acceptableRangeEnd);
 	}
 	
-	public int getScore() {
-		return categoryToScore.get(category);
+	protected DebraStatistic getCompletionStats() {
+		return completionStat;
+	}
+	
+	protected int getCategory() {
+		return category;
 	}
 }

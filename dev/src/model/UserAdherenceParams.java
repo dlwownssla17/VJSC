@@ -1,127 +1,237 @@
 package model;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+import util.Util;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 /* 
  * changeScore and getScore should be the only non-private methods. Score should only be change-able
  * by making a call to changeScore.	
 */
 public class UserAdherenceParams {
-	private Date lastUpdated;
+	/*
+	 * To disincentivize lying and reward gradual progress, MULT_MUCH_IMPROVEMENT is not much less than
+	 * MULT_LOTS_OF_IMPROVEMENT.
+	 * 
+	 * Also, to not discourage, we don't penalize poor performance by too much.
+	 */
+	public static final double MULTIPLIER_LOTS_OF_IMPROVEMENT = 2.2;
+	public static final double MULTIPLIER_MUCH_IMPROVEMENT = 2.;
+	public static final double MULTIPLIER_NORMAL = 1.;
+	public static final double MULTIPLIER_MUCH_DECREASE = .8;
+	public static final double MULTIPLIER_LOTS_OF_DECREASE = .75;
 	
-	// This parameter can be freely changed
-	private static final int N = 7;
-	
-	private static final double S = 2;
-	private static final double C = 1.5;
-	
-	private double[] lastNDaysLocalScore;	
-	protected UserAdherenceParams() {
-		lastUpdated = new Date(System.currentTimeMillis());
-		lastNDaysLocalScore = new double[N];
-	}
+	public static final ImmutableMap<Integer, Integer> CATEGORY_TO_SCORE = getCategoryToScore();	
+
+	/*
+	 *  We do not care about the "time" corresponding to the date object, so each Date object
+	 *  must be set to 12AM. The constructor will ensure that this invariant holds.
+	 */
+	private Map<Date, Double> dateToScore;
+	private Map<Integer, DebraStatistic> categoryToStats;
 	
 	private double globalScore;
 	
-	protected void changeScore(double delta) {
-		updateDate();
-		lastNDaysLocalScore[N-1] += delta;
+	/*
+	 * IllegalArgumentException is thrown if dates in the map are not all set to 12AM.
+	 */
+	protected UserAdherenceParams(Map<Date, Double> dateToScore, Map<Integer, DebraStatistic> categoryToStats) {
+		if (dateToScore == null || categoryToStats == null) {
+			throw new IllegalArgumentException("UserAdherenceParams: null inputs");
+		}
+		
+		// ensures encapsulation
+		this.dateToScore = new HashMap<>(dateToScore);
+		this.categoryToStats = new HashMap<>(categoryToStats);
+		
+		Iterator<Date> dates = dateToScore.keySet().iterator();
+		while (dates.hasNext()) {
+			Date nextDate = dates.next();
+			if (nextDate.getHours() + nextDate.getMinutes() + nextDate.getSeconds() != 0) {
+				throw new IllegalArgumentException("UserAdherenceParams: all Dates in the map need to be set to 12AM, to simplify equality checking.");
+			}
+		}
 	}
 	
-	protected double getScore() {
-		updateGlobalScore();
-		return globalScore;
+	public static Date getTodaysDateAtTwelveAM() {
+		Date today = new Date(System.currentTimeMillis());
+		today.setHours(0);
+		today.setMinutes(0);
+		today.setSeconds(0);
+		return today;
+	}
+	
+	public static double modifiedWeightedAveraging(List<Double> values) {
+		if (values == null) {
+			throw new IllegalArgumentException("modifiedWeightedAveraging: null input");
+		}
+		
+		double numerator = 0;
+		double denominator = 0;
+		for (int i = 0; i < values.size(); i++) {
+			numerator += (values.get(i) / (i+1));
+			denominator += (1.0 / (i+1));
+		}
+		
+		if (numerator == 0 || denominator == 0) { return 0; }
+		return numerator / denominator;
 	}
 	
 	/*
-	 * Returns the number of days between d1 and d2. If dateDiff >= N, outputs -1
-	 * This is a O(1) method
+	 * Score is changed by multiplying categoryScore and multiplicity factor.
+	 * categoryScore -- e.g. all food-related tasks have categoryScore of 100.
+	 * multiplicity factor -- dependent on how well (or poorly) item does in comparison to past behavior.
 	 */
-	private int absoluteDateDiff(Date d1, Date d2) {
-		// Ensures the inputs aren't corrupted by this function
-		d1 = (Date) d1.clone();
-		d2 = (Date) d2.clone();
-
-		if (d1.compareTo(d2) > 0) {
-			Date temp = d1;
-			d1 = d2;
-			d2 = temp;
-		}		
-		
-		for (int i = 0; i < N; i++) {
-			if (d1.getYear() == d2.getYear() && d1.getMonth() == d2.getMonth() && d1.getDate() == d2.getDate()) {
-				return i;
-			}
-			d1.setDate(d1.getDate()+1);
+	protected void changeScore(ScheduleItem item, double completionStatus) {
+		if (item == null) {
+			throw new IllegalArgumentException("changeScore: null input");
 		}
 		
-		
-		return -1;
-	}
-	
-	// Return true if and only if the date changes
-	private boolean updateDate() {
-		Date today = new Date(System.currentTimeMillis());
-		int dateDiff = absoluteDateDiff(lastUpdated, today);
-		if (dateDiff == 0) {
-			// no need to update global score
-			return false;
-		} else if (dateDiff == -1) {
-			lastNDaysLocalScore = new double[N];
-		} else {
-			for (int i = 0; i < N; i++) {
-				if (i + dateDiff < N) {
-					lastNDaysLocalScore[i] = lastNDaysLocalScore[i+dateDiff];
-				} else {
-					lastNDaysLocalScore[i] = 0;
-				}
-			}
-		}
-		lastUpdated = today;
-		return true;
-	}
-		
-	// Note: do not include today in global score.
-	private void updateGlobalScore() {
-		if (!updateDate()) {
+		// Don't reward cheaters!
+		if (isLying(item, completionStatus)) {
 			return;
 		}
-
-		// pastData.length == N-1. Used pastData.length so that no one accidentally uses "N" instead of "N-1"
 		
-		double[] pastData = Arrays.copyOf(lastNDaysLocalScore, lastNDaysLocalScore.length-1);
-
-		double avg = 0.0;
-		double expScoreSq = 0.0;
-		for (int i = 0; i < pastData.length; i++) {
-			avg += lastNDaysLocalScore[i];
-			expScoreSq += lastNDaysLocalScore[i] * lastNDaysLocalScore[i];
+		double scoreChange = CATEGORY_TO_SCORE.get(item.getCategory());
+		
+		double multiplier = MULTIPLIER_NORMAL;
+		
+		// Rewarding progress made on category-level
+		DebraStatistic categoryStat = categoryToStats.get(item.getCategory());
+		multiplier *= scoreMultiplier(completionStatus, categoryStat);
+		
+		// Rewarding progress made on a schedule-item-ID level
+		DebraStatistic itemStat = item.getCompletionStats();
+		multiplier *= scoreMultiplier(completionStatus, itemStat);
+		
+		/* Note: Rewarding progress made on a day-by-day basis: accounted for in global score */
+		
+		// Modify score in map
+		Date today = getTodaysDateAtTwelveAM();
+		double score = 0.;
+		if (dateToScore.containsKey(today)) {
+			score = dateToScore.get(today);
 		}
-		avg /= pastData.length;
-		expScoreSq /= pastData.length;
-		
-		double stdDev = Math.sqrt(expScoreSq - avg*avg);
-		
-		globalScore = 0;
-		for (int i = 0; i < pastData.length; i++) {
-			globalScore += (avg - pastData[i] > S * stdDev ? C : 1) * pastData[i];
-		}
+		score += completionStatus * scoreChange * multiplier;
+		dateToScore.put(today, score);
 	}
 	
-	
-	
-	public static void main(String[] args) {
-		// for testing
-		UserAdherenceParams params = new UserAdherenceParams();
-		Date yesterday = new Date(System.currentTimeMillis());
-		yesterday.setDate(yesterday.getDate()-1);
-		params.lastUpdated = yesterday;
-		for (int i = 0; i < N; i++) {
-			params.lastNDaysLocalScore[i] = 12;
+	private double scoreMultiplier(double value, DebraStatistic stat) {
+		if (stat == null) {
+			throw new IllegalArgumentException("scoreMultiplier: null input");		
 		}
-		params.lastNDaysLocalScore[1] = 3;
 		
-		System.out.println(params.getScore() == 12*(N-2) + C*3);
+		if (stat.isEmpty()) { return 1.; }
+		
+		double avg = stat.getAvg();
+		double stdDev = stat.getStdDev();
+		
+		double multiplier = 1.0;
+		
+		if (value > avg + 2*stdDev) {
+			multiplier = MULTIPLIER_LOTS_OF_IMPROVEMENT;
+		} else if (value > avg + stdDev) {
+			multiplier = MULTIPLIER_MUCH_IMPROVEMENT;
+		} else if (value < avg - stdDev) {
+			multiplier = MULTIPLIER_MUCH_DECREASE;
+		} else if (value < avg - 2*stdDev) {
+			multiplier = MULTIPLIER_LOTS_OF_DECREASE;
+		} 
+		stat.addEntry(value);
+		
+		return multiplier;
+	}
+	
+	/*
+	 * Return true if suspected lying.
+	 */
+	private boolean isLying(ScheduleItem item, double completionStatus) {
+		if (item == null) {
+			throw new IllegalArgumentException("isLying: null input");		
+		}
+		
+		// TODO(vivekaraj)
+		
+		return false;
+	}
+	
+	/*
+	 * Returns global score
+	 */
+	protected double getScore() {
+		Date today = getTodaysDateAtTwelveAM();		
+		
+		// Global score only needs to be calculated at most once per day
+		if (!dateToScore.containsKey(today)) {		
+			List<Date> dates = new ArrayList<>(dateToScore.keySet());
+			Collections.sort(dates);
+			List<Double> previousScores = new ArrayList<>();
+			for (Date date : dates) {
+				previousScores.add(dateToScore.get(date));
+			}
+			previousScores = Lists.reverse(previousScores);
+			globalScore = modifiedWeightedAveraging(previousScores);
+		}
+		
+		return globalScore;
+	}		
+	
+	protected Double getTodaysLocalScore() {
+		return dateToScore.get(getTodaysDateAtTwelveAM());
+	}
+	
+	private static ImmutableMap<Integer, Integer> getCategoryToScore() {		
+		try {
+			File file = new File("categoryToScore.txt");
+			if (!file.exists()) {
+				System.err.println("categoryToScore file doesn't exist :O");	
+				return ImmutableMap.<Integer,Integer>builder().build(); // empty map
+			}
+			
+			Scanner sc = new Scanner(file);			
+			sc.nextLine(); // remove header line
+			
+			ImmutableMap.Builder<Integer,Integer> builder = ImmutableMap.<Integer,Integer>builder();
+			
+			while (sc.hasNextLine()) {
+				String line = sc.nextLine().trim();
+				String[] arr = line.split("//");
+				
+				if (arr.length != 3) {
+					System.err.println("categoryToScore -- each line must contain 3 entries: " + line);	
+					continue; 
+				}
+				
+				for (int i = 0; i < arr.length; i++) {
+					arr[i] = arr[i].trim();
+				}
+				if (!Util.isNumeric(arr[1]) || !Util.isNumeric(arr[2])) {
+					System.err.println("categoryToScore contains a non-numeric id or score at line: " + line);	
+					continue; 
+				}
+				
+				builder.put(Integer.parseInt(arr[1]), Integer.parseInt(arr[2]));				
+			}
+			
+			sc.close();
+			return builder.build();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.err.println("Error in UserAdherenceParams' map construction!");	
+			return ImmutableMap.<Integer,Integer>builder().build(); // empty map
+		}
 	}
 }

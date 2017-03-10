@@ -74,6 +74,10 @@ public class User {
 		return true;
 	}
 	
+	public void changeScore(ScheduleItem item, double completionStatus) {
+		adherenceParams.changeScore(item, completionStatus);
+	}
+	
 	public static void main(String[] args) {
 		
 	}
