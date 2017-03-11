@@ -361,7 +361,7 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         scheduleStartTime = UITextField(frame: CGRect(x: 0, y: barHeight + 400, width: displayWidth, height: 50))
         scheduleStartTime.textAlignment = NSTextAlignment.center
         scheduleStartTime.textColor = blueColor
-        scheduleStartTime.placeholder = "Ending On What Date?"
+        scheduleStartTime.placeholder = "Starting At What Time?"
         scheduleStartTime.borderStyle = UITextBorderStyle.line
         scheduleStartTime.layer.borderWidth = 1
         scheduleStartTime.layer.borderColor = blueColor.cgColor
