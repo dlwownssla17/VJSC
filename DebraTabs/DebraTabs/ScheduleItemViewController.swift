@@ -163,6 +163,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
     
     // MARK: Button Action
     func addButtonTapped(_ button: UIButton) {
+        
         button.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
         UIView.animate(withDuration: 2.0,
                        delay: 0,
