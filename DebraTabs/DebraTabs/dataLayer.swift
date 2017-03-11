@@ -53,10 +53,11 @@ class dataLayer {
 //            print ("num of results = \(searchResults.count)")
 //            
 //            
-//            for trans in searchResults as! [NSManagedObject] {
-//                //get the Key Value pairs (although there may be a better way to do that...
-//                print("\(trans.value(forKey: "username"))")
-//            }
+            for trans in searchResults as! [NSManagedObject] {
+                Settings.usernameString = trans.value(forKey: "username") as! String
+                //get the Key Value pairs (although there may be a better way to do that...
+                print("\(trans.value(forKey: "username"))")
+            }
             
             return searchResults
         } catch {
