@@ -13,6 +13,8 @@ import Alamofire
 class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     public var ObjectsArray = [ScheduleItem]()
+    var codedLabel: UILabel = UILabel()
+
 
     private var myTableView: UITableView!
     
@@ -72,6 +74,18 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Num: \(indexPath.row)")
         print("Value: \(ObjectsArray[indexPath.row].scheduleItemTitle)")
+        print("Type: \(ScheduleItemType.ScheduleItemTypeStringMap[self.ObjectsArray[indexPath.row].scheduleItemType]!)")
+        
+        
+        // put slider here, that goes between 0 and duration value
+        let typeString = ScheduleItemType.ScheduleItemTypeStringMap[self.ObjectsArray[indexPath.row].scheduleItemType]!
+        var itemDuration = 10 // change back to 0
+        if (typeString == "Exercise") {
+            itemDuration = ObjectsArray[indexPath.row].scheduleItemDuration
+            print(itemDuration)
+            print("heyyheherherherh")
+        }
+
         
         // http://stackoverflow.com/questions/36394997/uialertview-was-deprecated-in-ios-9-0-use-uialertcontroller-with-a-preferreds
         
@@ -87,13 +101,55 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
                         (result : UIAlertAction) -> Void in
                         print("You pressed OK")
                     }
+                    
+                    
+                    if (itemDuration != 0) {
+//                        var view = UIView();
+                        var view = UIViewController();
+                        view.preferredContentSize = CGSize(width: 250,height: 100)
+//                        view.view.frame = CGRect(x: 0, y:0 , width: 250.0, height: 250.0)
+                        var myFrame = CGRect(x: 10.0, y: 10.0, width: 250.0, height: 10.0)
+                        var slider = UISlider(frame: myFrame)
+                        slider.minimumValue = 0
+                        slider.maximumValue = Float(itemDuration)
+                        slider.value = 0
+                        slider.addTarget(self, action:#selector(self.sliderValueDidChange), for: .valueChanged)
+                        view.view.addSubview(slider)
+                        
+                        self.codedLabel.frame = CGRect(x: 0, y: 15, width: 250, height: 55)
+                        self.codedLabel.textAlignment = .center
+                        self.codedLabel.text = "Minutes Completed: 0"
+                        self.codedLabel.numberOfLines = 5
+                        self.codedLabel.textColor = UIColor.black
+                        self.codedLabel.font=UIFont.systemFont(ofSize: 15)
+                        self.codedLabel.backgroundColor=UIColor.clear
+//                        self.codedLabel.translatesAutoresizingMaskIntoConstraints = false
+//                        codedLabel.heightAnchor.constraint(equalToConstant: 200).isActive = true
+//                        self.codedLabel.leftAnchor.constraintEqualToAnchor(NSNumber(10)).isActive = true
+
+                            
+                            
+//                            .constraint(equalToConstant: 0).isActive = true
+//                        self.codedLabel.centerXAnchor.constraint(equalTo: self.codedLabel.superview!.centerXAnchor).isActive = true
+                        
+                        view.view.addSubview(self.codedLabel)
+                        
+                        alertController.setValue(view, forKey: "contentViewController")
+//                        alertController.view.addSubview(view.view)
+                    }
+
                     alertController.addAction(okAction)
+                    
                     self.present(alertController, animated: true, completion: nil)
                 case .failure(let error):
                     print("Request failed with error: \(error)")
                 }
         }
         
+    }
+    
+    func sliderValueDidChange(sender:UISlider!) {
+        self.codedLabel.text = "Minutes Completed: \(sender.value)"
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
