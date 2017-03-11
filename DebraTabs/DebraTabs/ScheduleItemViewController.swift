@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -14,15 +15,19 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
     public var ObjectsArray = [ScheduleItem]()
     private var myTableView: UITableView!
     public var button: UIButton = UIButton()
+    public var button2: UIButton = UIButton()
     var currentDate: UITextField = UITextField()
     public var calendarButton: UIButton = UIButton()
     
     public var blueColor: UIColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
     
     var calendarPicker: UIDatePicker! = UIDatePicker()
+    
+    var currentDayInfo:CurrentDayInfo = CurrentDayInfo()
 
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
         view.backgroundColor = .white
@@ -42,24 +47,44 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
             "}" +
         "}"
         
-        var act1 = ScheduleItem(jsonString: jsonString1)
-        var act2 = ScheduleItem(jsonString: jsonString1)
-        var act3 = ScheduleItem(jsonString: jsonString1)
+//        Alamofire.request("http://130.91.134.209:8000/test", method: .get).validate().responseJSON { response in
+//            switch response.result {
+//            case .success(let data):
+//                let json = JSON(data)
+//                print(json.count)
+//                print("TestCAT")
+//                let jsonObjectList = json[JSONProtocolNames.scheduleItemsListResponseName].arrayValue
+//                self.ObjectsArray = []
+//                for jsonObject in jsonObjectList {
+//                    let scheduleItemObject = ScheduleItem(json: jsonObject)
+//                    self.ObjectsArray.append(scheduleItemObject)
+//                }
+//                self.myTableView.reloadData()
+//            //return scheduleItems
+//            case .failure(let error):
+//                print("Request failed with error: \(error)")
+//                self.ObjectsArray = []
+//            }
+//        }
         
-        
-        // For Testing purposes
-        act1.scheduleItemTitle = "RunFaster"
-        act1.scheduleItemStart = (Date() as NSDate) as Date
-        
-        act2.scheduleItemTitle = "Eat"
-        act2.scheduleItemStart = (Date() as NSDate) as Date
-        
-        act3.scheduleItemTitle = "Code"
-        act3.scheduleItemStart = (Date() as NSDate) as Date
-        
-        ObjectsArray.append(act1)
-        ObjectsArray.append(act2)
-        ObjectsArray.append(act3)
+//        var act1 = ScheduleItem(jsonString: jsonString1)
+//        var act2 = ScheduleItem(jsonString: jsonString1)
+//        var act3 = ScheduleItem(jsonString: jsonString1)
+//        
+//        
+//        // For Testing purposes
+//        act1.scheduleItemTitle = "RunFaster"
+//        act1.scheduleItemStart = (Date() as NSDate) as Date
+//        
+//        act2.scheduleItemTitle = "Eat"
+//        act2.scheduleItemStart = (Date() as NSDate) as Date
+//        
+//        act3.scheduleItemTitle = "Code"
+//        act3.scheduleItemStart = (Date() as NSDate) as Date
+//        
+//        ObjectsArray.append(act1)
+//        ObjectsArray.append(act2)
+//        ObjectsArray.append(act3)
         
         let barHeight: CGFloat = UIApplication.shared.statusBarFrame.size.height
         let displayWidth: CGFloat = self.view.frame.width
@@ -119,8 +144,21 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         button.addTarget(self, action: #selector(addButtonTapped(_:)), for: .touchDown)
         self.view.addSubview(button)
         
+        // Buttons
+        button2 = UIButton(frame: CGRect(x: displayWidth/4, y: displayHeight - 110, width: 100, height: 44))
+        button2.setTitle("Calendar", for: UIControlState.normal)
+        button2.setTitleColor(UIColor.blue, for: UIControlState.normal)
+        button2.backgroundColor = UIColor.clear
+        button2.layer.borderWidth = 1.0
+        button2.layer.borderColor = UIColor.blue.cgColor
+        button2.layer.cornerRadius = cornerRadius
+        button2.addTarget(self, action: #selector(calendarViewButtonTapped(_:)), for: .touchDown)
+        self.view.addSubview(button2)
+        
         print("HELLO")
         JSONParser.testJSON()
+        
+        Requests.getDayViewRoot()
     }
     
     // MARK: Button Action
@@ -143,6 +181,27 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         self.present(secondViewController, animated: true, completion: nil)
         
     }
+    
+    func calendarViewButtonTapped(_ button: UIButton) {
+        button.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+        UIView.animate(withDuration: 2.0,
+                       delay: 0,
+                       usingSpringWithDamping: 0.2,
+                       initialSpringVelocity: 6.0,
+                       options: .allowUserInteraction,
+                       animations: { [weak self] in
+                        self?.button.transform = .identity
+            },
+                       completion: nil)
+        
+        print("Add Schedule Item Button pressed")
+        
+        
+        let secondViewController:CalendarViewController = CalendarViewController()
+        self.present(secondViewController, animated: true, completion: nil)
+        
+    }
+    
     
     // MARK: Button Action
     func calendarButtonTapped(_ button: UIButton) {
@@ -217,10 +276,12 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
             // activity title
             secondViewController.ActivityTitle = self.ObjectsArray[indexPath.row].scheduleItemTitle
             secondViewController.ActivityDescription = self.ObjectsArray[indexPath.row].scheduleItemDescription
-            secondViewController.ActivityTypeIndex = 0
+            let selectedScheduleItemType = self.ObjectsArray[indexPath.row].scheduleItemType
+            let selectedScheduleItemTypeString = ScheduleItemType.ScheduleItemTypeStringMap[selectedScheduleItemType]
+            secondViewController.ActivityTypeIndex = ScheduleItemType.ScheduleItemTypeOrderedStringMap.index(of: selectedScheduleItemTypeString!)!
             secondViewController.ActivityID = self.ObjectsArray[indexPath.row].itemID
-            if (secondViewController.ActivityTypeIndex == 1) {
-                secondViewController.ActivityDuration = "5"
+            if (selectedScheduleItemType == .Exercise) {
+                secondViewController.ActivityDuration = self.ObjectsArray[indexPath.row].scheduleItemDuration
             }
             let dateFormatter: DateFormatter = DateFormatter()
             dateFormatter.dateFormat = "hh:mm a"
@@ -240,6 +301,51 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
             ////            ObjectsArray.remove(at: indexPath.row)
             ////            myTableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.automatic)
             ////            myTableView.endUpdates()
+            
+            
+            let removeAlert = UIAlertController(title: "Remove Item", message: "Are you sure?", preferredStyle: UIAlertControllerStyle.alert)
+            
+            removeAlert.addAction(UIAlertAction(title: "Remove Just Today", style: .default, handler: { (action: UIAlertAction!) in
+                let parameters = Requests.removeScheduleItem(item: self.ObjectsArray[indexPath.row], removeAllRecurring: false)
+                Alamofire.request("http://130.91.134.209:8000/remove", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
+                    .responseString { response in
+                        switch response.result {
+                        case .success(let _):
+                            print("TEST SPIRO")
+                            self.viewDidAppear(true)
+                        case .failure(let error):
+                            print("Request failed with error: \(error)")
+                            let alert = UIAlertController(title: "Alert", message: "Could not delete item.", preferredStyle: UIAlertControllerStyle.alert)
+                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                            self.present(alert, animated: true, completion: nil)
+                        }
+                }
+            }))
+            
+            if self.ObjectsArray[indexPath.row].recurringType != .NotRecurring {
+                removeAlert.addAction(UIAlertAction(title: "Remove From Every Day", style: .default, handler: { (action: UIAlertAction!) in
+                    let parameters = Requests.removeScheduleItem(item: self.ObjectsArray[indexPath.row], removeAllRecurring: true)
+                    Alamofire.request("http://130.91.134.209:8000/remove", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
+                        .responseString { response in
+                            switch response.result {
+                            case .success(let _):
+                                print("TEST SPIRO")
+                                self.viewDidAppear(true)
+                            case .failure(let error):
+                                print("Request failed with error: \(error)")
+                                let alert = UIAlertController(title: "Alert", message: "Could not delete item.", preferredStyle: UIAlertControllerStyle.alert)
+                                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                                self.present(alert, animated: true, completion: nil)
+                            }
+                    }
+                }))
+            }
+            
+            removeAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+                return
+            }))
+            
+            self.present(removeAlert, animated: true, completion: nil)
 
         }
         delete.backgroundColor = .red
@@ -273,6 +379,28 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         cell.detailTextLabel?.text = "\(ObjectsArray[indexPath.row].scheduleItemStart)"
         
         return cell
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        Alamofire.request("http://130.91.134.209:8000/test", method: .get).validate().responseJSON { response in
+            switch response.result {
+            case .success(let data):
+                let json = JSON(data)
+                print(json.count)
+                print("TestCAT")
+                let jsonObjectList = json[JSONProtocolNames.scheduleItemsListResponseName].arrayValue
+                self.ObjectsArray = []
+                for jsonObject in jsonObjectList {
+                    let scheduleItemObject = ScheduleItem(json: jsonObject)
+                    self.ObjectsArray.append(scheduleItemObject)
+                }
+                self.myTableView.reloadData()
+            //return scheduleItems
+            case .failure(let error):
+                print("Request failed with error: \(error)")
+                self.ObjectsArray = []
+            }
+        }
     }
     
 }

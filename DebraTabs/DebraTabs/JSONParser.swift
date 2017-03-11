@@ -27,16 +27,19 @@ class JSONParser {
     
     static func testJSON() {
         
-        Alamofire.request("https://httpbin.org/get").responseJSON { response in
+        Alamofire.request("http://130.91.134.209:8000/test").responseJSON { response in
+            print("START")
             print(response.request)  // original URL request
             print(response.response) // HTTP URL response
             print(response.data)     // server data
             print(response.result)   // result of response serialization
+            print("END")
             
             if let JSON = response.result.value {
                 print("JSON: \(JSON)")
             }
         }
+        print("END2")
         
         let jsonString = "{" +
             "\"Language\": {" +

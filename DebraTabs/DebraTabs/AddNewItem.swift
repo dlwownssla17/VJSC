@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UIScrollViewDelegate {
     
@@ -418,6 +419,26 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
     // MARK: Button Action
     func saveButtonTapped(_ button: UIButton) {
         
+        // Start check for required fields
+        if (scheduleTitle.text?.isEmpty)! {
+            let alert = UIAlertController(title: "Alert", message: "Please Provide an Schedule Title", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return
+        } else if (scheduleRecurringType.text?.isEmpty)! {
+            let alert = UIAlertController(title: "Alert", message: "Please Select Activity Frequency", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return
+        } else if (scheduleStartTime.text?.isEmpty)! {
+            let alert = UIAlertController(title: "Alert", message: "Please Select Start Time", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        
+        // End check for required field
+        
         let newScheduleItem = ScheduleItem()
 
         // Recurring-Type
@@ -459,33 +480,79 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
                 dayList.append(6)
             }
             newScheduleItem.recurringValue = dayList
+            if (dayList.count == 0) {
+                let alert = UIAlertController(title: "Alert", message: "Please Select Weekdays", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                return
+            }
         case .Weekly:
+            if (scheduleRecurringOption2b.text?.isEmpty)! {
+                let alert = UIAlertController(title: "Alert", message: "Please Select a Weekday", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                return
+            }
             let pickedDay = scheduleRecurringOption2b.text!
             newScheduleItem.recurringValue = [RecurringType.DaysOfWeek.index(of: pickedDay)!]
         case .Monthly:
+            if (scheduleRecurringOption2c.text?.isEmpty)! {
+                let alert = UIAlertController(title: "Alert", message: "Please Select a Day", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                return
+            }
             newScheduleItem.recurringValue = [Int(scheduleRecurringOption2c.text!)!]
         }
         
         // Ending-Type
-        let selectedEndingType = EndingType.getSelectedEndingItemType(item: scheduleEndingField.text!)
+        if selectedRecurringType == .NotRecurring {
+            newScheduleItem.endingType = .NotRecurring
+            newScheduleItem.endingValue = JSONProtocolNames.endingTypeNotNeeded
+        } else {
+            if (scheduleEndingField.text?.isEmpty)! {
+                let alert = UIAlertController(title: "Alert", message: "Please Select End Time", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                return
+            }
+
+            let selectedEndingType = EndingType.getSelectedEndingItemType(item: scheduleEndingField.text!)
         
-        // Ending Value
-        switch selectedEndingType {
-        case .NotRecurring:
-            newScheduleItem.endingValue = JSONProtocolNames.endingTypeNotNeeded
-        case .Never:
-            newScheduleItem.endingValue = JSONProtocolNames.endingTypeNotNeeded
-        case .AfterYOccurrences:
-            newScheduleItem.endingValue = scheduleEndingField2a.text!
-        case .OnT:
-            newScheduleItem.endingValue = scheduleEndingField2b.text!
+            // Ending Value
+            switch selectedEndingType {
+            case .NotRecurring:
+                newScheduleItem.endingValue = JSONProtocolNames.endingTypeNotNeeded
+            case .Never:
+                newScheduleItem.endingValue = JSONProtocolNames.endingTypeNotNeeded
+            case .AfterYOccurrences:
+                if (scheduleEndingField2a.text?.isEmpty)! {
+                    let alert = UIAlertController(title: "Alert", message: "Please Select Occurrences", preferredStyle: UIAlertControllerStyle.alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
+                    return
+                }
+                newScheduleItem.endingValue = scheduleEndingField2a.text!
+            case .OnT:
+                if (scheduleEndingField2b.text?.isEmpty)! {
+                    let alert = UIAlertController(title: "Alert", message: "Please Select End Date", preferredStyle: UIAlertControllerStyle.alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
+                    return
+                }
+                newScheduleItem.endingValue = scheduleEndingField2b.text!
+            }
         }
         
         // Schedule-Item-Title
         newScheduleItem.scheduleItemTitle = scheduleTitle.text!
         
         // Schedule-Item-Description
-        newScheduleItem.scheduleItemDescription = scheduleDesc.text!
+        if scheduleDesc.text!.isEmpty {
+            newScheduleItem.scheduleItemDescription = ""
+        } else {
+            newScheduleItem.scheduleItemDescription = scheduleDesc.text!
+        }
         
         // Schedule-Item-Type
         let selectedScheduleItemString:String = ScheduleItemType.ScheduleItemTypeOrderedStringMap[segmentedControl.selectedSegmentIndex]
@@ -495,6 +562,12 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         // Schedule-Item-Duration
         switch selectedScheduleItemType {
         case .Exercise:
+            if (scheduleDuration.text?.isEmpty)! {
+                let alert = UIAlertController(title: "Alert", message: "Please Select Duration", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                return
+            }
             newScheduleItem.scheduleItemProgressType = .Percentage
             newScheduleItem.scheduleItemDuration = Int(scheduleDuration.text!)!
         default:
@@ -510,13 +583,26 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         dateFormatterIn.dateFormat = "HH:mm a"
         newScheduleItem.scheduleItemStart = dateFormatterIn.date(from: ScheduleItemStart)!
         
-        print(Requests.addScheduleItemJSON(item: newScheduleItem))
+        //print(Requests.addScheduleItemJSON(item: newScheduleItem))
         
         
         print("SaveButton pressed")
         
+        let parameters = Requests.addScheduleItemJSON(item: newScheduleItem)
+        
+        Alamofire.request("http://130.91.134.209:8000/add", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
+            .responseString { response in
+                switch response.result {
+                case .success(let _):
+                    print("TEST SPIRO")
+                    self.dismiss(animated: true, completion: nil)
+                case .failure(let error):
+                    print("Request failed with error: \(error)")
+                }
+        }
+        
         // Dismiss VC
-        self.dismiss(animated: true, completion: nil)
+        //self.dismiss(animated: true, completion: nil)
         
     }
 

@@ -84,4 +84,12 @@ class JSONProtocolNames {
     
     static let scheduleItemsEditScheduleItemName:String = "Edit-Schedule-Item"
     
+    static let scheduleItemsRemoveScheduleItemName:String = "Remove-Schedule-Item"
+    
+    static let monthDayHeaderName:String = "Date"
+    static let monthDayScoreHeaderName:String = "Daily-Score"
+    static let monthDayColorHeaderName:String = "Daily-Color"
+    
+    static let monthListHeaderName:String = "Day-Info"
+    
 }

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
     
@@ -14,7 +15,7 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     public var ActivityTitle: String = String()
     public var ActivityDescription: String = String()
     public var ActivityTypeIndex: Int = Int()
-    public var ActivityDuration: String = String()
+    public var ActivityDuration: Int = Int()
     public var ActivityStartTime: String = String()
     public var ActivityID: Int = Int()
     
@@ -68,7 +69,7 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         scheduleDesc.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
         self.view.addSubview(scheduleDesc)
         
-        let items = ["Meds", "Exercise", "Food", "Blood Glucose"]
+        let items = ScheduleItemType.ScheduleItemTypeOrderedStringMap
         segmentedControl = UISegmentedControl(items: items)
         segmentedControl.frame = CGRect(x: 0, y: barHeight + 100, width: displayWidth, height: 50)
         segmentedControl.addTarget(self, action: #selector(actTypeTapped(_:)), for: .valueChanged)
@@ -83,11 +84,11 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         scheduleDuration.textAlignment = NSTextAlignment.center
         scheduleDuration.textColor = blueColor
         scheduleDuration.placeholder = "Exercise Duration"
-        scheduleDuration.text = ActivityDuration
+        scheduleDuration.text = String(ActivityDuration)
         scheduleDuration.borderStyle = UITextBorderStyle.line
         scheduleDuration.layer.borderWidth = 1
         scheduleDuration.layer.borderColor = blueColor.cgColor
-        scheduleDuration.isHidden = true
+        scheduleDuration.isHidden = ActivityTypeIndex != 1
         scheduleDuration.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
         self.scheduleDuration.inputView = self.exercisePicker
 
@@ -137,7 +138,6 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     }
     
     func saveButtonTapped(_ button: UIButton) {
-        self.dismiss(animated: true, completion: nil)
         
         // Title in scheduleTitle.text!
         // Description in scheduleDesc.text!
@@ -165,6 +165,22 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         dateFormatterIn.dateFormat = "HH:mm a"
         editScheduleItem.scheduleItemStart = dateFormatterIn.date(from: ScheduleItemStart)!
         editScheduleItem.itemID = ActivityID
+        
+        let parameters = Requests.editScheduleItem(item: editScheduleItem)
+        
+        Alamofire.request("http://130.91.134.209:8000/edit", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
+            .responseString { response in
+                switch response.result {
+                case .success(let _):
+                    print("TEST SPIRO")
+                    self.dismiss(animated: true, completion: nil)
+                case .failure(let error):
+                    print("Request failed with error: \(error)")
+                }
+        }
+        
+        
+        //self.dismiss(animated: true, completion: nil)
     }
     
     func doneButtonTapped(_ sender:UIBarButtonItem) {

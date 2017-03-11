@@ -38,10 +38,14 @@
 		D135B5451E6F1BEF0039718F /* ProgressType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D135B5441E6F1BEF0039718F /* ProgressType.swift */; };
 		D135B5471E6F26820039718F /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = D135B5461E6F26820039718F /* SwiftyJSON.swift */; };
 		D135B5491E6FF37C0039718F /* Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D135B5481E6FF37C0039718F /* Requests.swift */; };
+		D135B5511E7345120039718F /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D135B5501E7345120039718F /* AppSettings.swift */; };
 		D1D21B041E62FB6600D6BF69 /* CheckInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D21B031E62FB6600D6BF69 /* CheckInViewController.swift */; };
 		D1D21B6B1E6405CB00D6BF69 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D21B691E6405CB00D6BF69 /* MasterViewController.swift */; };
 		D1D21B6C1E6405CB00D6BF69 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D21B6A1E6405CB00D6BF69 /* DetailViewController.swift */; };
 		D1D21B6E1E64068100D6BF69 /* NewScheduleItemForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D21B6D1E64068100D6BF69 /* NewScheduleItemForm.swift */; };
+		D1E5655C1E73AAE600DC9D1C /* DayItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E5655B1E73AAE600DC9D1C /* DayItem.swift */; };
+		D1E565651E73B79100DC9D1C /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E565641E73B79100DC9D1C /* CalendarViewController.swift */; };
+		D1E565671E73BC6200DC9D1C /* CurrentDayInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E565661E73BC6200DC9D1C /* CurrentDayInfo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -151,10 +155,14 @@
 		D135B5441E6F1BEF0039718F /* ProgressType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressType.swift; sourceTree = "<group>"; };
 		D135B5461E6F26820039718F /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
 		D135B5481E6FF37C0039718F /* Requests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Requests.swift; sourceTree = "<group>"; };
+		D135B5501E7345120039718F /* AppSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		D1D21B031E62FB6600D6BF69 /* CheckInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckInViewController.swift; sourceTree = "<group>"; };
 		D1D21B691E6405CB00D6BF69 /* MasterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 		D1D21B6A1E6405CB00D6BF69 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		D1D21B6D1E64068100D6BF69 /* NewScheduleItemForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewScheduleItemForm.swift; sourceTree = "<group>"; };
+		D1E5655B1E73AAE600DC9D1C /* DayItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DayItem.swift; sourceTree = "<group>"; };
+		D1E565641E73B79100DC9D1C /* CalendarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
+		D1E565661E73BC6200DC9D1C /* CurrentDayInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentDayInfo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -235,6 +243,10 @@
 				D135B5421E6730570039718F /* EndingType.swift */,
 				D135B5441E6F1BEF0039718F /* ProgressType.swift */,
 				D135B5481E6FF37C0039718F /* Requests.swift */,
+				D135B5501E7345120039718F /* AppSettings.swift */,
+				D1E5655B1E73AAE600DC9D1C /* DayItem.swift */,
+				D1E565641E73B79100DC9D1C /* CalendarViewController.swift */,
+				D1E565661E73BC6200DC9D1C /* CurrentDayInfo.swift */,
 			);
 			path = DebraTabs;
 			sourceTree = "<group>";
@@ -403,8 +415,11 @@
 				D100C0CE1E55129200E464D8 /* ExpandingMenuButton.swift in Sources */,
 				D100C09C1E52E1ED00E464D8 /* CustomTabBar.swift in Sources */,
 				D110B7BF1E2D61D300621294 /* AppDelegate.swift in Sources */,
+				D135B5511E7345120039718F /* AppSettings.swift in Sources */,
 				D100C0A41E52FE5400E464D8 /* MoreViewController.swift in Sources */,
+				D1E565651E73B79100DC9D1C /* CalendarViewController.swift in Sources */,
 				D110B7E31E2D681300621294 /* PathMenu.swift in Sources */,
+				D1E5655C1E73AAE600DC9D1C /* DayItem.swift in Sources */,
 				D100C09E1E52E33F00E464D8 /* CustomTabs.swift in Sources */,
 				D135B5391E66F3200039718F /* JSONParser.swift in Sources */,
 				D135B5411E6724CB0039718F /* JSONProtocolNames.swift in Sources */,
@@ -418,6 +433,7 @@
 				D1D21B6B1E6405CB00D6BF69 /* MasterViewController.swift in Sources */,
 				D135B5451E6F1BEF0039718F /* ProgressType.swift in Sources */,
 				D1D21B6E1E64068100D6BF69 /* NewScheduleItemForm.swift in Sources */,
+				D1E565671E73BC6200DC9D1C /* CurrentDayInfo.swift in Sources */,
 				63323FD11E70B1070003F088 /* EditItemViewController.swift in Sources */,
 				D135B5431E6730570039718F /* EndingType.swift in Sources */,
 				D100C0A01E52E64800E464D8 /* CustomTabBarItem.swift in Sources */,

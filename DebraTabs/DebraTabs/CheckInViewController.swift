@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Alamofire
 
 class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -49,9 +50,9 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
         act3.scheduleItemTitle = "Code"
         act3.scheduleItemStart = (Date() as NSDate) as Date
         
-        ObjectsArray.append(act1)
-        ObjectsArray.append(act2)
-        ObjectsArray.append(act3)
+        //ObjectsArray.append(act1)
+        //ObjectsArray.append(act2)
+        //ObjectsArray.append(act3)
 
         
         let barHeight: CGFloat = UIApplication.shared.statusBarFrame.size.height
@@ -72,15 +73,25 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         // http://stackoverflow.com/questions/36394997/uialertview-was-deprecated-in-ios-9-0-use-uialertcontroller-with-a-preferreds
         
-        let alertController = UIAlertController(title: "Congratulations!", message: "You completed this Activity - \(ObjectsArray[indexPath.row].scheduleItemTitle)", preferredStyle: UIAlertControllerStyle.alert)
-        
-        let okAction = UIAlertAction(title: "Done", style: UIAlertActionStyle.default)
-        {
-            (result : UIAlertAction) -> Void in
-            print("You pressed OK")
+        Alamofire.request("http://130.91.134.209:8000/checkin", method: .post)
+            .responseString { response in
+                switch response.result {
+                case .success(let _):
+                    print("TEST SPIRO")
+                    let alertController = UIAlertController(title: "Congratulations!", message: "You completed this Activity - \(self.ObjectsArray[indexPath.row].scheduleItemTitle)", preferredStyle: UIAlertControllerStyle.alert)
+                    
+                    let okAction = UIAlertAction(title: "Done", style: UIAlertActionStyle.default)
+                    {
+                        (result : UIAlertAction) -> Void in
+                        print("You pressed OK")
+                    }
+                    alertController.addAction(okAction)
+                    self.present(alertController, animated: true, completion: nil)
+                case .failure(let error):
+                    print("Request failed with error: \(error)")
+                }
         }
-        alertController.addAction(okAction)
-        self.present(alertController, animated: true, completion: nil)
+        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -124,7 +135,29 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         cell.textLabel!.text = "\(ObjectsArray[indexPath.row].scheduleItemTitle)"
         cell.detailTextLabel?.text = "\(ObjectsArray[indexPath.row].scheduleItemStart)"
-        
+        cell.isUserInteractionEnabled = ObjectsArray[indexPath.row].scheduleItemActive
         return cell
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        Alamofire.request("http://130.91.134.209:8000/checkinview", method: .get).validate().responseJSON { response in
+            switch response.result {
+            case .success(let data):
+                let json = JSON(data)
+                print(json.count)
+                print("TestCAT")
+                let jsonObjectList = json[JSONProtocolNames.scheduleItemsListResponseName].arrayValue
+                self.ObjectsArray = []
+                for jsonObject in jsonObjectList {
+                    let scheduleItemObject = ScheduleItem(json: jsonObject)
+                    self.ObjectsArray.append(scheduleItemObject)
+                }
+                self.myTableView.reloadData()
+            //return scheduleItems
+            case .failure(let error):
+                print("Request failed with error: \(error)")
+                self.ObjectsArray = []
+            }
+        }
     }
 }
