@@ -145,7 +145,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         self.view.addSubview(button)
         
         // Buttons
-        button2 = UIButton(frame: CGRect(x: displayWidth/4, y: displayHeight - 110, width: 100, height: 44))
+        button2 = UIButton(frame: CGRect(x: displayWidth/2 - 100, y: displayHeight - 110, width: 100, height: 44))
         button2.setTitle("Calendar", for: UIControlState.normal)
         button2.setTitleColor(UIColor.blue, for: UIControlState.normal)
         button2.backgroundColor = UIColor.clear
