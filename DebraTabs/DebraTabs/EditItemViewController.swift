@@ -37,6 +37,8 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     
     // Save Button
     var saveButton: UIButton = UIButton()
+    
+    var currentDayInfo:CurrentDayInfo = CurrentDayInfo()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -168,7 +170,7 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         
         let parameters = Requests.editScheduleItem(item: editScheduleItem)
         
-        Alamofire.request("http://130.91.134.209:8000/edit", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
+        Alamofire.request(Settings.getEditScheduleItemURL(userID: Settings.testUserID, date: currentDayInfo.currentDayString), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
             .responseString { response in
                 switch response.result {
                 case .success(let _):

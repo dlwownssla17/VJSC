@@ -18,12 +18,17 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
     public var button2: UIButton = UIButton()
     var currentDate: UITextField = UITextField()
     public var calendarButton: UIButton = UIButton()
+    var currentDateLabel:UILabel = UILabel()
     
     public var blueColor: UIColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
     
     var calendarPicker: UIDatePicker! = UIDatePicker()
     
     var currentDayInfo:CurrentDayInfo = CurrentDayInfo()
+    
+    
+    var barHeight: CGFloat = 0.0
+    var displayWidth: CGFloat = 0.0
 
     
     override func viewDidLoad() {
@@ -86,8 +91,8 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
 //        ObjectsArray.append(act2)
 //        ObjectsArray.append(act3)
         
-        let barHeight: CGFloat = UIApplication.shared.statusBarFrame.size.height
-        let displayWidth: CGFloat = self.view.frame.width
+        barHeight = UIApplication.shared.statusBarFrame.size.height
+        displayWidth = self.view.frame.width
         let displayHeight: CGFloat = self.view.frame.height
         
         calendarPicker = UIDatePicker()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
@@ -115,7 +120,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         currentDate.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
         self.currentDate.inputView = self.calendarPicker
         currentDate.inputAccessoryView = toolBar
-        self.view.addSubview(currentDate)
+        //self.view.addSubview(currentDate)
         
         myTableView = UITableView(frame: CGRect(x: 0, y: barHeight + 50, width: displayWidth, height: displayHeight - 200))//barHeight*1.5))
         print("yo")
@@ -145,7 +150,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         self.view.addSubview(button)
         
         // Buttons
-        button2 = UIButton(frame: CGRect(x: displayWidth/4, y: displayHeight - 110, width: 100, height: 44))
+        button2 = UIButton(frame: CGRect(x: displayWidth/2 - 100, y: displayHeight - 110, width: 100, height: 44))
         button2.setTitle("Calendar", for: UIControlState.normal)
         button2.setTitleColor(UIColor.blue, for: UIControlState.normal)
         button2.backgroundColor = UIColor.clear
@@ -179,26 +184,28 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         
         
         let secondViewController:AddNewItem = AddNewItem()
+        secondViewController.currentDayInfo = currentDayInfo
         self.present(secondViewController, animated: true, completion: nil)
         
     }
     
     func calendarViewButtonTapped(_ button: UIButton) {
-        button.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
-        UIView.animate(withDuration: 2.0,
-                       delay: 0,
-                       usingSpringWithDamping: 0.2,
-                       initialSpringVelocity: 6.0,
-                       options: .allowUserInteraction,
-                       animations: { [weak self] in
-                        self?.button.transform = .identity
-            },
-                       completion: nil)
+//        button.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+//        UIView.animate(withDuration: 2.0,
+//                       delay: 0,
+//                       usingSpringWithDamping: 0.2,
+//                       initialSpringVelocity: 6.0,
+//                       options: .allowUserInteraction,
+//                       animations: { [weak self] in
+//                        self?.button.transform = .identity
+//            },
+//                       completion: nil)
         
         print("Add Schedule Item Button pressed")
         
         
         let secondViewController:CalendarViewController = CalendarViewController()
+        secondViewController.currentDayInfo = currentDayInfo
         self.present(secondViewController, animated: true, completion: nil)
         
     }
@@ -274,6 +281,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
             print("edit button tapped")
             print(self.ObjectsArray[indexPath.row].scheduleItemType)
             var secondViewController:EditItemViewController = EditItemViewController()
+            secondViewController.currentDayInfo = self.currentDayInfo
             // activity title
             secondViewController.ActivityTitle = self.ObjectsArray[indexPath.row].scheduleItemTitle
             secondViewController.ActivityDescription = self.ObjectsArray[indexPath.row].scheduleItemDescription
@@ -308,7 +316,8 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
             
             removeAlert.addAction(UIAlertAction(title: "Remove Just Today", style: .default, handler: { (action: UIAlertAction!) in
                 let parameters = Requests.removeScheduleItem(item: self.ObjectsArray[indexPath.row], removeAllRecurring: false)
-                Alamofire.request("http://130.91.134.209:8000/remove", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
+                //"http://130.91.134.209:8000/remove"
+                Alamofire.request(Settings.getRemoveScheduleItemURL(userID: Settings.testUserID, date: self.currentDayInfo.currentDayString), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
                     .responseString { response in
                         switch response.result {
                         case .success(let _):
@@ -326,7 +335,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
             if self.ObjectsArray[indexPath.row].recurringType != .NotRecurring {
                 removeAlert.addAction(UIAlertAction(title: "Remove From Every Day", style: .default, handler: { (action: UIAlertAction!) in
                     let parameters = Requests.removeScheduleItem(item: self.ObjectsArray[indexPath.row], removeAllRecurring: true)
-                    Alamofire.request("http://130.91.134.209:8000/remove", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
+                    Alamofire.request(Settings.getRemoveScheduleItemURL(userID: Settings.testUserID, date: self.currentDayInfo.currentDayString), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
                         .responseString { response in
                             switch response.result {
                             case .success(let _):
@@ -383,7 +392,8 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        Alamofire.request("http://130.91.134.209:8000/test", method: .get).validate().responseJSON { response in
+        //"http://130.91.134.209:8000/test"
+        Alamofire.request(Settings.getDayViewURL(userID: Settings.testUserID, day: currentDayInfo.currentDayString), method: .get).validate().responseJSON { response in
             switch response.result {
             case .success(let data):
                 let json = JSON(data)
@@ -396,12 +406,19 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
                     self.ObjectsArray.append(scheduleItemObject)
                 }
                 self.myTableView.reloadData()
+                
+                self.currentDateLabel.removeFromSuperview()
+                self.currentDateLabel.isHidden = true
+                self.currentDateLabel = UILabel(frame: CGRect(x: 0, y: self.barHeight, width: self.displayWidth, height: 50))
+                self.currentDateLabel.text = self.currentDayInfo.currentDayString
+                self.view.addSubview(self.currentDateLabel)
             //return scheduleItems
             case .failure(let error):
                 print("Request failed with error: \(error)")
                 self.ObjectsArray = []
             }
         }
+        print("FROM CALENDAR: " + currentDayInfo.currentDayString)
     }
     
 }
