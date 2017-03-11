@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.json.JSONObject;
 
-import model.Constant;
+import model.ModelTools;
 import model.User;
 import util.DateFormat;
 
@@ -132,7 +132,7 @@ public class SingleFileUserDB {
 	
 	public static void main(String[] args) {
 		long epoch = Long.parseLong("1081157732");
-		SingleFileUserDB userDB = new SingleFileUserDB("spiro", "metaxas95", new Date(epoch * 1000), Constant.DEFAULT_CAPACITY);
+		SingleFileUserDB userDB = new SingleFileUserDB("spiro", "metaxas95", new Date(epoch * 1000), ModelTools.DEFAULT_CAPACITY);
 		userDB.setFitBitDisplayName("SpiroTheMantaxas");
 		System.out.println(SingleFileDBTools.toJSON(userDB).toString(4));
 	}

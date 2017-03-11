@@ -11,7 +11,7 @@ import com.sun.net.httpserver.HttpServer;
 import db.SingleFileDBTools;
 import db.SingleFileUserDB;
 
-public class ServerResponse {
+public class ExampleServer {
 
     public static void main(String[] args) throws Exception {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);

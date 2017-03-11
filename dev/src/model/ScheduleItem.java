@@ -69,7 +69,7 @@ public class ScheduleItem {
 			Date startDateTime, Progress progress, ScheduleItemNotificationParams notificationParams)
 					throws IllegalArgumentException {
 		this(id, title, description, type, associatedUser, startDateTime, progress, notificationParams,
-				Constant.DEFAULT_YELLOW_THRESHOLD, Constant.DEFAULT_GREEN_THRESHOLD);
+				ModelTools.DEFAULT_YELLOW_THRESHOLD, ModelTools.DEFAULT_GREEN_THRESHOLD);
 	}
 	
 	@Override
@@ -179,18 +179,18 @@ public class ScheduleItem {
 		if (this.checkedIn) return false;
 		
 		Calendar checkInDateTime = DateAndCalendar.dateToCalendar(this.startDateTime);
-		int activeMinutesBefore = Constant.START_ACTIVE_MINUTES_BEFORE;
-		int activeMinutesAfter = Math.min(Constant.START_ACTIVE_MINUTES_AFTER,
-				(int) Math.round((double) this.duration * Constant.START_ACTIVE_MINUTES_AFTER /
-						(Constant.START_ACTIVE_MINUTES_AFTER + Constant.END_ACTIVE_MINUTES_BEFORE)));
+		int activeMinutesBefore = ModelTools.START_ACTIVE_MINUTES_BEFORE;
+		int activeMinutesAfter = Math.min(ModelTools.START_ACTIVE_MINUTES_AFTER,
+				(int) Math.round((double) this.duration * ModelTools.START_ACTIVE_MINUTES_AFTER /
+						(ModelTools.START_ACTIVE_MINUTES_AFTER + ModelTools.END_ACTIVE_MINUTES_BEFORE)));
 		
 		if (this.progress instanceof PercentageProgress) {
 			if (this.checkedInAtStart) {
 				checkInDateTime.add(Calendar.MINUTE, this.duration);
-				activeMinutesBefore = Math.min(Constant.END_ACTIVE_MINUTES_BEFORE,
-						(int) Math.round((double) this.duration * Constant.END_ACTIVE_MINUTES_BEFORE /
-								(Constant.START_ACTIVE_MINUTES_AFTER + Constant.END_ACTIVE_MINUTES_BEFORE)));
-				activeMinutesAfter = Constant.END_ACTIVE_MINUTES_AFTER;
+				activeMinutesBefore = Math.min(ModelTools.END_ACTIVE_MINUTES_BEFORE,
+						(int) Math.round((double) this.duration * ModelTools.END_ACTIVE_MINUTES_BEFORE /
+								(ModelTools.START_ACTIVE_MINUTES_AFTER + ModelTools.END_ACTIVE_MINUTES_BEFORE)));
+				activeMinutesAfter = ModelTools.END_ACTIVE_MINUTES_AFTER;
 			}
 		} else if (this.progress instanceof LevelsProgress) { // not implementing LevelsProgress yet
 			return false;
@@ -209,13 +209,13 @@ public class ScheduleItem {
 	// edit/remove is possible right now
 	public boolean isModifiable() {
 		Calendar modifiableAfterCreated = DateAndCalendar.dateToCalendar(this.createdDateTime);
-		modifiableAfterCreated.add(Calendar.MINUTE, Constant.MODIFIABLE_AFTER_CREATE);
+		modifiableAfterCreated.add(Calendar.MINUTE, ModelTools.MODIFIABLE_AFTER_CREATE);
 		
 		Calendar now = Calendar.getInstance();
 		if (now.before(modifiableAfterCreated)) return true;
 		
 		Calendar notModifiableBeforeStart = DateAndCalendar.dateToCalendar(this.startDateTime);
-		notModifiableBeforeStart.add(Calendar.MINUTE, -Constant.NOT_MODIFIABLE_BEFORE_START);
+		notModifiableBeforeStart.add(Calendar.MINUTE, -ModelTools.NOT_MODIFIABLE_BEFORE_START);
 		
 		return now.before(notModifiableBeforeStart);
 	}

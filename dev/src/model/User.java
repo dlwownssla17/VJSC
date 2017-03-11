@@ -29,7 +29,7 @@ public class User {
 		
 		// TODO decide on initialization of all the other fields
 		
-		this.schedule = new UserSchedule(365);
+		this.schedule = new UserSchedule(ModelTools.DEFAULT_CAPACITY);
 	}
 	
 	// TODO decide on how to initialize from initial survey upon registration

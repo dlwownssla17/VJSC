@@ -1,6 +1,6 @@
 package model;
 
-public class Constant {
+public class ModelTools {
 	public static double DEFAULT_YELLOW_THRESHOLD = 0.5;
 	public static double DEFAULT_GREEN_THRESHOLD = 0.8;
 	

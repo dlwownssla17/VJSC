@@ -229,7 +229,7 @@ public class ScheduleItemRecurrence {
 	}
 	
 	private String startDateTimeString() {
-		return DateFormat.getFormattedString(this.startDateTime, Constant.DATE_TIME_FORMAT);
+		return DateFormat.getFormattedString(this.startDateTime, ModelTools.DATE_TIME_FORMAT);
 	}
 	
 	private String endTypeString() {
@@ -252,7 +252,7 @@ public class ScheduleItemRecurrence {
 			case 1:
 				return String.format("Y = %d", this.endAfter);
 			case 2:
-				return DateFormat.getFormattedString(this.endDateTime, Constant.DATE_FORMAT);
+				return DateFormat.getFormattedString(this.endDateTime, ModelTools.DATE_FORMAT);
 			default:
 				throw new IllegalStateException();
 		}
