@@ -593,7 +593,7 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         let parameters = Requests.addScheduleItemJSON(item: newScheduleItem)
         
         //"http://130.91.134.209:8000/add"
-        Alamofire.request(Settings.getAddScheduleItemURL(userID: Settings.testUserID, date: currentDayInfo.currentDayString), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
+        Alamofire.request(Settings.getAddScheduleItemURL(userID: Settings.usernameString, date: currentDayInfo.currentDayString), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
             .responseString { response in
                 switch response.result {
                 case .success(let _):

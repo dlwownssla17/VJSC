@@ -23,6 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        var usernameString: String = String()
         for trans in x as! [NSManagedObject] {
             Settings.usernameString = trans.value(forKey: "username") as! String
+            print("AHHHHHH")
             print("\(trans.value(forKey: "username"))")
         }
         

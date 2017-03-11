@@ -15,40 +15,50 @@ class Settings {
    
     static var usernameString: String = ""
   
-    static let testUserID:Int = 123;
+    static let testUserID2:String = "123";
     
-    static func getDayViewURL(userID:Int, day:String)->String {
+    static func getDayViewURL(userID:String, day:String)->String {
         let relativeURL:String = String(userID) + "/day/view/" + day
         return serverURL + relativeURL
     }
     
-    static func getMonthViewURL(userID:Int, month:Int, year:Int)->String {
+    static func getMonthViewURL(userID:String, month:Int, year:Int)->String {
         let relativeURL:String = String(userID) + "/month/view/" + String(year) + "/" + String(month)
         return serverURL + relativeURL
     }
     
-    static func getCheckinViewURL(userID:Int)->String {
+    static func getCheckinViewURL(userID:String)->String {
         let relativeURL:String = String(userID) + "/checkin/view"
         return serverURL + relativeURL
     }
     
-    static func getAddScheduleItemURL(userID:Int, date:String)->String {
+    static func getAddScheduleItemURL(userID:String, date:String)->String {
         let relativeURL:String = String(userID) + "/day/add/" + date
         return serverURL + relativeURL
     }
     
-    static func getEditScheduleItemURL(userID:Int, date:String)->String {
+    static func getEditScheduleItemURL(userID:String, date:String)->String {
         let relativeURL:String = String(userID) + "/day/edit/" + date
         return serverURL + relativeURL
     }
     
-    static func getRemoveScheduleItemURL(userID:Int, date:String)->String {
+    static func getRemoveScheduleItemURL(userID:String, date:String)->String {
         let relativeURL:String = String(userID) + "/day/remove/" + date
         return serverURL + relativeURL
     }
     
-    static func getCheckinURL(userID:Int, itemID:Int)->String {
+    static func getCheckinURL(userID:String, itemID:Int)->String {
         let relativeURL:String = String(userID) + "/checkin/" + String(itemID)
+        return serverURL + relativeURL
+    }
+    
+    static func getRegistrationURL()->String {
+        let relativeURL:String = "register/"
+        return serverURL + relativeURL
+    }
+    
+    static func getLoginURL()->String {
+        let relativeURL:String = "login/"
         return serverURL + relativeURL
     }
 }

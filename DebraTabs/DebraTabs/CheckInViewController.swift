@@ -75,7 +75,7 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         // http://stackoverflow.com/questions/36394997/uialertview-was-deprecated-in-ios-9-0-use-uialertcontroller-with-a-preferreds
         
-        Alamofire.request(Settings.getCheckinURL(userID: Settings.testUserID, itemID: ObjectsArray[indexPath.row].itemID), method: .post)
+        Alamofire.request(Settings.getCheckinURL(userID: Settings.usernameString, itemID: ObjectsArray[indexPath.row].itemID), method: .post)
             .responseString { response in
                 switch response.result {
                 case .success(let _):

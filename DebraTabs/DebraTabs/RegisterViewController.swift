@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class RegisterViewController: UIViewController {
 
@@ -104,7 +105,23 @@ class RegisterViewController: UIViewController {
             self.present(alert, animated: true, completion: nil)
         } else {
              // Send Stuff to DB
-            
+            let parameters:[String:Any] = [:]
+            let headers = ["Username":text2!, "Password":(text3)!]
+            Alamofire.request(Settings.getRegistrationURL(), method: .post, parameters: parameters).validate().responseString { response in
+                switch response.result {
+                case .success(let data):
+                    // Save DB Response username
+                    dataLayer.storeTranscription(username: text2!)
+                    //Dismiss VC
+                    self.dismiss(animated: true, completion: nil)
+                    let mainStoryboard = UIStoryboard(name: "Main" , bundle: nil)
+                    self.present(mainStoryboard.instantiateInitialViewController()!, animated: true, completion: nil)
+                case .failure(let error):
+                    let alert = UIAlertController(title: "Alert", message: "Authentication Failed!", preferredStyle: UIAlertControllerStyle.alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
+                }
+            }
             
             //Dismiss VC
             self.dismiss(animated: true, completion: nil)
