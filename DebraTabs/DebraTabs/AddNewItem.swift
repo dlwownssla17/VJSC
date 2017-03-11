@@ -82,6 +82,8 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
     // Save Button
     var saveButton: UIButton = UIButton()
     
+    var currentDayInfo:CurrentDayInfo = CurrentDayInfo()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.hideKeyboardWhenTappedAround()
@@ -590,7 +592,8 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         
         let parameters = Requests.addScheduleItemJSON(item: newScheduleItem)
         
-        Alamofire.request("http://130.91.134.209:8000/add", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
+        //"http://130.91.134.209:8000/add"
+        Alamofire.request(Settings.getAddScheduleItemURL(userID: Settings.testUserID, date: currentDayInfo.currentDayString), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
             .responseString { response in
                 switch response.result {
                 case .success(let _):
