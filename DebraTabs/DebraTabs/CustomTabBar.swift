@@ -13,7 +13,9 @@ class CustomTabBar: UITabBarController, CustomTabBarDataSource, CustomTabBarDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         print("HELLO")
+        print(Settings.usernameString)
         
         // Do any additional setup after loading the view.
         self.tabBar.isHidden = true
@@ -38,7 +40,6 @@ class CustomTabBar: UITabBarController, CustomTabBarDataSource, CustomTabBarDele
         // END
         
         configureExpandingMenuButton()
-        
 
     }
     

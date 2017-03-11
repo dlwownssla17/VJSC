@@ -100,8 +100,15 @@ class LogInViewController: UIViewController {
             // Send Stuff to DB
             
             
+            
+             // Save DB Response username
+             dataLayer.storeTranscription(username: text2!)
+            
+            
             //Dismiss VC
             self.dismiss(animated: true, completion: nil)
+            let mainStoryboard = UIStoryboard(name: "Main" , bundle: nil)
+            self.present(mainStoryboard.instantiateInitialViewController()!, animated: true, completion: nil)
             
         }
 
