@@ -265,6 +265,48 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         self.view.frame = frame
         UIView.commitAnimations()
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("Num: \(indexPath.row)")
+        print("Value: \(ObjectsArray[indexPath.row].scheduleItemTitle)")
+        
+        let alertController = UIAlertController(title: "Details!", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+
+
+        
+        let okAction = UIAlertAction(title: "Done", style: UIAlertActionStyle.default)
+        {
+            (result : UIAlertAction) -> Void in
+            
+            let titleTextField = alertController.textFields![0] as UITextField
+            let descTextField = alertController.textFields![1] as UITextField
+            let typeTextField = alertController.textFields![2] as UITextField
+            let dateTextField = alertController.textFields![3] as UITextField
+            print("You pressed OK")
+        }
+        alertController.addTextField { (textField : UITextField!) -> Void in
+            textField.text = "Title: \(self.ObjectsArray[indexPath.row].scheduleItemTitle)"
+            textField.isEnabled = false
+        }
+        alertController.addTextField { (textField : UITextField!) -> Void in
+            textField.text = "Description: \(self.ObjectsArray[indexPath.row].scheduleItemDescription)"
+            textField.isEnabled = false
+        }
+        alertController.addTextField { (textField : UITextField!) -> Void in
+            textField.text = "Type: \(ScheduleItemType.ScheduleItemTypeStringMap[self.ObjectsArray[indexPath.row].scheduleItemType]!)"
+            textField.isEnabled = false
+        }
+        alertController.addTextField { (textField : UITextField!) -> Void in
+            let dateFormatter: DateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "hh:mm a"
+            let dateString: String = dateFormatter.string(from: self.ObjectsArray[indexPath.row].scheduleItemStart)
+            textField.text = "Time: \(dateString)"
+            textField.isEnabled = false
+        }
+        alertController.addAction(okAction)
+        self.present(alertController, animated: true, completion: nil)
+        
+    }
 
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
