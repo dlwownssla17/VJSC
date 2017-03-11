@@ -93,5 +93,9 @@ class JSONProtocolNames {
     static let monthListHeaderName:String = "Day-Info"
     
     static let passwordHeaderName:String = "Password"
+    static let usernameHeaderName:String = "Username"
+    static let dateHeaderName:String = "Date"
+    static let yearHeaderName:String = "Year"
+    static let monthHeaderName:String = "Month"
     
 }

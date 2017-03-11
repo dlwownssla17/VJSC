@@ -169,8 +169,9 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         editScheduleItem.itemID = ActivityID
         
         let parameters = Requests.editScheduleItem(item: editScheduleItem)
+        let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: self.currentDayInfo.currentDayString]
         
-        Alamofire.request(Settings.getEditScheduleItemURL(userID: Settings.usernameString, date: currentDayInfo.currentDayString), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
+        Alamofire.request(Settings.getEditScheduleItemURL(), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             .responseString { response in
                 switch response.result {
                 case .success(let _):

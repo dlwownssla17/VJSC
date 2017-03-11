@@ -17,13 +17,13 @@ class Settings {
   
     static let testUserID2:String = "123";
     
-    static func getDayViewURL(userID:String, day:String)->String {
-        let relativeURL:String = String(userID) + "/day/view/" + day
+    static func getDayViewURL()->String {
+        let relativeURL:String = "day/view/"
         return serverURL + relativeURL
     }
     
-    static func getMonthViewURL(userID:String, month:Int, year:Int)->String {
-        let relativeURL:String = String(userID) + "/month/view/" + String(year) + "/" + String(month)
+    static func getMonthViewURL()->String {
+        let relativeURL:String = "month/view/"
         return serverURL + relativeURL
     }
     
@@ -32,18 +32,18 @@ class Settings {
         return serverURL + relativeURL
     }
     
-    static func getAddScheduleItemURL(userID:String, date:String)->String {
-        let relativeURL:String = String(userID) + "/day/add/" + date
+    static func getAddScheduleItemURL()->String {
+        let relativeURL:String = "day/add/"
         return serverURL + relativeURL
     }
     
-    static func getEditScheduleItemURL(userID:String, date:String)->String {
-        let relativeURL:String = String(userID) + "/day/edit/" + date
+    static func getEditScheduleItemURL()->String {
+        let relativeURL:String = "day/edit/"
         return serverURL + relativeURL
     }
     
-    static func getRemoveScheduleItemURL(userID:String, date:String)->String {
-        let relativeURL:String = String(userID) + "/day/remove/" + date
+    static func getRemoveScheduleItemURL()->String {
+        let relativeURL:String = "day/remove/"
         return serverURL + relativeURL
     }
     
