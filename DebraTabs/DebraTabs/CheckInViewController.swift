@@ -89,7 +89,7 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         // http://stackoverflow.com/questions/36394997/uialertview-was-deprecated-in-ios-9-0-use-uialertcontroller-with-a-preferreds
         
-        Alamofire.request(Settings.getCheckinURL(userID: Settings.testUserID, itemID: ObjectsArray[indexPath.row].itemID), method: .post)
+        Alamofire.request(Settings.getCheckinURL(userID: Settings.usernameString, itemID: ObjectsArray[indexPath.row].itemID), method: .post)
             .responseString { response in
                 switch response.result {
                 case .success(let _):
@@ -198,7 +198,7 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        Alamofire.request("http://130.91.134.209:8000/checkinview", method: .get).validate().responseJSON { response in
+        Alamofire.request(Settings.getCheckinViewURL(userID: Settings.usernameString), method: .get).validate().responseJSON { response in
             switch response.result {
             case .success(let data):
                 let json = JSON(data)

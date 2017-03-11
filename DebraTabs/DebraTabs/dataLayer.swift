@@ -32,6 +32,7 @@ class dataLayer {
         do {
             try context.save()
             print("saved!")
+            Settings.usernameString = username
         } catch let error as NSError  {
             print("Could not save \(error), \(error.userInfo)")
         } catch {

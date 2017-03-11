@@ -81,6 +81,10 @@ class Requests {
         return itemInformation
     }
     
+    static func loginItem(password:String)->[String: Any] {
+        return [JSONProtocolNames.passwordHeaderName: password]
+    }
+    
     static func getDayViewRoot()->Array<ScheduleItem> {
 //        Alamofire.request("http://130.91.134.209:8000/test").responseJSON { response in
 //            print("START")

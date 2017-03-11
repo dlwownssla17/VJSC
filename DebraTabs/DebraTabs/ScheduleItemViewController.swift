@@ -314,7 +314,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return true
+        return self.ObjectsArray[indexPath.row].scheduleItemModifiable
     }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
@@ -359,7 +359,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
             removeAlert.addAction(UIAlertAction(title: "Remove Just Today", style: .default, handler: { (action: UIAlertAction!) in
                 let parameters = Requests.removeScheduleItem(item: self.ObjectsArray[indexPath.row], removeAllRecurring: false)
                 //"http://130.91.134.209:8000/remove"
-                Alamofire.request(Settings.getRemoveScheduleItemURL(userID: Settings.testUserID, date: self.currentDayInfo.currentDayString), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
+                Alamofire.request(Settings.getRemoveScheduleItemURL(userID: Settings.usernameString, date: self.currentDayInfo.currentDayString), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
                     .responseString { response in
                         switch response.result {
                         case .success(let _):
@@ -377,7 +377,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
             if self.ObjectsArray[indexPath.row].recurringType != .NotRecurring {
                 removeAlert.addAction(UIAlertAction(title: "Remove From Every Day", style: .default, handler: { (action: UIAlertAction!) in
                     let parameters = Requests.removeScheduleItem(item: self.ObjectsArray[indexPath.row], removeAllRecurring: true)
-                    Alamofire.request(Settings.getRemoveScheduleItemURL(userID: Settings.testUserID, date: self.currentDayInfo.currentDayString), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
+                    Alamofire.request(Settings.getRemoveScheduleItemURL(userID: Settings.usernameString, date: self.currentDayInfo.currentDayString), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
                         .responseString { response in
                             switch response.result {
                             case .success(let _):
@@ -435,7 +435,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
     
     override func viewDidAppear(_ animated: Bool) {
         //"http://130.91.134.209:8000/test"
-        Alamofire.request(Settings.getDayViewURL(userID: Settings.testUserID, day: currentDayInfo.currentDayString), method: .get).validate().responseJSON { response in
+        Alamofire.request(Settings.getDayViewURL(userID: Settings.usernameString, day: currentDayInfo.currentDayString), method: .get).validate().responseJSON { response in
             switch response.result {
             case .success(let data):
                 let json = JSON(data)
