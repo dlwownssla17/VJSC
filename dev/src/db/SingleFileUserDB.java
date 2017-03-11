@@ -8,7 +8,7 @@ import model.Constant;
 import model.User;
 import util.DateFormat;
 
-public class UserDB {
+public class SingleFileUserDB {
 	private String username;
 	private String password;
 	
@@ -28,7 +28,7 @@ public class UserDB {
 	// TODO this is temporary (remove this later)
 	private String fitBitDisplayName;
 	
-	public UserDB(String username, String password, String memberSince, int userScheduleCapacity) {
+	public SingleFileUserDB(String username, String password, String memberSince, int userScheduleCapacity) {
 		this.username = username;
 		this.password = password;
 		
@@ -37,14 +37,14 @@ public class UserDB {
 		this.userScheduleCapacity = userScheduleCapacity;
 	}
 	
-	public UserDB(String username, String password, Date memberSince, int userScheduleCapacity) {
-		this(username, password, DateFormat.getFormattedString(memberSince, DBTools.MemberSinceDateTimeFormat),
+	public SingleFileUserDB(String username, String password, Date memberSince, int userScheduleCapacity) {
+		this(username, password, DateFormat.getFormattedString(memberSince, SingleFileDBTools.MemberSinceDateTimeFormat),
 				userScheduleCapacity);
 	}
 	
-	public UserDB(User user) {
+	public SingleFileUserDB(User user) {
 		this(user.getUsername(), user.getPassword(),
-				DateFormat.getFormattedString(user.getMemberSince(), DBTools.MemberSinceDateTimeFormat),
+				DateFormat.getFormattedString(user.getMemberSince(), SingleFileDBTools.MemberSinceDateTimeFormat),
 				user.getSchedule().getCapacity());
 	}
 	
@@ -132,8 +132,8 @@ public class UserDB {
 	
 	public static void main(String[] args) {
 		long epoch = Long.parseLong("1081157732");
-		UserDB userDB = new UserDB("spiro", "metaxas95", new Date(epoch * 1000), Constant.DEFAULT_CAPACITY);
+		SingleFileUserDB userDB = new SingleFileUserDB("spiro", "metaxas95", new Date(epoch * 1000), Constant.DEFAULT_CAPACITY);
 		userDB.setFitBitDisplayName("SpiroTheMantaxas");
-		System.out.println(DBTools.toJSON(userDB).toString(4));
+		System.out.println(SingleFileDBTools.toJSON(userDB).toString(4));
 	}
 }

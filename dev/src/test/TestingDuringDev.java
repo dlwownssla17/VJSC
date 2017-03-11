@@ -8,9 +8,9 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import db.DBTools;
-import db.TeamDB;
-import db.UserDB;
+import db.SingleFileDBTools;
+import db.SingleFileTeamDB;
+import db.SingleFileUserDB;
 import fitbit.FitBitAccount;
 import fitbit.FitBitActivity;
 import fitbit.FitBitIntraDayActivity;
@@ -107,36 +107,36 @@ public class TestingDuringDev {
 			teamSC.addUser(spiro);
 			teamSC.addUser(chad);
 			
-			UserDB vivekDB = DBTools.toUserDB(vivek);
-			UserDB jjDB = DBTools.toUserDB(jj);
-			UserDB spiroDB = DBTools.toUserDB(spiro);
-			UserDB chadDB = DBTools.toUserDB(chad);
+			SingleFileUserDB vivekDB = SingleFileDBTools.toUserDB(vivek);
+			SingleFileUserDB jjDB = SingleFileDBTools.toUserDB(jj);
+			SingleFileUserDB spiroDB = SingleFileDBTools.toUserDB(spiro);
+			SingleFileUserDB chadDB = SingleFileDBTools.toUserDB(chad);
 			
-			TeamDB teamVJDB = DBTools.toTeamDB(teamVJ);
-			TeamDB teamSCDB = DBTools.toTeamDB(teamSC);
+			SingleFileTeamDB teamVJDB = SingleFileDBTools.toTeamDB(teamVJ);
+			SingleFileTeamDB teamSCDB = SingleFileDBTools.toTeamDB(teamSC);
 			
-			DBTools.setUserDB(vivekDB);
-			DBTools.setUserDB(jjDB);
-			DBTools.setUserDB(spiroDB);
-			DBTools.setTeamDB(teamVJDB);
-			DBTools.setUserDB(chadDB);
-			DBTools.setTeamDB(teamSCDB);
+			SingleFileDBTools.setUserDB(vivekDB);
+			SingleFileDBTools.setUserDB(jjDB);
+			SingleFileDBTools.setUserDB(spiroDB);
+			SingleFileDBTools.setTeamDB(teamVJDB);
+			SingleFileDBTools.setUserDB(chadDB);
+			SingleFileDBTools.setTeamDB(teamSCDB);
 			
 			System.out.println("---Everyone joined!---");
 			System.out.println(IO.readFile("db"));
 			System.out.println();
 			
-			spiroDB = DBTools.getUserDB("spiromaster");
+			spiroDB = SingleFileDBTools.getUserDB("spiromaster");
 			System.out.println("---");
 			System.out.println(String.format("Spiro's FitBit display name is = %s", spiroDB.getFitBitDisplayName()));
 			System.out.println();
 			
 			jj.setPassword("jj_with_his_bridgewater_transparency17");
-			jjDB = DBTools.toUserDB(jj);
-			DBTools.setUserDB(jjDB);
+			jjDB = SingleFileDBTools.toUserDB(jj);
+			SingleFileDBTools.setUserDB(jjDB);
 			
-			DBTools.removeTeamDB(teamSCDB);
-			DBTools.removeUserDB(chadDB);
+			SingleFileDBTools.removeTeamDB(teamSCDB);
+			SingleFileDBTools.removeUserDB(chadDB);
 			
 			System.out.println("---Now what?!---");
 			System.out.println(IO.readFile("db"));

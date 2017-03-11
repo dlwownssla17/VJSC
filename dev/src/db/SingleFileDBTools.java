@@ -15,13 +15,13 @@ import model.User;
 import util.DateFormat;
 import util.IO;
 
-public class DBTools {
+public class SingleFileDBTools {
 	private static String DB = "db";
 	
 	protected static String MemberSinceDateTimeFormat = "yyyy-MM-dd HH:mm";
 	
-	public static UserDB toUserDB(User user) {
-		UserDB userDB = new UserDB(user);
+	public static SingleFileUserDB toUserDB(User user) {
+		SingleFileUserDB userDB = new SingleFileUserDB(user);
 		
 		if (user.hasFitBitAccount()) {
 			userDB.setFitBitAccessToken(user.getFitBitAccount().getAccessToken());
@@ -39,8 +39,8 @@ public class DBTools {
 		return userDB;
 	}
 	
-	public static TeamDB toTeamDB(Team team) {
-		TeamDB teamDB = new TeamDB(team.getTeamName());
+	public static SingleFileTeamDB toTeamDB(Team team) {
+		SingleFileTeamDB teamDB = new SingleFileTeamDB(team.getTeamName());
 		
 		for (User user : team.getUsers()) {
 			teamDB.addUsername(user.getUsername());
@@ -49,7 +49,7 @@ public class DBTools {
 		return teamDB;
 	}
 	
-	public static User fromUserDB(UserDB userDB) {
+	public static User fromUserDB(SingleFileUserDB userDB) {
 		try {
 			User user = new User(userDB.getUsername(), userDB.getPassword());
 			
@@ -76,7 +76,7 @@ public class DBTools {
 	
 	// TODO fromTeamDB
 	
-	public static JSONObject toJSON(UserDB userDB) {
+	public static JSONObject toJSON(SingleFileUserDB userDB) {
 		JSONObject userJSON = new JSONObject();
 		userJSON.put("username", userDB.getUsername());
 		userJSON.put("password",  userDB.getPassword());
@@ -91,14 +91,14 @@ public class DBTools {
 		return userJSON;
 	}
 	
-	public static JSONObject toJSON(TeamDB teamDB) {
+	public static JSONObject toJSON(SingleFileTeamDB teamDB) {
 		JSONObject teamJSON = new JSONObject();
 		teamJSON.put("team_name", teamDB.getTeamName());
 		teamJSON.put("usernames", new JSONArray(teamDB.getUsernames()));
 		return teamJSON;
 	}
 	
-	public static UserDB toUserDB(JSONObject userDBJSON) {
+	public static SingleFileUserDB toUserDB(JSONObject userDBJSON) {
 		String username = userDBJSON.getString("username");
 		String password = userDBJSON.getString("password");
 		String memberSince = userDBJSON.getString("member_since");
@@ -111,7 +111,7 @@ public class DBTools {
 		String fitBitExpiresIn = userDBJSON.getString("fitbit_expires_in");
 		String fitBitDisplayName = userDBJSON.getString("fitbit_display_name"); // remove this later
 		
-		UserDB userDB = new UserDB(username, password, memberSince, scheduleCapacity);
+		SingleFileUserDB userDB = new SingleFileUserDB(username, password, memberSince, scheduleCapacity);
 		userDB.setFitBitAccessToken(fitBitAccessToken);
 		userDB.setFitBitRefreshToken(fitBitRefreshToken);
 		userDB.setFitBitUserId(fitBitUserId);
@@ -122,11 +122,11 @@ public class DBTools {
 		return userDB;
 	}
 	
-	public static TeamDB toTeamDB(JSONObject teamDBJSON) {
+	public static SingleFileTeamDB toTeamDB(JSONObject teamDBJSON) {
 		String teamName = teamDBJSON.getString("team_name");
 		JSONArray usernames = teamDBJSON.getJSONArray("usernames");
 		
-		TeamDB teamDB = new TeamDB(teamName);
+		SingleFileTeamDB teamDB = new SingleFileTeamDB(teamName);
 		for (int i = 0; i < usernames.length(); i++) {
 			teamDB.addUsername(usernames.getString(i));
 		}
@@ -163,7 +163,7 @@ public class DBTools {
 	
 	// TODO these methods are gonna have to become more granular
 	
-	public static UserDB getUserDB(String username) {
+	public static SingleFileUserDB getUserDB(String username) {
 		JSONObject db = loadDB();
 		
 		JSONObject userDBJSON = db.getJSONObject("users").getJSONObject(username);
@@ -171,7 +171,7 @@ public class DBTools {
 		return toUserDB(userDBJSON);
 	}
 	
-	public static boolean setUserDB(UserDB userDB) {
+	public static boolean setUserDB(SingleFileUserDB userDB) {
 		JSONObject db = loadDB();
 		
 		db.getJSONObject("users").put(userDB.getUsername(), toJSON(userDB));
@@ -180,7 +180,7 @@ public class DBTools {
 		return true;
 	}
 	
-	public static boolean removeUserDB(UserDB userDB) {
+	public static boolean removeUserDB(SingleFileUserDB userDB) {
 		JSONObject db = loadDB();
 		
 		db.getJSONObject("users").remove(userDB.getUsername());
@@ -189,7 +189,7 @@ public class DBTools {
 		return true;
 	}
 	
-	public static TeamDB getTeamDB(String teamName) {
+	public static SingleFileTeamDB getTeamDB(String teamName) {
 		JSONObject db = loadDB();
 		
 		JSONObject teamDBJSON = db.getJSONObject("teams").getJSONObject(teamName);
@@ -197,7 +197,7 @@ public class DBTools {
 		return toTeamDB(teamDBJSON);
 	}
 	
-	public static boolean setTeamDB(TeamDB teamDB) {
+	public static boolean setTeamDB(SingleFileTeamDB teamDB) {
 		JSONObject db = loadDB();
 		
 		db.getJSONObject("teams").put(teamDB.getTeamName(), toJSON(teamDB));
@@ -206,7 +206,7 @@ public class DBTools {
 		return true;
 	}
 	
-	public static boolean removeTeamDB(TeamDB teamDB) {
+	public static boolean removeTeamDB(SingleFileTeamDB teamDB) {
 		JSONObject db = loadDB();
 		
 		db.getJSONObject("teams").remove(teamDB.getTeamName());

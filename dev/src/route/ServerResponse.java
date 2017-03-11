@@ -8,8 +8,8 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import db.DBTools;
-import db.UserDB;
+import db.SingleFileDBTools;
+import db.SingleFileUserDB;
 
 public class ServerResponse {
 
@@ -23,7 +23,7 @@ public class ServerResponse {
     static class MyHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
-        	UserDB spiroDB = DBTools.getUserDB("spiromaster");
+        	SingleFileUserDB spiroDB = SingleFileDBTools.getUserDB("spiromaster");
     		String spiroFitBitDisplayName = spiroDB.getFitBitDisplayName();
     		String response = String.format("%s\n", spiroFitBitDisplayName);
             t.sendResponseHeaders(200, response.getBytes().length);

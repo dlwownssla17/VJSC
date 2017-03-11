@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class TeamDB {
+public class SingleFileTeamDB {
 	private String teamName;
 	private ArrayList<String> usernames;
 	
-	public TeamDB(String teamName) {
+	public SingleFileTeamDB(String teamName) {
 		this.teamName = teamName;
 		this.usernames = new ArrayList<>();
 	}
@@ -31,12 +31,12 @@ public class TeamDB {
 	}
 	
 	public static void main(String[] args) {
-		TeamDB teamDB = new TeamDB("Pokemon");
+		SingleFileTeamDB teamDB = new SingleFileTeamDB("Pokemon");
 		teamDB.addUsername("whatsup");
 		teamDB.addUsername("dlwownssla17");
 		teamDB.addUsername("vjsc");
 		teamDB.addUsername("spiro");
 		teamDB.removeUsername("vjsc");
-		System.out.println(DBTools.toJSON(teamDB).toString(4));
+		System.out.println(SingleFileDBTools.toJSON(teamDB).toString(4));
 	}
 }

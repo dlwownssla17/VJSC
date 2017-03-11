@@ -1,11 +1,11 @@
 package model;
 
-public enum ScheduleItemProgressColor {
+public enum ProgressColor {
 	WHITE("white"), RED("red"), YELLOW("yellow"), GREEN("green"), GREY("grey");
 	
 	private String name;
 	
-	private ScheduleItemProgressColor(String name) {
+	private ProgressColor(String name) {
 		this.name = name;
 	}
 	
