@@ -142,7 +142,7 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        Alamofire.request("http://130.91.134.209:8000/checkinview", method: .get).validate().responseJSON { response in
+        Alamofire.request(Settings.getCheckinViewURL(userID: Settings.usernameString), method: .get).validate().responseJSON { response in
             switch response.result {
             case .success(let data):
                 let json = JSON(data)
