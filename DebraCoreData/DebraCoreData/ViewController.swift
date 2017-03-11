@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class ViewController: UIViewController {
     
@@ -56,7 +57,14 @@ class ViewController: UIViewController {
     }
     
     func buttonAction2(button: UIButton) {
-        DataLayer.getTranscriptions()
+        let x = DataLayer.getTranscriptions()
+        for trans in x as! [NSManagedObject] {
+            //                //get the Key Value pairs (although there may be a better way to do that...
+                            print("\(trans.value(forKey: "info"))")
+            //                print("\(trans.value(forKey: "type"))")
+                        }
+
+
     }
 
     override func didReceiveMemoryWarning() {

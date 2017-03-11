@@ -12,7 +12,9 @@ class Settings {
     static let serverURL:String = "http://130.91.134.209:8000/"
     
     static let dayViewRootURL:String = "test"
-    
+   
+    static var usernameString: String = ""
+  
     static let testUserID:Int = 123;
     
     static func getDayViewURL(userID:Int, day:String)->String {
