@@ -13,9 +13,9 @@ public class RGB {
 			case GREEN:
 				return new int[]{ 0, 255, 0 };
 			case WHITE:
-				return null;
+				return null; // TODO
 			case GREY:
-				return null;
+				return new int[]{ 150, 150, 150 };
 			default:
 				throw new IllegalArgumentException("invalid color.");
 		}
