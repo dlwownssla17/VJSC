@@ -13,6 +13,12 @@ public class CreateLookupDate {
 		return DateAndCalendar.calendarToDate(calendar);
 	}
 	
+	public static Date getInstance(Date date) {
+		Calendar calendar = DateAndCalendar.dateToCalendar(date);
+		return getInstance(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+				calendar.get(Calendar.DAY_OF_MONTH));
+	}
+	
 	public static Date getInstance(String formattedDate) {
 		int year = Integer.parseInt(formattedDate.substring(0, 4));
 		int month = Integer.parseInt(formattedDate.substring(4, 6));

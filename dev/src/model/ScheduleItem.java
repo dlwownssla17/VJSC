@@ -259,7 +259,7 @@ public class ScheduleItem {
 	// TODO: Improve schedule item level scoring algorithm
 	private int updateScore(double progress) {
 		this.progress.setProgress(progress);
-		this.score += (int) Math.round(this.type.scoreBaseByScheduleItemType() * this.progress.getProgress());
+		this.score += (int) Math.round(this.type.scoreBaseByScheduleItemType() * progress);
 		return this.score;
 	}
 

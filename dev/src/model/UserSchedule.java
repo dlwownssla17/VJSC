@@ -56,6 +56,16 @@ public class UserSchedule {
 		return this.items;
 	}
 	
+	public ScheduleItem getItemForDate(Date date, long id) {
+		ArrayList<ScheduleItem> dailyItems = this.items.get(date);
+		if (dailyItems != null) {
+			for (ScheduleItem item : dailyItems) {
+				if (item.getId() == id) return item;
+			}
+		}
+		return null;
+	}
+	
 	public HashMap<Date, Integer> getDailyScores() {
 		return this.dailyScores;
 	}
@@ -63,6 +73,10 @@ public class UserSchedule {
 	public HashMap<Date, Integer> setDailyScores(HashMap<Date, Integer> dailyScores) {
 		this.dailyScores = dailyScores;
 		return this.dailyScores;
+	}
+	
+	public int getScoreForDate(Date date) {
+		return this.dailyScores.containsKey(date) ? this.dailyScores.get(date) : 0;
 	}
 	
 	public long getScheduleIdCounter() {
@@ -118,10 +132,10 @@ public class UserSchedule {
 	}
 
 	// add schedule item according to frontend-backend protocol
-	public synchronized void addScheduleItem(int year, int month, int day, int recurringType, int[] recurringValue,
+	public synchronized void addScheduleItem(Date date, int recurringType, int[] recurringValue,
 			int endType, String endValue, String title, String description, String typeString, String startTimeString,
 			String progressTypeString, int duration) {
-		Date startDate = CreateLookupDate.getInstance(year, month, day);
+		Date startDate = CreateLookupDate.getInstance(date);
 
 		// recurrence
 		ScheduleItemRecurrence recurrence = null;
@@ -153,8 +167,8 @@ public class UserSchedule {
 		}
 
 		// add single schedule item instances
-		for (Date date : this.computeRecurringDates(startDate, recurrence)) {
-			this.addSingleScheduleItem(date, recurrence, title, description, typeString, startTimeString,
+		for (Date recurringDate : this.computeRecurringDates(startDate, recurrence)) {
+			this.addSingleScheduleItem(recurringDate, recurrence, title, description, typeString, startTimeString,
 					progressTypeString, duration);
 		}
 	}
@@ -259,16 +273,16 @@ public class UserSchedule {
 	}
 
 	// edit schedule item according to frontend-backend protocol
-	public synchronized void editScheduleItem(int year, int month, int day, long id, String title, String description,
+	public synchronized void editScheduleItem(Date date, long id, String title, String description,
 			String startTimeString, int duration) {
-		Date date = CreateLookupDate.getInstance(year, month, day);
+		date = CreateLookupDate.getInstance(date);
 		this.ensureDate(date);
 
 		for (ScheduleItem scheduleItem : this.items.get(date)) {
 			if (scheduleItem.getId() == id) {
 				scheduleItem.setTitle(title);
 				scheduleItem.setDescription(description);
-				Date startDateTime = scheduleItemStartDateTimeFromStartTimeString(year, month, day, startTimeString);
+				Date startDateTime = scheduleItemStartDateTimeFromStartTimeString(date, startTimeString);
 				scheduleItem.setStartDateTime(startDateTime);
 				scheduleItem.setDuration(duration);
 				break;
@@ -277,8 +291,8 @@ public class UserSchedule {
 	}
 
 	// remove schedule item according to frontend-backend protocol
-	public synchronized void removeScheduleItem(int year, int month, int day, long id, long recurringId) {
-		Date date = CreateLookupDate.getInstance(year, month, day);
+	public synchronized void removeScheduleItem(Date date, long id, long recurringId) {
+		date = CreateLookupDate.getInstance(date);
 		this.ensureDate(date);
 
 		// remove only this instance
@@ -324,11 +338,12 @@ public class UserSchedule {
 		return filtered;
 	}
 
-	public synchronized int getDailyScore(int year, int month, int day) {
-		return this.getDailyScore(CreateLookupDate.getInstance(year, month, day));
+	public synchronized int computeDailyScore(int year, int month, int day) {
+		return this.computeDailyScore(CreateLookupDate.getInstance(year, month, day));
 	}
 
-	public synchronized int getDailyScore(Date date) {
+	// TODO: Improve daily level scoring algorithm
+	public synchronized int computeDailyScore(Date date) {
 		this.ensureDate(date);
 
 		int dailyScore = 0;
@@ -349,15 +364,15 @@ public class UserSchedule {
 	}
 
 	// POST /update-daily-scores
-	public void updateDailyScores(int year, int month, int day) {
-		Calendar lastDayChecked = DateAndCalendar.dateToCalendar(CreateLookupDate.getInstance(year, month, day));
+	public void updateDailyScores(Date lastDayCheckedDate) {
+		Calendar lastDayChecked = DateAndCalendar.dateToCalendar(lastDayCheckedDate);
 		Calendar oneDayAgo = Calendar.getInstance();
 		oneDayAgo.add(Calendar.DAY_OF_MONTH, -1);
 
 		Calendar calendar = (Calendar) lastDayChecked.clone();
 		while (!calendar.after(oneDayAgo)) {
 			Date date = DateAndCalendar.calendarToDate(calendar);
-			this.updateScore(date, this.getDailyScore(date));
+			this.updateScore(date, this.computeDailyScore(date));
 		}
 	}
 

@@ -3,6 +3,7 @@ package db;
 import static com.mongodb.client.model.Filters.eq;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.bson.Document;
 
@@ -94,24 +95,41 @@ public class DBTools {
 		return existingUser == null || !existingUser.getPassword().equals(password) ? null : existingUser;
 	}
 	
-	public static ArrayList<ScheduleItem> findDailyItems(String username, int year, int month, int day) {
+	public static ArrayList<ScheduleItem> findDailyItems(String username, Date date) {
 		open();
 		
 		User existingUser = findUser(username);
 		
 		close();
 		
-		return existingUser == null ? null : existingUser.getSchedule().getItemsForDate(year, month, day);
+		return existingUser == null ? null : existingUser.getSchedule().getItemsForDate(date);
 	}
 	
-	public static int findDailyScore(String username, int year, int month, int day) {
+	public static int findDailyScore(String username, Date date) {
 		open();
 		
 		User existingUser = findUser(username);
 		
 		close();
 		
-		return existingUser == null ? -1 : existingUser.getSchedule().getDailyScore(year, month, day);
+		return existingUser == null ? -1 : existingUser.getSchedule().computeDailyScore(date);
+	}
+	
+	public static void updateUser(User user) {
+		open();
+		
+		users.replaceOne(eq("username", user.getUsername()), userDB.toDocument(user));
+		
+		close();
+	}
+	
+	public static void updateUserSchedule(User user) {
+		open();
+		
+		Document newUserSchedule = new Document("schedule", userScheduleDB.toDocument(user.getSchedule()));
+		users.updateOne(eq("username", user.getUsername()), new Document("$set", newUserSchedule));
+		
+		close();
 	}
 	
 	
