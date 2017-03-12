@@ -221,7 +221,8 @@ class CalendarViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         //"http://130.91.134.209:8000/test"
-        let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.yearHeaderName: self.currentDayInfo.currentYear, JSONProtocolNames.monthHeaderName: self.currentDayInfo.currentMonth]
+        let headers:[String:String] = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.yearHeaderName: String(self.currentDayInfo.currentYear), JSONProtocolNames.monthHeaderName: String(self.currentDayInfo.currentMonth)]
+        //let headers:[String: String] = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, ]
         Alamofire.request(Settings.getMonthViewURL(), method: .get, headers: headers).validate().responseJSON { response in
             switch response.result {
             case .success(let data):

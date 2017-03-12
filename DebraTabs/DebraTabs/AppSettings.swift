@@ -10,6 +10,7 @@ import Foundation
 
 class Settings {
     static let serverURL:String = "http://130.91.135.160:8000/"
+    //static let serverURL:String = "http://130.91.134.209:8000/"
     
     static let dayViewRootURL:String = "test"
    
@@ -27,8 +28,8 @@ class Settings {
         return serverURL + relativeURL
     }
     
-    static func getCheckinViewURL(userID:String)->String {
-        let relativeURL:String = String(userID) + "/checkin/view"
+    static func getCheckinViewURL()->String {
+        let relativeURL:String = "checkin/view"
         return serverURL + relativeURL
     }
     
@@ -47,8 +48,8 @@ class Settings {
         return serverURL + relativeURL
     }
     
-    static func getCheckinURL(userID:String, itemID:Int)->String {
-        let relativeURL:String = String(userID) + "/checkin/" + String(itemID)
+    static func getCheckinURL()->String {
+        let relativeURL:String = "checkin/submit/"
         return serverURL + relativeURL
     }
     

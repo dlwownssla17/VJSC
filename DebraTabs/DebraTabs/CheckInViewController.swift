@@ -79,7 +79,7 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         // put slider here, that goes between 0 and duration value
         let typeString = ScheduleItemType.ScheduleItemTypeStringMap[self.ObjectsArray[indexPath.row].scheduleItemType]!
-        var itemDuration = 10 // change back to 0
+        var itemDuration = 0 // change back to 0
         if (typeString == "Exercise") {
             itemDuration = ObjectsArray[indexPath.row].scheduleItemDuration
             print(itemDuration)
@@ -89,62 +89,168 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         // http://stackoverflow.com/questions/36394997/uialertview-was-deprecated-in-ios-9-0-use-uialertcontroller-with-a-preferreds
         
-        Alamofire.request(Settings.getCheckinURL(userID: Settings.usernameString, itemID: ObjectsArray[indexPath.row].itemID), method: .post)
-            .responseString { response in
-                switch response.result {
-                case .success(let _):
-                    print("TEST SPIRO")
-                    let alertController = UIAlertController(title: "Congratulations!", message: "You completed this Activity - \(self.ObjectsArray[indexPath.row].scheduleItemTitle)", preferredStyle: UIAlertControllerStyle.alert)
-                    
-                    let okAction = UIAlertAction(title: "Done", style: UIAlertActionStyle.default)
-                    {
-                        (result : UIAlertAction) -> Void in
-                        print("You pressed OK")
+        //START
+        if self.ObjectsArray[indexPath.row].scheduleItemCheckedInAtStart {
+        var myFrame = CGRect(x: 10.0, y: 10.0, width: 250.0, height: 10.0)
+        var slider = UISlider(frame: myFrame)
+        
+        
+        let alertController = UIAlertController(title: "Congratulations!", message: "You completed this Activity - \(self.ObjectsArray[indexPath.row].scheduleItemTitle)", preferredStyle: UIAlertControllerStyle.alert)
+        
+        let okAction = UIAlertAction(title: "Done", style: UIAlertActionStyle.default)
+        {
+            (result : UIAlertAction) -> Void in
+            print("You pressed OK")
+            let dur = self.ObjectsArray[indexPath.row].scheduleItemDuration
+            let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString]
+            var parameters = [JSONProtocolNames.scheduleItemIDHeaderName: String(self.ObjectsArray[indexPath.row].itemID)]
+            if self.ObjectsArray[indexPath.row].scheduleItemCheckedInAtStart {
+                parameters[JSONProtocolNames.progressHeaderName] = String(Double(slider.value) / Double(dur))
+            } else {
+                parameters[JSONProtocolNames.progressHeaderName] = String(-1)
+            }
+            Alamofire.request(Settings.getCheckinURL(), method: .post, parameters: parameters, headers: headers)
+                .responseString { response in
+                    switch response.result {
+                    case .success(let _):
+                        print("TEST SPIRO CHECKING")
+                        let alertController2 = UIAlertController(title: "Congratulations!", message: "You completed this Activity - \(self.ObjectsArray[indexPath.row].scheduleItemTitle)", preferredStyle: UIAlertControllerStyle.alert)
+                        
+                        let okAction = UIAlertAction(title: "Done", style: UIAlertActionStyle.default)
+                        {
+                            (result : UIAlertAction) -> Void in
+                            print("You pressed OK")
+                        }
+                        alertController2.addAction(okAction)
+                        
+                        self.present(alertController2, animated: true, completion: nil)
+                    case .failure(let error):
+                        print("Request failed with error: \(error)")
                     }
-                    
-                    
-                    if (itemDuration != 0) {
-//                        var view = UIView();
-                        var view = UIViewController();
-                        view.preferredContentSize = CGSize(width: 250,height: 100)
-//                        view.view.frame = CGRect(x: 0, y:0 , width: 250.0, height: 250.0)
-                        var myFrame = CGRect(x: 10.0, y: 10.0, width: 250.0, height: 10.0)
-                        var slider = UISlider(frame: myFrame)
-                        slider.minimumValue = 0
-                        slider.maximumValue = Float(itemDuration)
-                        slider.value = 0
-                        slider.addTarget(self, action:#selector(self.sliderValueDidChange), for: .valueChanged)
-                        view.view.addSubview(slider)
-                        
-                        self.codedLabel.frame = CGRect(x: 0, y: 15, width: 250, height: 55)
-                        self.codedLabel.textAlignment = .center
-                        self.codedLabel.text = "Minutes Completed: 0"
-                        self.codedLabel.numberOfLines = 5
-                        self.codedLabel.textColor = UIColor.black
-                        self.codedLabel.font=UIFont.systemFont(ofSize: 15)
-                        self.codedLabel.backgroundColor=UIColor.clear
-//                        self.codedLabel.translatesAutoresizingMaskIntoConstraints = false
-//                        codedLabel.heightAnchor.constraint(equalToConstant: 200).isActive = true
-//                        self.codedLabel.leftAnchor.constraintEqualToAnchor(NSNumber(10)).isActive = true
-
-                            
-                            
-//                            .constraint(equalToConstant: 0).isActive = true
-//                        self.codedLabel.centerXAnchor.constraint(equalTo: self.codedLabel.superview!.centerXAnchor).isActive = true
-                        
-                        view.view.addSubview(self.codedLabel)
-                        
-                        alertController.setValue(view, forKey: "contentViewController")
-//                        alertController.view.addSubview(view.view)
-                    }
-
-                    alertController.addAction(okAction)
-                    
-                    self.present(alertController, animated: true, completion: nil)
-                case .failure(let error):
-                    print("Request failed with error: \(error)")
-                }
+            }
         }
+        
+        
+        if (self.ObjectsArray[indexPath.row].scheduleItemCheckedInAtStart) {
+            //                        var view = UIView();
+            var view = UIViewController();
+            view.preferredContentSize = CGSize(width: 250,height: 100)
+            //                        view.view.frame = CGRect(x: 0, y:0 , width: 250.0, height: 250.0)
+            //var myFrame = CGRect(x: 10.0, y: 10.0, width: 250.0, height: 10.0)
+            //var slider = UISlider(frame: myFrame)
+            slider.minimumValue = 0
+            slider.maximumValue = Float(itemDuration)
+            slider.value = 0
+            slider.addTarget(self, action:#selector(self.sliderValueDidChange), for: .valueChanged)
+            view.view.addSubview(slider)
+            
+            self.codedLabel.frame = CGRect(x: 0, y: 15, width: 250, height: 55)
+            self.codedLabel.textAlignment = .center
+            self.codedLabel.text = "Minutes Completed: 0"
+            self.codedLabel.numberOfLines = 5
+            self.codedLabel.textColor = UIColor.black
+            self.codedLabel.font=UIFont.systemFont(ofSize: 15)
+            self.codedLabel.backgroundColor=UIColor.clear
+            //                        self.codedLabel.translatesAutoresizingMaskIntoConstraints = false
+            //                        codedLabel.heightAnchor.constraint(equalToConstant: 200).isActive = true
+            //                        self.codedLabel.leftAnchor.constraintEqualToAnchor(NSNumber(10)).isActive = true
+            
+            
+            
+            //                            .constraint(equalToConstant: 0).isActive = true
+            //                        self.codedLabel.centerXAnchor.constraint(equalTo: self.codedLabel.superview!.centerXAnchor).isActive = true
+            
+            view.view.addSubview(self.codedLabel)
+            
+            alertController.setValue(view, forKey: "contentViewController")
+            //                        alertController.view.addSubview(view.view)
+        }
+        
+        alertController.addAction(okAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+        } else {
+            let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString]
+            var parameters = [JSONProtocolNames.scheduleItemIDHeaderName: String(self.ObjectsArray[indexPath.row].itemID)]
+            parameters[JSONProtocolNames.progressHeaderName] = String(-1)
+            Alamofire.request(Settings.getCheckinURL(), method: .post, parameters: parameters, headers: headers)
+                .responseString { response in
+                    switch response.result {
+                    case .success(let _):
+                        print("TEST SPIRO CHECKING")
+                        let alertController2 = UIAlertController(title: "Congratulations!", message: "You completed this Activity - \(self.ObjectsArray[indexPath.row].scheduleItemTitle)", preferredStyle: UIAlertControllerStyle.alert)
+                        
+                        let okAction = UIAlertAction(title: "Done", style: UIAlertActionStyle.default)
+                        {
+                            (result : UIAlertAction) -> Void in
+                            print("You pressed OK")
+                        }
+                        alertController2.addAction(okAction)
+                        
+                        self.present(alertController2, animated: true, completion: nil)
+                    case .failure(let error):
+                        print("Request failed with error: \(error)")
+                    }
+            }
+        }
+        //END
+        
+//        Alamofire.request(Settings.getCheckinURL(userID: Settings.usernameString, itemID: ObjectsArray[indexPath.row].itemID), method: .post)
+//            .responseString { response in
+//                switch response.result {
+//                case .success(let _):
+//                    print("TEST SPIRO CHECKING")
+//                    let alertController2 = UIAlertController(title: "Congratulations!", message: "You completed this Activity - \(self.ObjectsArray[indexPath.row].scheduleItemTitle)", preferredStyle: UIAlertControllerStyle.alert)
+//                    
+//                    let okAction = UIAlertAction(title: "Done", style: UIAlertActionStyle.default)
+//                    {
+//                        (result : UIAlertAction) -> Void in
+//                        print("You pressed OK")
+//                    }
+//                    
+//                    
+////                    if (itemDuration != 0) {
+//////                        var view = UIView();
+////                        var view = UIViewController();
+////                        view.preferredContentSize = CGSize(width: 250,height: 100)
+//////                        view.view.frame = CGRect(x: 0, y:0 , width: 250.0, height: 250.0)
+////                        var myFrame = CGRect(x: 10.0, y: 10.0, width: 250.0, height: 10.0)
+////                        var slider = UISlider(frame: myFrame)
+////                        slider.minimumValue = 0
+////                        slider.maximumValue = Float(itemDuration)
+////                        slider.value = 0
+////                        slider.addTarget(self, action:#selector(self.sliderValueDidChange), for: .valueChanged)
+////                        view.view.addSubview(slider)
+////                        
+////                        self.codedLabel.frame = CGRect(x: 0, y: 15, width: 250, height: 55)
+////                        self.codedLabel.textAlignment = .center
+////                        self.codedLabel.text = "Minutes Completed: 0"
+////                        self.codedLabel.numberOfLines = 5
+////                        self.codedLabel.textColor = UIColor.black
+////                        self.codedLabel.font=UIFont.systemFont(ofSize: 15)
+////                        self.codedLabel.backgroundColor=UIColor.clear
+//////                        self.codedLabel.translatesAutoresizingMaskIntoConstraints = false
+//////                        codedLabel.heightAnchor.constraint(equalToConstant: 200).isActive = true
+//////                        self.codedLabel.leftAnchor.constraintEqualToAnchor(NSNumber(10)).isActive = true
+////
+////                            
+////                            
+//////                            .constraint(equalToConstant: 0).isActive = true
+//////                        self.codedLabel.centerXAnchor.constraint(equalTo: self.codedLabel.superview!.centerXAnchor).isActive = true
+////                        
+////                        view.view.addSubview(self.codedLabel)
+////                        
+////                        alertController.setValue(view, forKey: "contentViewController")
+//////                        alertController.view.addSubview(view.view)
+////                    }
+//
+//                    alertController2.addAction(okAction)
+//                    
+//                    self.present(alertController2, animated: true, completion: nil)
+//                case .failure(let error):
+//                    print("Request failed with error: \(error)")
+//                }
+//        }
         
     }
     
@@ -198,7 +304,8 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        Alamofire.request(Settings.getCheckinViewURL(userID: Settings.usernameString), method: .get).validate().responseJSON { response in
+        let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString]
+        Alamofire.request(Settings.getCheckinViewURL(), method: .get, headers: headers).validate().responseJSON { response in
             switch response.result {
             case .success(let data):
                 let json = JSON(data)

@@ -24,8 +24,22 @@ class Requests {
         let progressType = ProgressType.getJSONCode(type: item.scheduleItemProgressType)
         
         
+//        let itemInformation: [String: Any] = [
+//            JSONProtocolNames.scheduleItemsAddScheduleItemName: [
+//                JSONProtocolNames.recurringTypeHeaderName: recurringType,
+//                JSONProtocolNames.recurringValueHeaderName: item.recurringValue,
+//                JSONProtocolNames.endingTypeHeaderName: endingType,
+//                JSONProtocolNames.endingValueHeaderName: item.endingValue,
+//                JSONProtocolNames.scheduleItemTitleHeaderName: item.scheduleItemTitle,
+//                JSONProtocolNames.scheduleItemDescriptionHeaderName: item.scheduleItemDescription,
+//                JSONProtocolNames.scheduleItemTypeHeaderName: scheduleItemType,
+//                JSONProtocolNames.scheduleItemStartHeaderName: startInformation,
+//                JSONProtocolNames.scheduleItemProgressTypeHeaderName: progressType,
+//                JSONProtocolNames.scheduleItemDurationHeaderName: item.scheduleItemDuration
+//            ]
+//        ]
+        
         let itemInformation: [String: Any] = [
-            JSONProtocolNames.scheduleItemsAddScheduleItemName: [
                 JSONProtocolNames.recurringTypeHeaderName: recurringType,
                 JSONProtocolNames.recurringValueHeaderName: item.recurringValue,
                 JSONProtocolNames.endingTypeHeaderName: endingType,
@@ -36,7 +50,6 @@ class Requests {
                 JSONProtocolNames.scheduleItemStartHeaderName: startInformation,
                 JSONProtocolNames.scheduleItemProgressTypeHeaderName: progressType,
                 JSONProtocolNames.scheduleItemDurationHeaderName: item.scheduleItemDuration
-            ]
         ]
         
         //print(itemInformation.rawString()!)
@@ -52,15 +65,24 @@ class Requests {
         dateFormatter.dateFormat = "hh:mm:ss"
         let startInformation = dateFormatter.string(from: item.scheduleItemStart)
         
+//        let itemInformation: [String: Any] = [
+//            JSONProtocolNames.scheduleItemsEditScheduleItemName: [
+//                JSONProtocolNames.scheduleItemIDHeaderName: item.itemID,
+//                JSONProtocolNames.scheduleItemTypeHeaderName: scheduleItemType,
+//                JSONProtocolNames.scheduleItemTitleHeaderName: item.scheduleItemTitle,
+//                JSONProtocolNames.scheduleItemDescriptionHeaderName: item.scheduleItemDescription,
+//                JSONProtocolNames.scheduleItemStartHeaderName: startInformation,
+//                JSONProtocolNames.scheduleItemDurationHeaderName: item.scheduleItemDuration
+//            ]
+//        ]
+        
         let itemInformation: [String: Any] = [
-            JSONProtocolNames.scheduleItemsEditScheduleItemName: [
                 JSONProtocolNames.scheduleItemIDHeaderName: item.itemID,
-                JSONProtocolNames.scheduleItemTypeHeaderName: scheduleItemType,
+                //JSONProtocolNames.scheduleItemTypeHeaderName: scheduleItemType,
                 JSONProtocolNames.scheduleItemTitleHeaderName: item.scheduleItemTitle,
                 JSONProtocolNames.scheduleItemDescriptionHeaderName: item.scheduleItemDescription,
                 JSONProtocolNames.scheduleItemStartHeaderName: startInformation,
                 JSONProtocolNames.scheduleItemDurationHeaderName: item.scheduleItemDuration
-            ]
         ]
         
         return itemInformation
@@ -71,11 +93,16 @@ class Requests {
         if removeAllRecurring {
             recurring = item.recurringID
         }
+//        let itemInformation: [String: Any] = [
+//            JSONProtocolNames.scheduleItemsRemoveScheduleItemName: [
+//                JSONProtocolNames.scheduleItemIDHeaderName: item.itemID,
+//                JSONProtocolNames.recurringIDHeaderName: recurring
+//            ]
+//        ]
+        
         let itemInformation: [String: Any] = [
-            JSONProtocolNames.scheduleItemsRemoveScheduleItemName: [
-                JSONProtocolNames.scheduleItemIDHeaderName: item.itemID,
-                JSONProtocolNames.recurringIDHeaderName: recurring
-            ]
+            JSONProtocolNames.scheduleItemIDHeaderName: item.itemID,
+            JSONProtocolNames.recurringIDHeaderName: recurring
         ]
         
         return itemInformation

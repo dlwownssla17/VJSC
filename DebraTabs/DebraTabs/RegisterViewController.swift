@@ -108,24 +108,30 @@ class RegisterViewController: UIViewController {
             let text = registerUsername.text?.trimmingCharacters(in: .whitespaces)
             let parameters:[String:Any] = [:]
             let headers = ["Username":text!, "Password":(text3)!]
+            print("USERNAME: \(text!)")
+            print("PASSWORD: \(text3!)")
             Alamofire.request(Settings.getRegistrationURL(), method: .post, parameters: parameters, headers:headers).validate().responseString { response in
                 switch response.result {
                 case .success(let data):
                     // Save DB Response username
                     dataLayer.storeTranscription(username: text!)
+                    print("SUCCESS")
                     //Dismiss VC
                     self.dismiss(animated: true, completion: nil)
                     let mainStoryboard = UIStoryboard(name: "Main" , bundle: nil)
                     self.present(mainStoryboard.instantiateInitialViewController()!, animated: true, completion: nil)
                 case .failure(let error):
-                    let alert = UIAlertController(title: "Alert", message: "Authentication Failed!", preferredStyle: UIAlertControllerStyle.alert)
+                    print("FAILED")
+                    print(error)
+                    let alert = UIAlertController(title: "Alert", message: "Registration Failed: Username already exists", preferredStyle: UIAlertControllerStyle.alert)
                     alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
                     self.present(alert, animated: true, completion: nil)
                 }
+
             }
             
             //Dismiss VC
-            self.dismiss(animated: true, completion: nil)
+            //self.dismiss(animated: true, completion: nil)
 
         }
         

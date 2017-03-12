@@ -28,6 +28,7 @@ class ScheduleItem {
     var scheduleItemActive:Bool = false
     var scheduleItemColor:UIColor = UIColor.black
     var scheduleItemModifiable:Bool = false
+    var scheduleItemCheckedInAtStart:Bool = false
     
     init(jsonString: String) {
         //let json = JSONParser.getJSONObjectFromString(jsonString: jsonString)
@@ -74,6 +75,7 @@ class ScheduleItem {
         }
         scheduleItemColor = UIColor(red: CGFloat(scheduleItemColorArray[0]) / 255.0, green: CGFloat(scheduleItemColorArray[1]) / 255.0, blue: CGFloat(scheduleItemColorArray[2]) / 255.0, alpha: CGFloat(1.0))
         scheduleItemModifiable = json[JSONProtocolNames.scheduleItemModifiableHeaderName].boolValue
+        scheduleItemCheckedInAtStart = json[JSONProtocolNames.scheduleItemCheckedInAtStartHeaderName].boolValue
     }
     
 }

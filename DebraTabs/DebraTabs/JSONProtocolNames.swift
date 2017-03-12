@@ -13,14 +13,14 @@ class JSONProtocolNames {
     static let scheduleItemTypeHeaderName:String = "Schedule-Item-Type"
     static let medication:String = "medication"
     static let exercise:String = "exercise"
-    static let glucoseLevel:String = "blood_glucose_level"
+    static let glucoseLevel:String = "blood_glucose_measurement"
     static let eating:String = "eating"
     static let none:String = ""
     
     static let scheduleItemTypeMap:Dictionary<ScheduleItemType, String> =
         [.Medication: "medication",
          .Exercise: "exercise",
-         .GlucoseLevel: "blood_glucose_level",
+         .GlucoseLevel: "blood_glucose_measurement",
          .Eating: "eating",
          .None: "none"]
     
@@ -77,8 +77,9 @@ class JSONProtocolNames {
     static let scheduleItemActiveHeaderName:String = "Schedule-Item-Active"
     static let scheduleItemColorHeaderName:String = "Schedule-Item-Color"
     static let scheduleItemModifiableHeaderName:String = "Schedule-Item-Modifiable"
+    static let scheduleItemCheckedInAtStartHeaderName:String = "Schedule-Item-Checked-In-At-Start"
     
-    static let scheduleItemsListResponseName:String = "Schedule-Items"
+    static let scheduleItemsListResponseName:String = "Daily-Items"  // Daily-Items
     
     static let scheduleItemsAddScheduleItemName:String = "Add-Schedule-Item"
     
@@ -97,5 +98,6 @@ class JSONProtocolNames {
     static let dateHeaderName:String = "Date"
     static let yearHeaderName:String = "Year"
     static let monthHeaderName:String = "Month"
+    static let progressHeaderName:String = "Progress"
     
 }
