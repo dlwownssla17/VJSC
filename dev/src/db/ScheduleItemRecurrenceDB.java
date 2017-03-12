@@ -9,8 +9,10 @@ import com.mongodb.BasicDBList;
 
 import model.ScheduleItemRecurrence;
 
-public class ScheduleItemRecurrenceDB extends ObjectDB {
-	public static Document toDocument(ScheduleItemRecurrence recurrence) {
+public class ScheduleItemRecurrenceDB implements DB<ScheduleItemRecurrence> {
+	
+	@Override
+	public Document toDocument(ScheduleItemRecurrence recurrence) {
 		if (recurrence == null) return new Document();
 		
 		return new Document("recurring-id", recurrence.getRecurringId())
@@ -22,7 +24,8 @@ public class ScheduleItemRecurrenceDB extends ObjectDB {
 					.append("end-date-time", recurrence.getEndDateTime());
 	}
 	
-	public static ScheduleItemRecurrence fromDocument(Document document) {
+	@Override
+	public ScheduleItemRecurrence fromDocument(Document document) {
 		if (document.isEmpty()) return null;
 		
 		long recurringId = document.getLong("recurring-id");
@@ -47,4 +50,5 @@ public class ScheduleItemRecurrenceDB extends ObjectDB {
 			throw new IllegalStateException();
 		}
 	}
+	
 }

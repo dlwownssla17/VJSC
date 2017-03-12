@@ -6,8 +6,10 @@ import model.BooleanProgress;
 import model.PercentageProgress;
 import model.Progress;
 
-public class ProgressDB extends ObjectDB {
-	public static Document toDocument(Progress progress) {
+public class ProgressDB implements DB<Progress> {
+	
+	@Override
+	public Document toDocument(Progress progress) {
 		String progressType = null;
 		if (progress instanceof BooleanProgress) {
 			progressType = "boolean";
@@ -21,7 +23,8 @@ public class ProgressDB extends ObjectDB {
 					.append("progress-value", progress.getProgress());
 	}
 	
-	public static Progress fromDocument(Document document) {
+	@Override
+	public Progress fromDocument(Document document) {
 		String progressType = document.getString("progress-type");
 		double progressValue = document.getDouble("progress-value");
 		
@@ -38,4 +41,5 @@ public class ProgressDB extends ObjectDB {
 		
 		return progress;
 	}
+	
 }

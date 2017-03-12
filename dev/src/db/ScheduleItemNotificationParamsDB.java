@@ -4,14 +4,18 @@ import org.bson.Document;
 
 import model.ScheduleItemNotificationParams;
 
-public class ScheduleItemNotificationParamsDB extends ObjectDB {
-	public static Document toDocument(ScheduleItemNotificationParams notificationParams) {
+public class ScheduleItemNotificationParamsDB implements DB<ScheduleItemNotificationParams> {
+	
+	@Override
+	public Document toDocument(ScheduleItemNotificationParams notificationParams) {
 		// TODO: implement
 		return new Document();
 	}
 	
-	public static ScheduleItemNotificationParams fromDocument(Document document) {
+	@Override
+	public ScheduleItemNotificationParams fromDocument(Document document) {
 		// TODO: implement
 		return null;
 	}
+	
 }

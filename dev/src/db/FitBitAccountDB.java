@@ -4,8 +4,10 @@ import org.bson.Document;
 
 import fitbit.FitBitAccount;
 
-public class FitBitAccountDB extends ObjectDB {
-	public static Document toDocument(FitBitAccount fitBitAccount) {
+public class FitBitAccountDB implements DB<FitBitAccount> {
+	
+	@Override
+	public Document toDocument(FitBitAccount fitBitAccount) {
 		if (fitBitAccount == null) return new Document();
 		
 		return new Document("fitbit-user-id", fitBitAccount.getUserId())
@@ -16,7 +18,8 @@ public class FitBitAccountDB extends ObjectDB {
 					.append("fitbit-expires-in", fitBitAccount.getExpiresIn());
 	}
 	
-	public static FitBitAccount fromDocument(Document document) {
+	@Override
+	public FitBitAccount fromDocument(Document document) {
 		if (document.isEmpty()) return null;
 		
 		return new FitBitAccount(document.getString("fitbit-access-token"),
@@ -24,4 +27,5 @@ public class FitBitAccountDB extends ObjectDB {
 				document.getString("fitbit-scope"), document.getString("fitbit-token-type"),
 				document.getLong("fitbit-expires-in"));
 	}
+	
 }

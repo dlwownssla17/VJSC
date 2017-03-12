@@ -9,7 +9,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import db.UserDB;
+import db.DBTools;
 import model.User;
 
 public class Server {
@@ -36,7 +36,7 @@ public class Server {
 				String username = headers.getFirst("Username");
 				String password = headers.getFirst("Password");
 				
-				User newUser = UserDB.registerUser(username, password);
+				User newUser = DBTools.registerUser(username, password);
 				
 				String response = "";
 				int rc = newUser != null ? 200 : 401;
@@ -68,7 +68,7 @@ public class Server {
 				String username = headers.getFirst("Username");
 				String password = headers.getFirst("Password");
 				
-				User existingUser = UserDB.loginUser(username, password);
+				User existingUser = DBTools.loginUser(username, password);
 				
 				String response = "";
 				int rc = existingUser != null ? 200 : 401;
@@ -91,8 +91,6 @@ public class Server {
 			if (requestMethod.equals("GET")) {
 				
 			} else if (requestMethod.equals("POST")) {
-				Headers headers = t.getRequestHeaders();
-				String username = headers.getFirst("Username");
 				
 				// nothing for now
 				

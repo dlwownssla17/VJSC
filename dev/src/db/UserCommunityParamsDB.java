@@ -5,14 +5,18 @@ import org.bson.Document;
 import model.User;
 import model.UserCommunityParams;
 
-public class UserCommunityParamsDB extends ObjectDB {
-	public static Document toDocument(UserCommunityParams communityParams) {
+public class UserCommunityParamsDB implements DB<UserCommunityParams> {
+	
+	@Override
+	public Document toDocument(UserCommunityParams communityParams) {
 		// TODO: implement
 		return new Document();
 	}
 	
-	public static UserCommunityParams fromDocument(Document document) {
+	@Override
+	public UserCommunityParams fromDocument(Document document) {
 		// TODO: implement
 		return null;
 	}
+	
 }

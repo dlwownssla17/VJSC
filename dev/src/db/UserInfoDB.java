@@ -4,14 +4,18 @@ import org.bson.Document;
 
 import model.UserInfo;
 
-public class UserInfoDB extends ObjectDB {
-	public static Document toDocument(UserInfo info) {
+public class UserInfoDB implements DB<UserInfo> {
+	
+	@Override
+	public Document toDocument(UserInfo info) {
 		// TODO: implement
 		return new Document();
 	}
 	
-	public static UserInfo fromDocument(Document document) {
+	@Override
+	public UserInfo fromDocument(Document document) {
 		// TODO: implement
 		return null;
 	}
+	
 }

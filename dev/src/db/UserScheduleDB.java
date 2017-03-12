@@ -12,15 +12,17 @@ import com.mongodb.BasicDBList;
 import model.ScheduleItem;
 import model.UserSchedule;
 
-public class UserScheduleDB extends ObjectDB {
-	public static Document toDocument(UserSchedule schedule) {
+public class UserScheduleDB implements DB<UserSchedule> {
+	
+	@Override
+	public Document toDocument(UserSchedule schedule) {
 		List<Document> itemsDocument = new ArrayList<>();
 		HashMap<Date, ArrayList<ScheduleItem>> items = schedule.getItems();
 		for (Date date : items.keySet()) {
 			List<Document> dailyItemsDocument = new ArrayList<>();
 			ArrayList<ScheduleItem> dailyItems = items.get(date);
 			for (ScheduleItem item : dailyItems) {
-				dailyItemsDocument.add(ScheduleItemDB.toDocument(item));
+				dailyItemsDocument.add(DBTools.scheduleItemDB.toDocument(item));
 			}
 			
 			itemsDocument.add(new Document("daily-date", date)
@@ -44,7 +46,8 @@ public class UserScheduleDB extends ObjectDB {
 					.append("recurring-id-counter", schedule.getRecurringIdCounter());
 	}
 	
-	public static UserSchedule fromDocument(Document document) {
+	@Override
+	public UserSchedule fromDocument(Document document) {
 		UserSchedule schedule = new UserSchedule(document.getInteger("capacity"),
 				document.getString("associated-username"));
 		
@@ -56,7 +59,7 @@ public class UserScheduleDB extends ObjectDB {
 			ArrayList<ScheduleItem> dailyItems = new ArrayList<>();
 			BasicDBList dailyItemsList = (BasicDBList) dailyItemsDocument.get("daily-items");
 			for (Object dailyObj : dailyItemsList) {
-				dailyItems.add(ScheduleItemDB.fromDocument((Document) dailyObj));
+				dailyItems.add(DBTools.scheduleItemDB.fromDocument((Document) dailyObj));
 			}
 			items.put(dailyDate, dailyItems);
 		}
@@ -77,4 +80,5 @@ public class UserScheduleDB extends ObjectDB {
 		
 		return schedule;
 	}
+	
 }

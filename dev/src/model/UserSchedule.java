@@ -236,10 +236,9 @@ public class UserSchedule {
 		ScheduleItemType type = scheduleItemTypeFromString(typeString);
 		Date startDateTime = scheduleItemStartDateTimeFromStartTimeString(date, startTimeString);
 		Progress progress = scheduleItemProgressFromProgressTypeString(progressTypeString);
+		// TODO: notification params
 		ScheduleItem scheduleItem = new ScheduleItem(this.scheduleIdCounter++, title, description, type,
-				this.associatedUsername, startDateTime, progress, null); // TODO:
-																		// notification
-																		// params
+				this.associatedUsername, startDateTime, progress, null);
 
 		// set recurrence
 		scheduleItem.setRecurrence(recurrence);
@@ -314,6 +313,16 @@ public class UserSchedule {
 			}
 		}
 	}
+	
+	public ArrayList<Date> getDatesOfMonthInDailyScores(String username, int year, int month) {
+		ArrayList<Date> filtered = new ArrayList<>();
+		for (Date date : this.dailyScores.keySet()) {
+			Calendar calendar = DateAndCalendar.dateToCalendar(date);
+			if (calendar.get(Calendar.YEAR) == year && calendar.get(Calendar.MONTH) == month) filtered.add(date);
+		}
+		
+		return filtered;
+	}
 
 	public synchronized int getDailyScore(int year, int month, int day) {
 		return this.getDailyScore(CreateLookupDate.getInstance(year, month, day));
@@ -339,7 +348,7 @@ public class UserSchedule {
 		this.dailyScores.put(date, score);
 	}
 
-	// POST /[user id]/update-daily-scores
+	// POST /update-daily-scores
 	public void updateDailyScores(int year, int month, int day) {
 		Calendar lastDayChecked = DateAndCalendar.dateToCalendar(CreateLookupDate.getInstance(year, month, day));
 		Calendar oneDayAgo = Calendar.getInstance();
