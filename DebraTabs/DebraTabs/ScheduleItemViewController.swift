@@ -8,6 +8,7 @@
 
 import UIKit
 import Alamofire
+import CoreData
 
 class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -36,6 +37,20 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         super.viewDidLoad()
         
         view.backgroundColor = .white
+        
+        let x = dataLayer.getTranscriptions()
+        for trans in x as! [NSManagedObject] {
+            Settings.datecheckString = trans.value(forKey: "datecheck") as! String
+            print("AHHHHHH")
+            print("\(trans.value(forKey: "username"))")
+        }
+        
+        // HERE - Send Settings.datecheckString to send to server
+        
+        // HERE - Save server response to Settings.datecheckString, see below
+        // Settings.datecheckString = response_date_from_server
+        
+        dataLayer.storeDateTranscription(datecheck: Settings.datecheckString)
         
         let jsonString1 = "{" +
             "\"Language\": {" +
