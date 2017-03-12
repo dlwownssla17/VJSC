@@ -173,6 +173,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling register...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -185,11 +187,6 @@ public class Server {
 				
 				String response = "";
 				int rc = newUser != null ? 200 : 401;
-				if (rc == 200) {
-					System.out.println(String.format("Register SUCCESS: %s - %s", username, password));
-				} else {
-					System.out.println("Register FAILURE");
-				}
 				t.sendResponseHeaders(rc, response.getBytes().length);
 	            OutputStream os = t.getResponseBody();
 	            os.write(response.getBytes());
@@ -205,6 +202,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling login...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -232,6 +231,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling logout...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -255,6 +256,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling day view...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				Headers headers = t.getRequestHeaders();
@@ -286,6 +289,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling day add...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -334,6 +339,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling day edit...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -371,6 +378,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling day remove...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -405,6 +414,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling month view...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				Headers headers = t.getRequestHeaders();
@@ -456,6 +467,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling check-in view...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				Headers headers = t.getRequestHeaders();
@@ -485,6 +498,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling check-in submit...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -519,6 +534,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling update daily scores...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
