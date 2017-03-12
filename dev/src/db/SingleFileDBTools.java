@@ -65,7 +65,7 @@ public class SingleFileDBTools {
 			
 			FitBitAccount fitBitAccount = new FitBitAccount(fitBitAccessToken, fitBitRefreshToken, fitBitUserId,
 					fitBitScope, fitBitTokenType, fitBitExpiresIn);
-			user.linkFitBitAccount(fitBitAccount);
+			user.setFitBitAccount(fitBitAccount);
 			
 			return user;
 		} catch (ParseException e) {

@@ -39,57 +39,34 @@ public class UserDB extends ObjectDB {
 		return user;
 	}
 	
-	public static Document registerUser(String username, String password) {
+	public static User registerUser(String username, String password) {
 		start();
 		
 		// user with username already exists
 		if (users.count(eq("username", username)) > 0) return null;
 		
-		Document newUser = new Document("username", username)
-							.append("password", password)
-							.append("member-since", new Date())
-							.append("info",
-									new Document())
-							.append("settings",
-									new Document())
-							.append("diabetes-params",
-									new Document())
-							.append("adherence-params",
-									new Document())
-							.append("community-params",
-									new Document())
-							.append("schedule",
-									new Document("capacity", ModelTools.DEFAULT_CAPACITY)
-										.append("schedule-id-counter", 0)
-										.append("recurring-id-counter", 0)
-										.append("schedule-dates", new ArrayList<Document>()))
-							.append("fitbit-account",
-									new Document("fitbit-user-id", null)
-										.append("fitbit-access-token", null)
-										.append("fitbit-refresh-token", null)
-										.append("fitbit-scope", null)
-										.append("fitbit-token-type", null)
-										.append("fitbit-expires-in", -1));
-		users.insertOne(newUser);
+		User newUser = new User(username, password);
+		
+		users.insertOne(toDocument(newUser));
 		
 		end();
 		
 		return newUser;
 	}
 	
-	public static Document findUser(String username) {
+	public static User findUser(String username) {
 		start();
 		
-		Document existingUser = users.find(eq("username", username)).first();
+		Document existingUserDocument = users.find(eq("username", username)).first();
 		
 		end();
 		
-		return existingUser;
+		return existingUserDocument == null ? null : fromDocument(existingUserDocument);
 	}
 	
-	public static Document loginUser(String username, String password) {
-		Document existingUser = findUser(username);
-		if (existingUser == null || !password.equals(existingUser.getString("password"))) return null;
+	public static User loginUser(String username, String password) {
+		User existingUser = findUser(username);
+		if (existingUser == null || !existingUser.getPassword().equals(password)) return null;
 		
 		return existingUser;
 	}

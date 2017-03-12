@@ -4,14 +4,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
-import org.bson.Document;
-
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import db.UserDB;
+import model.User;
 
 public class Server {
 	public static void main(String[] args) throws Exception {
@@ -37,7 +36,7 @@ public class Server {
 				String username = headers.getFirst("Username");
 				String password = headers.getFirst("Password");
 				
-				Document newUser = UserDB.registerUser(username, password);
+				User newUser = UserDB.registerUser(username, password);
 				
 				String response = "";
 				int rc = newUser != null ? 200 : 401;
@@ -69,7 +68,7 @@ public class Server {
 				String username = headers.getFirst("Username");
 				String password = headers.getFirst("Password");
 				
-				Document existingUser = UserDB.loginUser(username, password);
+				User existingUser = UserDB.loginUser(username, password);
 				
 				String response = "";
 				int rc = existingUser != null ? 200 : 401;

@@ -98,7 +98,7 @@ public class TestingDuringDev {
 			
 			FitBitAccount spiroFitBitAccount = new FitBitAccount("userAuthentication.txt");
 			
-			spiro.linkFitBitAccount(spiroFitBitAccount);
+			spiro.setFitBitAccount(spiroFitBitAccount);
 			
 			Team teamVJ = new Team("The Voice");
 			teamVJ.addUser(vivek);
