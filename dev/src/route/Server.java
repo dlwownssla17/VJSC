@@ -41,6 +41,11 @@ public class Server {
 				
 				String response = "";
 				int rc = newUser != null ? 200 : 401;
+				if (rc == 200) {
+					System.out.println(String.format("Register SUCCESS: %s - %s", username, password));
+				} else {
+					System.out.println("Register FAILURE");
+				}
 				t.sendResponseHeaders(rc, response.getBytes().length);
 	            OutputStream os = t.getResponseBody();
 	            os.write(response.getBytes());

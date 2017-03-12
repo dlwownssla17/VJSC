@@ -6,13 +6,9 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
-public class InitDB {
+public class InitDB extends ObjectDB {
 	public static void main(String[] args) {
-		MongoClient mongoClient = new MongoClient(DBTools.HOST, DBTools.PORT);
-		MongoDatabase database = mongoClient.getDatabase(DBTools.DATABASE);
-		
-		MongoCollection<Document> users = database.getCollection(DBTools.USERDB);
-		MongoCollection<Document> teams = database.getCollection(DBTools.TEAMDB);
+		start();
 		
 		Document dummy = new Document();
 		users.insertOne(dummy);
@@ -20,6 +16,6 @@ public class InitDB {
 		teams.insertOne(dummy);
 		teams.deleteOne(dummy);
 		
-		mongoClient.close();
+		end();
 	}
 }

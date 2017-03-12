@@ -57,6 +57,56 @@ public class User {
 		return this.memberSince;
 	}
 	
+	public UserInfo getInfo() {
+		return this.info;
+	}
+	
+	public UserInfo setInfo(UserInfo info) {
+		this.info = info;
+		return this.info;
+	}
+	
+	public UserSettings getSettings() {
+		return this.settings;
+	}
+	
+	public UserSettings setSettings(UserSettings settings) {
+		this.settings = settings;
+		return this.settings;
+	}
+	
+	public UserDiabetesParams getDiabetesParams() {
+		return this.diabetesParams;
+	}
+	
+	public UserDiabetesParams setDiabetesParams(UserDiabetesParams diabetesParams) {
+		this.diabetesParams = diabetesParams;
+		return this.diabetesParams;
+	}
+	
+	public UserAdherenceParams getAdherenceParams() {
+		return this.adherenceParams;
+	}
+	
+	public UserAdherenceParams setAdherenceParams(UserAdherenceParams adherenceParams) {
+		this.adherenceParams = adherenceParams;
+		return this.adherenceParams;
+	}
+	
+	public UserCommunityParams getCommunityParams() {
+		return this.communityParams;
+	}
+	
+	public UserCommunityParams setCommunityParams(UserCommunityParams communityParams) {
+		this.communityParams = communityParams;
+		return this.communityParams;
+	}
+	
+	public UserSchedule setSchedule(UserSchedule schedule) {
+		this.schedule = schedule;
+		return this.schedule;
+	}
+	
 	public UserSchedule getSchedule() {
 		return this.schedule;
 	}
@@ -69,12 +119,8 @@ public class User {
 		return this.fitBitAccount;
 	}
 	
-	public boolean linkFitBitAccount(FitBitAccount fitBitAccount) {
+	public FitBitAccount setFitBitAccount(FitBitAccount fitBitAccount) {
 		this.fitBitAccount = fitBitAccount;
-		return true;
-	}
-	
-	public static void main(String[] args) {
-		
+		return this.fitBitAccount;
 	}
 }

@@ -11,7 +11,7 @@ public class ScheduleItem {
 	private String title;
 	private String description;
 	private ScheduleItemType type;
-	private User associatedUser;
+	private String associatedUsername;
 	private Date createdDateTime;
 	private Date startDateTime;
 	private Progress progress;
@@ -26,7 +26,7 @@ public class ScheduleItem {
 	
 	private double yellowThreshold, greenThreshold;
 	
-	public ScheduleItem(long id, String title, String description, ScheduleItemType type, User associatedUser,
+	public ScheduleItem(long id, String title, String description, ScheduleItemType type, String associatedUsername,
 			Date startDateTime, Progress progress, ScheduleItemNotificationParams notificationParams,
 			double yellowThreshold, double greenThreshold) throws IllegalArgumentException {
 		if (id < 0) throw new IllegalArgumentException("The schedule id must be non-negative.");
@@ -40,7 +40,7 @@ public class ScheduleItem {
 		this.description = description;
 		
 		this.type = type;
-		this.associatedUser = associatedUser;
+		this.associatedUsername = associatedUsername;
 		
 		this.createdDateTime = new Date();
 		if (startDateTime.before(this.createdDateTime))
@@ -65,10 +65,10 @@ public class ScheduleItem {
 		this.greenThreshold = greenThreshold;
 	}
 	
-	public ScheduleItem(long id, String title, String description, ScheduleItemType type, User associatedUser,
+	public ScheduleItem(long id, String title, String description, ScheduleItemType type, String associatedUsername,
 			Date startDateTime, Progress progress, ScheduleItemNotificationParams notificationParams)
 					throws IllegalArgumentException {
-		this(id, title, description, type, associatedUser, startDateTime, progress, notificationParams,
+		this(id, title, description, type, associatedUsername, startDateTime, progress, notificationParams,
 				ModelTools.DEFAULT_YELLOW_THRESHOLD, ModelTools.DEFAULT_GREEN_THRESHOLD);
 	}
 	
@@ -118,8 +118,8 @@ public class ScheduleItem {
 		return this.type;
 	}
 	
-	public User getAssociatedUser() {
-		return this.associatedUser;
+	public String getAssociatedUsername() {
+		return this.associatedUsername;
 	}
 	
 	public Date getCreatedDateTime() {
@@ -135,8 +135,8 @@ public class ScheduleItem {
 		return this.startDateTime;
 	}
 	
-	public double getProgress() {
-		return this.progress.getProgress();
+	public Progress getProgress() {
+		return this.progress;
 	}
 	
 	public ProgressColor getProgressColor() {
@@ -248,6 +248,11 @@ public class ScheduleItem {
 	}
 	
 	public int getScore() {
+		return this.score;
+	}
+	
+	public int setScore(int score) {
+		this.score = score;
 		return this.score;
 	}
 	

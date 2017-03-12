@@ -7,28 +7,36 @@ import java.util.Date;
 
 import org.bson.Document;
 
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-
 import model.ModelTools;
+import model.User;
 
-public class UserDB {
-	private static MongoClient mongoClient;
-	private static MongoDatabase database;
-	private static MongoCollection<Document> users;
-	// private static MongoCollection<Document> teams;
-	
-	private static void start() {
-		mongoClient = new MongoClient(DBTools.HOST, DBTools.PORT);
-		database = mongoClient.getDatabase(DBTools.DATABASE);
-		
-		users = database.getCollection(DBTools.USERDB);
-		// teams = database.getCollection(DBTools.TEAMDB);
+public class UserDB extends ObjectDB {
+	public static Document toDocument(User user) {
+		return new Document("username", user.getUsername())
+					.append("password", user.getPassword())
+					.append("member-since", user.getMemberSince())
+					.append("info", UserInfoDB.toDocument(user.getInfo()))
+					.append("settings", UserSettingsDB.toDocument(user.getSettings()))
+					.append("diabetes-params", UserDiabetesParamsDB.toDocument(user.getDiabetesParams()))
+					.append("adherence-params", UserAdherenceParamsDB.toDocument(user.getAdherenceParams()))
+					.append("community-params", UserCommunityParamsDB.toDocument(user.getCommunityParams()))
+					.append("schedule", UserScheduleDB.toDocument(user.getSchedule()))
+					.append("fitbit-account", FitBitAccountDB.toDocument(user.getFitBitAccount()));
 	}
 	
-	private static void end() {
-		mongoClient.close();
+	public static User fromDocument(Document document) {
+		User user = new User(document.getString("username"), document.getString("password"));
+		
+		user.setMemberSince(document.getDate("member-since"));
+		user.setInfo(UserInfoDB.fromDocument((Document) document.get("info")));
+		user.setSettings(UserSettingsDB.fromDocument((Document) document.get("settings")));
+		user.setDiabetesParams(UserDiabetesParamsDB.fromDocument((Document) document.get("diabetes-params")));
+		user.setAdherenceParams(UserAdherenceParamsDB.fromDocument((Document) document.get("adherence-params")));
+		user.setCommunityParams(UserCommunityParamsDB.fromDocument((Document) document.get("community-params")));
+		user.setSchedule(UserScheduleDB.fromDocument((Document) document.get("schedule")));
+		user.setFitBitAccount(FitBitAccountDB.fromDocument((Document) document.get("fitbit-account")));
+		
+		return user;
 	}
 	
 	public static Document registerUser(String username, String password) {
@@ -57,7 +65,6 @@ public class UserDB {
 										.append("schedule-dates", new ArrayList<Document>()))
 							.append("fitbit-account",
 									new Document("fitbit-user-id", null)
-										.append("fitbit-display-name", null)
 										.append("fitbit-access-token", null)
 										.append("fitbit-refresh-token", null)
 										.append("fitbit-scope", null)
@@ -70,13 +77,19 @@ public class UserDB {
 		return newUser;
 	}
 	
-	public static Document loginUser(String username, String password) {
+	public static Document findUser(String username) {
 		start();
 		
 		Document existingUser = users.find(eq("username", username)).first();
-		if (existingUser == null || !password.equals(existingUser.getString("password"))) return null;
 		
 		end();
+		
+		return existingUser;
+	}
+	
+	public static Document loginUser(String username, String password) {
+		Document existingUser = findUser(username);
+		if (existingUser == null || !password.equals(existingUser.getString("password"))) return null;
 		
 		return existingUser;
 	}

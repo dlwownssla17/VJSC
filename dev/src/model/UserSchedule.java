@@ -12,7 +12,7 @@ import util.DateFormat;
 
 public class UserSchedule {
 	private int capacity;
-	private User associatedUser;
+	private String associatedUsername;
 	private HashMap<Date, ArrayList<ScheduleItem>> items;
 	private HashMap<Date, Integer> dailyScores;
 	private long scheduleIdCounter;
@@ -25,9 +25,9 @@ public class UserSchedule {
 		this.recurringIdCounter = 0;
 	}
 
-	public UserSchedule(int capacity, User associatedUser) {
+	public UserSchedule(int capacity, String associatedUsername) {
 		this(capacity);
-		this.associatedUser = associatedUser;
+		this.associatedUsername = associatedUsername;
 	}
 
 	public int getCapacity() {
@@ -38,17 +38,49 @@ public class UserSchedule {
 		return this.items.size() >= this.capacity;
 	}
 
-	public User getAssociatedUser() {
-		return this.associatedUser;
+	public String getAssociatedUsername() {
+		return this.associatedUsername;
 	}
 
-	public User setAssociatedUser(User associatedUser) {
-		this.associatedUser = associatedUser;
-		return this.associatedUser;
+	public String setAssociatedUser(String associatedUsername) {
+		this.associatedUsername = associatedUsername;
+		return this.associatedUsername;
 	}
 
 	public HashMap<Date, ArrayList<ScheduleItem>> getItems() {
 		return this.items;
+	}
+	
+	public HashMap<Date, ArrayList<ScheduleItem>> setItems(HashMap<Date, ArrayList<ScheduleItem>> items) {
+		this.items = items;
+		return this.items;
+	}
+	
+	public HashMap<Date, Integer> getDailyScores() {
+		return this.dailyScores;
+	}
+	
+	public HashMap<Date, Integer> setDailyScores(HashMap<Date, Integer> dailyScores) {
+		this.dailyScores = dailyScores;
+		return this.dailyScores;
+	}
+	
+	public long getScheduleIdCounter() {
+		return this.scheduleIdCounter;
+	}
+	
+	public long setScheduleIdCounter(long scheduleIdCounter) {
+		this.scheduleIdCounter = scheduleIdCounter;
+		return this.scheduleIdCounter;
+	}
+	
+	public long getRecurringIdCounter() {
+		return this.recurringIdCounter;
+	}
+	
+	public long setRecurringIdCounter(long recurringIdCounter) {
+		this.recurringIdCounter = recurringIdCounter;
+		return this.recurringIdCounter;
 	}
 
 	public void ensureDate(int year, int month, int day) {
@@ -205,7 +237,7 @@ public class UserSchedule {
 		Date startDateTime = scheduleItemStartDateTimeFromStartTimeString(date, startTimeString);
 		Progress progress = scheduleItemProgressFromProgressTypeString(progressTypeString);
 		ScheduleItem scheduleItem = new ScheduleItem(this.scheduleIdCounter++, title, description, type,
-				this.associatedUser, startDateTime, progress, null); // TODO:
+				this.associatedUsername, startDateTime, progress, null); // TODO:
 																		// notification
 																		// params
 

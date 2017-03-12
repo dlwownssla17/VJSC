@@ -1,5 +1,5 @@
 package db;
 
-public class TeamDB {
+public class TeamDB extends ObjectDB {
 
 }
