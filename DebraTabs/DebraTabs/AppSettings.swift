@@ -14,6 +14,7 @@ class Settings {
     static let dayViewRootURL:String = "test"
    
     static var usernameString: String = ""
+    static var datecheckString: String = ""
   
     static let testUserID2:String = "123";
     

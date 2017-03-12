@@ -76,6 +76,7 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         segmentedControl.frame = CGRect(x: 0, y: barHeight + 100, width: displayWidth, height: 50)
         segmentedControl.addTarget(self, action: #selector(actTypeTapped(_:)), for: .valueChanged)
         segmentedControl.selectedSegmentIndex = ActivityTypeIndex
+        self.segmentedControl.isUserInteractionEnabled = false
         view.addSubview(segmentedControl)
         
         exercisePicker = UIPickerView()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
@@ -92,7 +93,8 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         scheduleDuration.layer.borderColor = blueColor.cgColor
         scheduleDuration.isHidden = ActivityTypeIndex != 1
         scheduleDuration.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
-        self.scheduleDuration.inputView = self.exercisePicker
+        self.scheduleDuration.isUserInteractionEnabled = false
+//        self.scheduleDuration.inputView = self.exercisePicker
 
         self.view.addSubview(scheduleDuration)
         

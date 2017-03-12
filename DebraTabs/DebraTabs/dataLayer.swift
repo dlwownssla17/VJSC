@@ -40,6 +40,29 @@ class dataLayer {
         }
     }
     
+    class func storeDateTranscription(datecheck: String) {
+        let context = getContext()
+        
+        //retrieve the entity that we just created
+        let entity =  NSEntityDescription.entity(forEntityName: "GeneralObject", in: context)
+        
+        let transc = NSManagedObject(entity: entity!, insertInto: context)
+        
+        //set the entity values
+        transc.setValue(datecheck, forKey: "datecheck")
+        
+        //save the object
+        do {
+            try context.save()
+            print("saved date!")
+            Settings.datecheckString = datecheck
+        } catch let error as NSError  {
+            print("Could not save \(error), \(error.userInfo)")
+        } catch {
+            
+        }
+    }
+    
     class func getTranscriptions () -> [Any] {
         //create a fetch request, telling it about the entity
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GeneralObject")
@@ -56,6 +79,7 @@ class dataLayer {
 //            
             for trans in searchResults as! [NSManagedObject] {
                 Settings.usernameString = trans.value(forKey: "username") as! String
+                Settings.datecheckString = trans.value(forKey: "datecheck") as! String
                 //get the Key Value pairs (although there may be a better way to do that...
                 print("\(trans.value(forKey: "username"))")
             }
