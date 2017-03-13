@@ -34,6 +34,7 @@ public class ScheduleItem {
 		
 		if (title.length() > 128)
 			throw new IllegalArgumentException("The title should be 128 characters or less.");
+		this.title = title;
 		
 		if (description.length() > 1024)
 			throw new IllegalArgumentException("The description should be 1024 characters or less.");
@@ -123,6 +124,11 @@ public class ScheduleItem {
 	}
 	
 	public Date getCreatedDateTime() {
+		return this.createdDateTime;
+	}
+	
+	public Date setCreatedDateTime(Date createdDateTime) {
+		this.createdDateTime = createdDateTime;
 		return this.createdDateTime;
 	}
 	

@@ -21,8 +21,8 @@ public class CreateLookupDate {
 	
 	public static Date getInstance(String formattedDate) {
 		int year = Integer.parseInt(formattedDate.substring(0, 4));
-		int month = Integer.parseInt(formattedDate.substring(4, 6));
-		int day = Integer.parseInt(formattedDate.substring(6));
+		int month = Integer.parseInt(formattedDate.substring(5, 7));
+		int day = Integer.parseInt(formattedDate.substring(8));
 		return getInstance(year, month, day);
 	}
 }

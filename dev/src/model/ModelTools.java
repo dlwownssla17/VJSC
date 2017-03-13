@@ -15,6 +15,6 @@ public class ModelTools {
 	public static int NOT_MODIFIABLE_BEFORE_START = 120;
 	
 	public static String DATE_FORMAT = "yyyy-MM-dd";
-	public static String TIME_FORMAT = "HH:mm";
+	public static String TIME_FORMAT = "HH:mm:ss";
 	public static String DATE_TIME_FORMAT = String.format("%s %s", DATE_FORMAT, TIME_FORMAT);
 }

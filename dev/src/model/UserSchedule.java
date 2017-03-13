@@ -21,6 +21,7 @@ public class UserSchedule {
 	public UserSchedule(int capacity) {
 		this.capacity = capacity;
 		this.items = new HashMap<>();
+		this.dailyScores = new HashMap<>();
 		this.scheduleIdCounter = 0;
 		this.recurringIdCounter = 0;
 	}

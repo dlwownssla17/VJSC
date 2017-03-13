@@ -9,6 +9,7 @@ import org.bson.Document;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
 import model.ScheduleItem;
@@ -66,7 +67,12 @@ public class DBTools {
 	
 	// assume open connection to database
 	public static User findUser(String username) {
+		open();
+		
 		Document existingUserDocument = users.find(eq("username", username)).first();
+		
+		close();
+		
 		return existingUserDocument == null ? null : userDB.fromDocument(existingUserDocument);
 	}
 	
@@ -86,31 +92,19 @@ public class DBTools {
 	}
 	
 	public static User loginUser(String username, String password) {
-		open();
-		
 		User existingUser = findUser(username);
-		
-		close();
 		
 		return existingUser == null || !existingUser.getPassword().equals(password) ? null : existingUser;
 	}
 	
 	public static ArrayList<ScheduleItem> findDailyItems(String username, Date date) {
-		open();
-		
 		User existingUser = findUser(username);
-		
-		close();
 		
 		return existingUser == null ? null : existingUser.getSchedule().getItemsForDate(date);
 	}
 	
 	public static int findDailyScore(String username, Date date) {
-		open();
-		
 		User existingUser = findUser(username);
-		
-		close();
 		
 		return existingUser == null ? -1 : existingUser.getSchedule().computeDailyScore(date);
 	}

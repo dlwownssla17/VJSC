@@ -15,6 +15,7 @@ public class ScheduleItemDB implements DB<ScheduleItem> {
 					.append("description", item.getDescription())
 					.append("type", item.getType().toString())
 					.append("associated-username", item.getAssociatedUsername())
+					.append("created-date-time", item.getCreatedDateTime())
 					.append("start-date-time", item.getStartDateTime())
 					.append("progress", DBTools.progressDB.toDocument(item.getProgress()))
 					.append("notification-params", DBTools.scheduleItemNotificationParamsDB.toDocument(item.getNotificationParams()))
@@ -34,6 +35,7 @@ public class ScheduleItemDB implements DB<ScheduleItem> {
 				document.getString("description"), type, document.getString("username"),
 				document.getDate("start-date-time"), DBTools.progressDB.fromDocument((Document) document.get("progress")),
 				DBTools.scheduleItemNotificationParamsDB.fromDocument((Document) document.get("notification-params")));
+		item.setCreatedDateTime(document.getDate("created-date-time"));
 		item.setRecurrence(DBTools.scheduleItemRecurrenceDB.fromDocument((Document) document.get("recurrence")));
 		item.setScore(document.getInteger("score"));
 		

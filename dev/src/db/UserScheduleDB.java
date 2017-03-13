@@ -50,25 +50,24 @@ public class UserScheduleDB implements DB<UserSchedule> {
 	public UserSchedule fromDocument(Document document) {
 		UserSchedule schedule = new UserSchedule(document.getInteger("capacity"),
 				document.getString("associated-username"));
+
 		
 		HashMap<Date, ArrayList<ScheduleItem>> items = new HashMap<>();
-		BasicDBList itemsList = (BasicDBList) document.get("items");
-		for (Object obj : itemsList) {
-			Document dailyItemsDocument = (Document) obj;
+		List<Document> itemsList = document.get("items", List.class);
+		for (Document dailyItemsDocument : itemsList) {
 			Date dailyDate = dailyItemsDocument.getDate("daily-date");
 			ArrayList<ScheduleItem> dailyItems = new ArrayList<>();
-			BasicDBList dailyItemsList = (BasicDBList) dailyItemsDocument.get("daily-items");
-			for (Object dailyObj : dailyItemsList) {
-				dailyItems.add(DBTools.scheduleItemDB.fromDocument((Document) dailyObj));
+			List<Document> dailyItemsList = dailyItemsDocument.get("daily-items", List.class);
+			for (Document dailyObj : dailyItemsList) {
+				dailyItems.add(DBTools.scheduleItemDB.fromDocument(dailyObj));
 			}
 			items.put(dailyDate, dailyItems);
 		}
 		schedule.setItems(items);
 		
 		HashMap<Date, Integer> scores = new HashMap<>();
-		BasicDBList scoresList = (BasicDBList) document.get("scores");
-		for (Object obj : scoresList) {
-			Document dailyScoreDocument = (Document) obj;
+		List<Document> scoresList = document.get("scores", List.class);
+		for (Document dailyScoreDocument : scoresList) {
 			Date dailyDate = dailyScoreDocument.getDate("daily-date");
 			int dailyScore = dailyScoreDocument.getInteger("daily-score");
 			scores.put(dailyDate, dailyScore);

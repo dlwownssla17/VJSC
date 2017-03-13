@@ -113,7 +113,7 @@ public class Server {
 			itemJSON.put("Schedule-Item-Description", item.getDescription());
 			itemJSON.put("Schedule-Item-Type", item.getType().toString());
 			itemJSON.put("Schedule-Item-Start",
-					DateFormat.getFormattedString(item.getStartDateTime(), ModelTools.DATE_TIME_FORMAT));
+					DateFormat.getFormattedString(item.getStartDateTime(), ModelTools.TIME_FORMAT));
 			
 			String progressType = "";
 			Progress progress = item.getProgress();
@@ -194,6 +194,8 @@ public class Server {
 			} else {
 				
 			}
+			
+			System.out.println("handled register");
 		}
 		
 	}
@@ -223,6 +225,8 @@ public class Server {
 			} else {
 				
 			}
+
+			System.out.println("handled login");
 		}
 		
 	}
@@ -248,6 +252,8 @@ public class Server {
 			} else {
 				
 			}
+
+			System.out.println("handled logout");
 		}
 		
 	}
@@ -281,6 +287,8 @@ public class Server {
 			} else {
 				
 			}
+
+			System.out.println("handled day view");
 		}
 		
 	}
@@ -331,6 +339,8 @@ public class Server {
 			} else {
 				
 			}
+
+			System.out.println("handled day add");
 		}
 		
 	}
@@ -370,6 +380,8 @@ public class Server {
 			} else {
 				
 			}
+
+			System.out.println("handled day edit");
 		}
 		
 	}
@@ -406,6 +418,8 @@ public class Server {
 			} else {
 				
 			}
+
+			System.out.println("handled day remove");
 		}
 		
 	}
@@ -459,6 +473,8 @@ public class Server {
 			} else {
 				
 			}
+
+			System.out.println("handled month view");
 		}
 		
 	}
@@ -490,6 +506,8 @@ public class Server {
 			} else {
 				
 			}
+
+			System.out.println("handled check-in view");
 		}
 		
 	}
@@ -526,6 +544,8 @@ public class Server {
 			} else {
 				
 			}
+
+			System.out.println("handled check-in submit");
 		}
 		
 	}
@@ -560,6 +580,8 @@ public class Server {
 			} else {
 				
 			}
+
+			System.out.println("handled update daily scores");
 		}
 		
 	}

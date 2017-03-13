@@ -2,10 +2,9 @@ package db;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.bson.Document;
-
-import com.mongodb.BasicDBList;
 
 import model.ScheduleItemRecurrence;
 
@@ -30,10 +29,10 @@ public class ScheduleItemRecurrenceDB implements DB<ScheduleItemRecurrence> {
 		
 		long recurringId = document.getLong("recurring-id");
 		int recurringType = document.getInteger("recurring-type");
-		BasicDBList recurringValueList = (BasicDBList) document.get("recurring-value");
+		List<Integer> recurringValueList = document.get("recurring-value", List.class);
 		int[] recurringValue = new int[recurringValueList.size()];
 		for (int i = 0; i < recurringValueList.size(); i++) {
-			recurringValue[i] = (int) recurringValueList.get(i);
+			recurringValue[i] = recurringValueList.get(i);
 		}
 		Date startDateTime = document.getDate("start-date-time");
 		int endType = document.getInteger("end-type");
