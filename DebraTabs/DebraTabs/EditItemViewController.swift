@@ -92,16 +92,16 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         
         scheduleDuration = UITextField(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 50))
         scheduleDuration.textAlignment = NSTextAlignment.center
-        scheduleDuration.textColor = UIColor.lightGray
+        scheduleDuration.textColor = blueColor
         scheduleDuration.placeholder = "Exercise Duration"
         scheduleDuration.text = String(ActivityDuration)
         scheduleDuration.borderStyle = UITextBorderStyle.line
         scheduleDuration.layer.borderWidth = 1
-        scheduleDuration.layer.borderColor = UIColor.lightGray.cgColor
+        scheduleDuration.layer.borderColor = blueColor.cgColor
         scheduleDuration.isHidden = ActivityTypeIndex != 1
         scheduleDuration.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
-        self.scheduleDuration.isUserInteractionEnabled = false
-//        self.scheduleDuration.inputView = self.exercisePicker
+//        self.scheduleDuration.isUserInteractionEnabled = true
+        self.scheduleDuration.inputView = self.exercisePicker
 
         self.view.addSubview(scheduleDuration)
         
