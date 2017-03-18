@@ -87,6 +87,8 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
     
     var currentDayInfo:CurrentDayInfo = CurrentDayInfo()
     
+    var isToday:Bool = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.hideKeyboardWhenTappedAround()
@@ -337,6 +339,10 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         endingPicker2b = UIDatePicker()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
         endingPicker2b.timeZone = NSTimeZone.local
         endingPicker2b.datePickerMode = UIDatePickerMode.date
+        let currentDateFormatter:DateFormatter = DateFormatter()
+        currentDateFormatter.dateFormat = "yyyy-MM-dd"
+        let currentDay = currentDateFormatter.date(from: self.currentDayInfo.currentDayString)
+        endingPicker2b.minimumDate = currentDay
         endingPicker2b.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
 //        endingPicker2b.delegate = self
 //        endingPicker2b.dataSource = self
@@ -358,6 +364,30 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         startTimePicker.timeZone = NSTimeZone.local
         startTimePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         startTimePicker.datePickerMode = UIDatePickerMode.time
+        
+        let startDateFormatter: DateFormatter = DateFormatter()
+        startDateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        let currentTime:Date = Date()
+        let currentTimeFormatter:DateFormatter = DateFormatter()
+        currentTimeFormatter.dateFormat = "HH:mm"
+        let currentTimeString:String = currentTimeFormatter.string(from: currentTime)
+        
+        let currentDayFormatter:DateFormatter = DateFormatter()
+        currentDayFormatter.dateFormat = "yyyy-MM-dd"
+        let actualDayValueString:String = currentDayFormatter.string(from: Date())
+        isToday = actualDayValueString == self.currentDayInfo.currentDayString
+        
+        var startDateString:String = ""
+        if isToday {
+            startDateString = self.currentDayInfo.currentDayString + " " + currentTimeString
+        } else {
+            startDateString = self.currentDayInfo.currentDayString + " 0:00"
+        }
+        // Apply date format
+        print(startDateString)
+        let startTimeDate: Date = startDateFormatter.date(from: startDateString)!
+        startTimePicker.date = startTimeDate
+        startTimePicker.minimumDate = startTimeDate
         //        endingPicker2b.delegate = self
         //        endingPicker2b.dataSource = self
         
@@ -560,18 +590,42 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
                     self.present(alert, animated: true, completion: nil)
                     return
                 }
+                let currentDateFormatter:DateFormatter = DateFormatter()
+                currentDateFormatter.dateFormat = "yyyy-MM-dd"
+                let currentDay = currentDateFormatter.date(from: self.currentDayInfo.currentDayString)
+                let selectedEndDateValue:Date = currentDateFormatter.date(from: scheduleEndingField2b.text!)!
+                if selectedEndDateValue < currentDay! {
+                    let alert = UIAlertController(title: "Alert", message: "End Day cannot be in the past", preferredStyle: UIAlertControllerStyle.alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
+                    return
+                }
                 newScheduleItem.endingValue = scheduleEndingField2b.text!
             }
         }
         
         // Schedule-Item-Title
-        newScheduleItem.scheduleItemTitle = scheduleTitle.text!
+        if (scheduleTitle.text!).characters.count > JSONProtocolNames.scheduleItemTitleMaxLength {
+            let alert = UIAlertController(title: "Alert", message: "Title should be \(JSONProtocolNames.scheduleItemTitleMaxLength) characters or less.", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return
+        } else {
+            newScheduleItem.scheduleItemTitle = scheduleTitle.text!
+        }
         
         // Schedule-Item-Description
         if scheduleDesc.text!.isEmpty {
             newScheduleItem.scheduleItemDescription = ""
         } else {
-            newScheduleItem.scheduleItemDescription = scheduleDesc.text!
+            if (scheduleDesc.text!).characters.count > JSONProtocolNames.scheduleItemDescriptionLength {
+                let alert = UIAlertController(title: "Alert", message: "Description should be \(JSONProtocolNames.scheduleItemDescriptionLength) characters or less.", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                return
+            } else {
+                newScheduleItem.scheduleItemDescription = scheduleDesc.text!
+            }
         }
         
         // Schedule-Item-Type
@@ -605,8 +659,15 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         let dateFormatterOut = DateFormatter()
         dateFormatterOut.timeZone = NSTimeZone(name: "GMT") as TimeZone!
         
-        
-        newScheduleItem.scheduleItemStart = selectedDate
+        let currentDate:Date = Date()
+        if selectedRecurringType == .NotRecurring && selectedDate < currentDate {
+            let alert = UIAlertController(title: "Alert", message: "Start time cannot be in the past for Non-Recurring Schedule Items", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return
+        } else {
+            newScheduleItem.scheduleItemStart = selectedDate
+        }
         
         
         //print(Requests.addScheduleItemJSON(item: newScheduleItem))

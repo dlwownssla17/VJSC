@@ -476,53 +476,18 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         return cell
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    func updateScheduleItems() {
         let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: currentDayInfo.currentDayString]
         
-        //Update Scores
-        let x = dataLayer.getTranscriptions()
-        
-        // HERE - Send Settings.datecheckString to send to server
-        let currentDate:Date = Date()
-        let currentFormatter:DateFormatter = DateFormatter()
-        currentFormatter.dateFormat = "yyyy-MM-dd"
-        let currentDateString: String = currentFormatter.string(from: currentDate)
-        print("BEFORE IF STATEMENT FIRST: \(Settings.datecheckString)")
-        print("BEFORE IF STATEMENT SECOND: \(currentDateString)")
-        if Settings.datecheckString != currentDateString {
-            dataLayer.storeDateTranscription(datecheck: currentDateString)
-            dataLayer.storeTranscription(username: Settings.usernameString)
-            print("AFTER UPDATE FIRST: \(Settings.datecheckString)")
-            print("AFTER UPDATE SECOND: \(currentDateString)")
-            Alamofire.request(Settings.getUpdateScoresURL(), method: .post, headers: headers).validate().responseJSON { response in
-                switch response.result {
-                case .success(let data):
-                    let json = JSON(data)
-                    print("Updated Scores")
-                case .failure(let error):
-                    print("Request failed with error: \(error)")
-                }
-            }
-        } else {
-            print("Doesnt Need to Update Score")
-        }
-        
-        // HERE - Save server response to Settings.datecheckString, see below
-        //Settings.datecheckString = response_date_from_server
-        
-        //dataLayer.storeDateTranscription(datecheck: Settings.datecheckString)
-        //dataLayer.storeTranscription(username: Settings.usernameString)
-        
-        
-        //"http://130.91.134.209:8000/test"
-        //let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: currentDayInfo.currentDayString]
         Alamofire.request(Settings.getDayViewURL(), method: .get, headers: headers).validate().responseJSON { response in
             switch response.result {
             case .success(let data):
                 let json = JSON(data)
                 print(json.count)
                 print("TestCAT")
+                //print(json)
                 let jsonObjectList = json[JSONProtocolNames.scheduleItemsListResponseName].arrayValue
+                //print(jsonObjectList)
                 let dailyScore:Int = json[JSONProtocolNames.monthDayScoreHeaderName].intValue
                 self.ObjectsArray = []
                 for jsonObject in jsonObjectList {
@@ -544,13 +509,74 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
                     self.currentDateLabel.text = self.currentDayInfo.currentDayString + " - Score: \(dailyScore)"
                 }
                 self.view.addSubview(self.currentDateLabel)
-                print(TimeZone.current)
+                
+                let currentDayFormatter:DateFormatter = DateFormatter()
+                currentDayFormatter.dateFormat = "yyyy-MM-dd"
+                let currentDateValue:Date = currentDayFormatter.date(from: self.currentDayInfo.currentDayString)!
+                let actualDateValueString:String = currentDayFormatter.string(from: Date())
+                let actualDateValue:Date = currentDayFormatter.date(from: actualDateValueString)!
+                if currentDateValue < actualDateValue {
+                    self.button.isEnabled = false
+                    self.button.backgroundColor = UIColor.gray
+                } else {
+                    self.button.isEnabled = true
+                    self.button.backgroundColor = UIColor.green
+                }
+                print("FINISHED DISPLAYING ITEMS")
+                //print(TimeZone.current)
             //return scheduleItems
             case .failure(let error):
                 print("Request failed with error: \(error)")
                 self.ObjectsArray = []
             }
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: currentDayInfo.currentDayString]
+        
+        //Update Scores
+        let x = dataLayer.getTranscriptions()
+        
+        // HERE - Send Settings.datecheckString to send to server
+        let currentDate:Date = Date()
+        let currentFormatter:DateFormatter = DateFormatter()
+        currentFormatter.dateFormat = "yyyy-MM-dd"
+        let currentDateString: String = currentFormatter.string(from: currentDate)
+        print("BEFORE IF STATEMENT FIRST: \(Settings.datecheckString)")
+        print("BEFORE IF STATEMENT SECOND: \(currentDateString)")
+        //if Settings.datecheckString != currentDateString {
+        if false {
+            print("AFTER UPDATE FIRST: \(Settings.datecheckString)")
+            print("AFTER UPDATE SECOND: \(currentDateString)")
+            Alamofire.request(Settings.getUpdateScoresURL(), method: .post, headers: headers).validate().responseString { response in
+                switch response.result {
+                case .success(let data):
+                    let json = JSON(data)
+                    dataLayer.storeDateTranscription(datecheck: currentDateString)
+                    dataLayer.storeTranscription(username: Settings.usernameString)
+                    self.updateScheduleItems()
+                    print("Updated Scores")
+                    
+                case .failure(let error):
+                    print("Request failed with error: \(error)")
+                }
+            }
+        } else {
+            print("Doesnt Need to Update Score")
+            updateScheduleItems()
+        }
+        
+        // HERE - Save server response to Settings.datecheckString, see below
+        //Settings.datecheckString = response_date_from_server
+        
+        //dataLayer.storeDateTranscription(datecheck: Settings.datecheckString)
+        //dataLayer.storeTranscription(username: Settings.usernameString)
+        
+        
+        //"http://130.91.134.209:8000/test"
+        //let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: currentDayInfo.currentDayString]
+        
         print("FROM CALENDAR: " + currentDayInfo.currentDayString)
     }
     

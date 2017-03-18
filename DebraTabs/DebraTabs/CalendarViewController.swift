@@ -26,6 +26,7 @@ class CalendarViewController: UIViewController {
     var buttonToDay:Dictionary<UIButton, DayItem> = [:]
     
     var leftRightBurronHeight:CGFloat = 0.0
+    var closeButtonHeight:CGFloat = 0.0
     
     var calendarTitle:UILabel = UILabel()
     
@@ -69,6 +70,16 @@ class CalendarViewController: UIViewController {
         calendarTitle.text = ""
         calendarTitle.textColor = UIColor.black
         self.view.addSubview(calendarTitle)
+        
+        closeButtonHeight = buttonWidth * 9
+        let closeButton = UIButton(frame: CGRect(x: buttonWidth * 2.5, y: closeButtonHeight, width: buttonWidth * 2, height: buttonHeight))
+        closeButton.setTitle("Close", for: UIControlState.normal)
+        closeButton.setTitleColor(UIColor.blue, for: UIControlState.normal)
+        closeButton.backgroundColor = UIColor.clear
+        closeButton.layer.borderWidth = 1.0
+        closeButton.layer.borderColor = UIColor.blue.cgColor
+        closeButton.addTarget(self, action: #selector(closeButtonTapped(_:)), for: .touchDown)
+        self.view.addSubview(closeButton)
         
     }
     
@@ -138,6 +149,7 @@ class CalendarViewController: UIViewController {
             dayItem.day = dayString
             let formatter  = DateFormatter()
             formatter.dateFormat = "yyyy-MM-dd"
+            //print(dayString)
             dayItem.dayValue = formatter.date(from: dayString)!
             dayItem.setInactive()
             FullObjectArray.append(dayItem)
@@ -145,6 +157,9 @@ class CalendarViewController: UIViewController {
     }
     
     func mergeDayItemArrays() {
+        for day in ObjectsArray {
+            print("BEFORE: " + day.day)
+        }
         for day in ObjectsArray {
             for existingDay in FullObjectArray {
                 if day.dayNumber == existingDay.dayNumber {
@@ -155,6 +170,9 @@ class CalendarViewController: UIViewController {
                     existingDay.setActive()
                 }
             }
+        }
+        for day in ObjectsArray {
+            print("AFTER" + day.day)
         }
     }
     
@@ -210,9 +228,14 @@ class CalendarViewController: UIViewController {
         self.viewDidAppear(true)
     }
     
+    func closeButtonTapped(_ button: UIButton) {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     func calendarViewButtonTapped(_ button: UIButton) {
         print("Add Schedule Item Button pressed")
         let dayItemPicked:DayItem = buttonToDay[button]!
+        print("PICKED \(dayItemPicked.day)")
         currentDayInfo.currentDayString = dayItemPicked.day
         print("Picked " + dayItemPicked.day)
         self.dismiss(animated: true, completion: nil)

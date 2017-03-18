@@ -19,7 +19,7 @@ class Requests {
         let dateFormatter = DateFormatter()
         let timeZone = NSTimeZone(name: "GMT")
         dateFormatter.timeZone=timeZone as TimeZone!
-        dateFormatter.dateFormat = "yyyy-MM-dd hh:mm:ss"
+        dateFormatter.dateFormat = "HH:mm:ss"
         let startInformation = dateFormatter.string(from: item.scheduleItemStart)
         let progressType = ProgressType.getJSONCode(type: item.scheduleItemProgressType)
         
@@ -62,7 +62,7 @@ class Requests {
         let dateFormatter = DateFormatter()
         let timeZone = NSTimeZone(name: "GMT")
         dateFormatter.timeZone=timeZone as TimeZone!
-        dateFormatter.dateFormat = "hh:mm:ss"
+        dateFormatter.dateFormat = "HH:mm:ss"
         let startInformation = dateFormatter.string(from: item.scheduleItemStart)
         
 //        let itemInformation: [String: Any] = [

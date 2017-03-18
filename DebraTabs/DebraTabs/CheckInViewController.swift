@@ -119,7 +119,7 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
                         let okAction = UIAlertAction(title: "Done", style: UIAlertActionStyle.default)
                         {
                             (result : UIAlertAction) -> Void in
-                            print("You pressed OK")
+                            print("You pressed OK PERCENTAGE")
                         }
                         alertController2.addAction(okAction)
                         
@@ -183,7 +183,7 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
                         let okAction = UIAlertAction(title: "Done", style: UIAlertActionStyle.default)
                         {
                             (result : UIAlertAction) -> Void in
-                            print("You pressed OK")
+                            print("You pressed OK BOOLEAN")
                         }
                         alertController2.addAction(okAction)
                         

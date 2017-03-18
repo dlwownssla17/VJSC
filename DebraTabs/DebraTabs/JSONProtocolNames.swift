@@ -101,4 +101,7 @@ class JSONProtocolNames {
     static let monthHeaderName:String = "Month"
     static let progressHeaderName:String = "Progress"
     
+    static let scheduleItemTitleMaxLength:Int = 128
+    static let scheduleItemDescriptionLength:Int = 1024
+    
 }
