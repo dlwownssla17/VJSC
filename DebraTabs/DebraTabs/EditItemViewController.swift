@@ -82,7 +82,7 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         segmentedControl.addTarget(self, action: #selector(actTypeTapped(_:)), for: .valueChanged)
         segmentedControl.selectedSegmentIndex = ActivityTypeIndex
         segmentedControl.tintColor = UIColor.lightGray
-//        segmentedControl.backgroundColor = UIColor.lightGray
+        //segmentedControl.backgroundColor = UIColor.lightGray
         self.segmentedControl.isUserInteractionEnabled = false
         view.addSubview(segmentedControl)
         
@@ -181,10 +181,14 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         }
         let ScheduleItemStart = scheduleStartTime.text!
         let dateFormatterIn = DateFormatter()
-        let timeZone = NSTimeZone(name: "GMT")
-        dateFormatterIn.timeZone=timeZone as TimeZone!
-        dateFormatterIn.dateFormat = "HH:mm a"
-        editScheduleItem.scheduleItemStart = dateFormatterIn.date(from: ScheduleItemStart)!
+        //let timeZone = NSTimeZone(name: "GMT")
+        //dateFormatterIn.timeZone=timeZone as TimeZone!
+        dateFormatterIn.dateFormat = "yyyy-MM-dd hh:mm a"
+        let fullDateString:String = self.currentDayInfo.currentDayString + " " + ScheduleItemStart
+        print("FULL DAY STRING: " + fullDateString)
+        editScheduleItem.scheduleItemStart = dateFormatterIn.date(from: fullDateString)!
+        print(editScheduleItem.scheduleItemStart)
+        print("END")
         editScheduleItem.itemID = ActivityID
         //editScheduleItem.recurringID = -1
         
