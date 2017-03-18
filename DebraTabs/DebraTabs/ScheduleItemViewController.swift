@@ -367,6 +367,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
             if (selectedScheduleItemType == .Exercise) {
                 secondViewController.ActivityDuration = self.ObjectsArray[indexPath.row].scheduleItemDuration
             }
+            secondViewController.ActivityScheduleItemObject = self.ObjectsArray[indexPath.row]
             let dateFormatter: DateFormatter = DateFormatter()
             dateFormatter.dateFormat = "hh:mm a"
             let selectedDate: String = dateFormatter.string(from: self.ObjectsArray[indexPath.row].scheduleItemStart as Date)

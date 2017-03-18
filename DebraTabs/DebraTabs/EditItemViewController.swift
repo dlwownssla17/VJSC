@@ -18,6 +18,7 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     public var ActivityDuration: Int = Int()
     public var ActivityStartTime: String = String()
     public var ActivityID: Int = Int()
+    public var ActivityScheduleItemObject: ScheduleItem = ScheduleItem()
     
     public var blueColor: UIColor = UIColor(red: CGFloat(0/255.0), green: CGFloat(122/255.0), blue: CGFloat(255/255.0), alpha: CGFloat(1.0))
     
@@ -78,6 +79,8 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         segmentedControl.frame = CGRect(x: 0, y: barHeight + 100, width: displayWidth, height: 50)
         segmentedControl.addTarget(self, action: #selector(actTypeTapped(_:)), for: .valueChanged)
         segmentedControl.selectedSegmentIndex = ActivityTypeIndex
+        segmentedControl.tintColor = UIColor.lightGray
+        segmentedControl.backgroundColor = UIColor.lightGray
         self.segmentedControl.isUserInteractionEnabled = false
         view.addSubview(segmentedControl)
         
@@ -87,12 +90,12 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         
         scheduleDuration = UITextField(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 50))
         scheduleDuration.textAlignment = NSTextAlignment.center
-        scheduleDuration.textColor = blueColor
+        scheduleDuration.textColor = UIColor.lightGray
         scheduleDuration.placeholder = "Exercise Duration"
         scheduleDuration.text = String(ActivityDuration)
         scheduleDuration.borderStyle = UITextBorderStyle.line
         scheduleDuration.layer.borderWidth = 1
-        scheduleDuration.layer.borderColor = blueColor.cgColor
+        scheduleDuration.layer.borderColor = UIColor.lightGray.cgColor
         scheduleDuration.isHidden = ActivityTypeIndex != 1
         scheduleDuration.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
         self.scheduleDuration.isUserInteractionEnabled = false
@@ -208,6 +211,55 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     func doneButtonTapped(_ sender:UIBarButtonItem) {
         scheduleDuration.resignFirstResponder()
         scheduleStartTime.resignFirstResponder()
+        
+        let removeAlert = UIAlertController(title: "Remove Item", message: "Are you sure?", preferredStyle: UIAlertControllerStyle.alert)
+        
+        removeAlert.addAction(UIAlertAction(title: "Remove Just Today", style: .default, handler: {nil}))
+//        (action: UIAlertAction!) in
+//            let parameters = Requests.removeScheduleItem(item: self.ObjectsArray[indexPath.row], removeAllRecurring: false)
+//            //"http://130.91.134.209:8000/remove"
+//            let headers = [JSONProtocolNames.usernameHeaderName:Settings.usernameString, JSONProtocolNames.dateHeaderName: self.currentDayInfo.currentDayString]
+//            Alamofire.request(Settings.getRemoveScheduleItemURL(), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+//                .responseString { response in
+//                    switch response.result {
+//                    case .success(let _):
+//                        print("TEST SPIRO")
+//                        self.viewDidAppear(true)
+//                    case .failure(let error):
+//                        print("Request failed with error: \(error)")
+//                        let alert = UIAlertController(title: "Alert", message: "Could not delete item.", preferredStyle: UIAlertControllerStyle.alert)
+//                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+//                        self.present(alert, animated: true, completion: nil)
+//                    }
+//            }
+//        }))
+        
+        if self.ActivityScheduleItemObject.recurringType != .NotRecurring {
+            removeAlert.addAction(UIAlertAction(title: "Remove From Every Day", style: .default, handler: {nil}))
+            //(action: UIAlertAction!) in
+//                let parameters = Requests.removeScheduleItem(item: self.ObjectsArray[indexPath.row], removeAllRecurring: true)
+//                let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: self.currentDayInfo.currentDayString]
+//                Alamofire.request(Settings.getRemoveScheduleItemURL(), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+//                    .responseString { response in
+//                        switch response.result {
+//                        case .success(let _):
+//                            print("TEST SPIRO")
+//                            self.viewDidAppear(true)
+//                        case .failure(let error):
+//                            print("Request failed with error: \(error)")
+//                            let alert = UIAlertController(title: "Alert", message: "Could not delete item.", preferredStyle: UIAlertControllerStyle.alert)
+//                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+//                            self.present(alert, animated: true, completion: nil)
+//                        }
+//                }
+//            }))
+        }
+        
+        removeAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+            return
+        }))
+        
+        self.present(removeAlert, animated: true, completion: nil)
     }
     
     // MARK: Button Action
