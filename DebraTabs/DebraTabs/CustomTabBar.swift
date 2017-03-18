@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class CustomTabBar: UITabBarController, CustomTabBarDataSource, CustomTabBarDelegate {
     
@@ -53,6 +54,48 @@ class CustomTabBar: UITabBarController, CustomTabBarDataSource, CustomTabBarDele
             let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
             self.present(alert, animated: true, completion: nil)
+            
+            if (title == "Log Out") {
+                Settings.usernameString = ""
+                Settings.datecheckString = "2000-01-01"
+                
+                let moc = dataLayer.getContext()
+                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GeneralObject")
+                
+                let result = try? moc.fetch(fetchRequest)
+                let resultData = result as! [NSManagedObject]
+                
+                for object in resultData {
+                    moc.delete(object)
+                }
+                let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                appDelegate.resetAppToFirstController()
+//                exit(0)
+                
+//                do {
+//                    try moc.save()
+//                    print("saved!")
+//                } catch let error as NSError  {
+//                    print("Could not save \(error), \(error.userInfo)")
+//                } catch {
+//                    
+//                }
+
+                
+                
+//                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GeneralObject")
+//                do {
+//                    let searchResults = try dataLayer.getContext().fetch(fetchRequest)
+//                    for object in searchResults {
+//                        dataLayer.getContext().delete(object as! NSManagedObject)
+//                        print("deleting here")
+//                    }
+//                    exit(0)
+//                } catch {
+//                    print("Error with request: \(error)")
+//                }
+                
+            }
         }
         
         let item1 = ExpandingMenuItem(size: menuButtonSize, title: "Music", image: UIImage(named: "chooser-moment-icon-music")!, highlightedImage: UIImage(named: "chooser-moment-icon-place-highlighted")!, backgroundImage: UIImage(named: "chooser-moment-button"), backgroundHighlightedImage: UIImage(named: "chooser-moment-button-highlighted")) { () -> Void in
@@ -71,8 +114,8 @@ class CustomTabBar: UITabBarController, CustomTabBarDataSource, CustomTabBarDele
             showAlert("Thought")
         }
         
-        let item5 = ExpandingMenuItem(size: menuButtonSize, title: "Sleep", image: UIImage(named: "chooser-moment-icon-sleep")!, highlightedImage: UIImage(named: "chooser-moment-icon-sleep-highlighted")!, backgroundImage: UIImage(named: "chooser-moment-button"), backgroundHighlightedImage: UIImage(named: "chooser-moment-button-highlighted")) { () -> Void in
-            showAlert("Sleep")
+        let item5 = ExpandingMenuItem(size: menuButtonSize, title: "Log Out", image: UIImage(named: "chooser-moment-icon-sleep")!, highlightedImage: UIImage(named: "chooser-moment-icon-sleep-highlighted")!, backgroundImage: UIImage(named: "chooser-moment-button"), backgroundHighlightedImage: UIImage(named: "chooser-moment-button-highlighted")) { () -> Void in
+            showAlert("Log Out")
         }
         
         menuButton.addMenuItems([item1, item2, item3, item4, item5])

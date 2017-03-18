@@ -469,7 +469,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         }
         
         if !self.ObjectsArray[indexPath.row].scheduleItemActive {
-            cell.backgroundColor = UIColor.gray
+            cell.backgroundColor = UIColor.lightGray
         }
 
         cell.textLabel!.text = "\(ObjectsArray[indexPath.row].scheduleItemTitle)"
