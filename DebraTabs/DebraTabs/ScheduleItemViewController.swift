@@ -509,6 +509,16 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func updateScheduleItems() {
+        
+        var indicator = UIActivityIndicatorView()
+        indicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        indicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+        indicator.center = self.view.center
+        self.view.addSubview(indicator)
+        
+        indicator.startAnimating()
+        indicator.backgroundColor = UIColor.white
+        
         let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: currentDayInfo.currentDayString]
         
         Alamofire.request(Settings.getDayViewURL(), method: .get, headers: headers).validate().responseJSON { response in
@@ -561,6 +571,9 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
                     self.button.backgroundColor = UIColor.green
                 }
                 print("FINISHED DISPLAYING ITEMS")
+//                sleep(2)
+                indicator.stopAnimating()
+                indicator.hidesWhenStopped = true
                 //print(TimeZone.current)
             //return scheduleItems
             case .failure(let error):
