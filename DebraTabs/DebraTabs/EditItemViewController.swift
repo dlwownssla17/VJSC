@@ -42,6 +42,8 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     var cancelButton: UIButton = UIButton()
     
     var currentDayInfo:CurrentDayInfo = CurrentDayInfo()
+    
+    var removeAllRecurringType:Int = -1
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -184,21 +186,66 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         dateFormatterIn.dateFormat = "HH:mm a"
         editScheduleItem.scheduleItemStart = dateFormatterIn.date(from: ScheduleItemStart)!
         editScheduleItem.itemID = ActivityID
-        editScheduleItem.recurringID = -1
+        //editScheduleItem.recurringID = -1
         
-        let parameters = Requests.editScheduleItem(item: editScheduleItem)
-        let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: self.currentDayInfo.currentDayString]
+//        let parameters = Requests.editScheduleItem(item: editScheduleItem)
+//        let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: self.currentDayInfo.currentDayString]
+//        
+//        Alamofire.request(Settings.getEditScheduleItemURL(), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+//            .responseString { response in
+//                switch response.result {
+//                case .success(let _):
+//                    print("TEST SPIRO")
+//                    self.dismiss(animated: true, completion: nil)
+//                case .failure(let error):
+//                    print("Request failed with error: \(error)")
+//                }
+//        }
+        let removeAlert = UIAlertController(title: "Edit Item", message: "Are you sure?", preferredStyle: UIAlertControllerStyle.alert)
         
-        Alamofire.request(Settings.getEditScheduleItemURL(), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            .responseString { response in
-                switch response.result {
-                case .success(let _):
-                    print("TEST SPIRO")
-                    self.dismiss(animated: true, completion: nil)
-                case .failure(let error):
-                    print("Request failed with error: \(error)")
+        removeAlert.addAction(UIAlertAction(title: "Edit Just Today", style: .default, handler: {
+            (action: UIAlertAction!) in
+            editScheduleItem.recurringID = self.removeAllRecurringType
+            let parameters = Requests.editScheduleItem(item: editScheduleItem)
+            let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: self.currentDayInfo.currentDayString]
+            
+            Alamofire.request(Settings.getEditScheduleItemURL(), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+                .responseString { response in
+                    switch response.result {
+                    case .success(let _):
+                        print("TEST SPIRO")
+                        self.dismiss(animated: true, completion: nil)
+                    case .failure(let error):
+                        print("Request failed with error: \(error)")
+                    }
+            }
+        }))
+        
+        if self.ActivityScheduleItemObject.recurringType != .NotRecurring {
+            removeAlert.addAction(UIAlertAction(title: "Edit Every Day", style: .default, handler: {
+                (action: UIAlertAction!) in
+                editScheduleItem.recurringID = self.ActivityScheduleItemObject.recurringID
+                let parameters = Requests.editScheduleItem(item: editScheduleItem)
+                let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: self.currentDayInfo.currentDayString]
+                
+                Alamofire.request(Settings.getEditScheduleItemURL(), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+                    .responseString { response in
+                        switch response.result {
+                        case .success(let _):
+                            print("TEST SPIRO")
+                            self.dismiss(animated: true, completion: nil)
+                        case .failure(let error):
+                            print("Request failed with error: \(error)")
+                        }
                 }
+            }))
         }
+        
+        removeAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+            return
+        }))
+        
+        self.present(removeAlert, animated: true, completion: nil)
         
         
         //self.dismiss(animated: true, completion: nil)
@@ -212,54 +259,7 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         scheduleDuration.resignFirstResponder()
         scheduleStartTime.resignFirstResponder()
         
-        let removeAlert = UIAlertController(title: "Remove Item", message: "Are you sure?", preferredStyle: UIAlertControllerStyle.alert)
         
-        removeAlert.addAction(UIAlertAction(title: "Remove Just Today", style: .default, handler: {nil}))
-//        (action: UIAlertAction!) in
-//            let parameters = Requests.removeScheduleItem(item: self.ObjectsArray[indexPath.row], removeAllRecurring: false)
-//            //"http://130.91.134.209:8000/remove"
-//            let headers = [JSONProtocolNames.usernameHeaderName:Settings.usernameString, JSONProtocolNames.dateHeaderName: self.currentDayInfo.currentDayString]
-//            Alamofire.request(Settings.getRemoveScheduleItemURL(), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-//                .responseString { response in
-//                    switch response.result {
-//                    case .success(let _):
-//                        print("TEST SPIRO")
-//                        self.viewDidAppear(true)
-//                    case .failure(let error):
-//                        print("Request failed with error: \(error)")
-//                        let alert = UIAlertController(title: "Alert", message: "Could not delete item.", preferredStyle: UIAlertControllerStyle.alert)
-//                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
-//                        self.present(alert, animated: true, completion: nil)
-//                    }
-//            }
-//        }))
-        
-        if self.ActivityScheduleItemObject.recurringType != .NotRecurring {
-            removeAlert.addAction(UIAlertAction(title: "Remove From Every Day", style: .default, handler: {nil}))
-            //(action: UIAlertAction!) in
-//                let parameters = Requests.removeScheduleItem(item: self.ObjectsArray[indexPath.row], removeAllRecurring: true)
-//                let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: self.currentDayInfo.currentDayString]
-//                Alamofire.request(Settings.getRemoveScheduleItemURL(), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-//                    .responseString { response in
-//                        switch response.result {
-//                        case .success(let _):
-//                            print("TEST SPIRO")
-//                            self.viewDidAppear(true)
-//                        case .failure(let error):
-//                            print("Request failed with error: \(error)")
-//                            let alert = UIAlertController(title: "Alert", message: "Could not delete item.", preferredStyle: UIAlertControllerStyle.alert)
-//                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
-//                            self.present(alert, animated: true, completion: nil)
-//                        }
-//                }
-//            }))
-        }
-        
-        removeAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
-            return
-        }))
-        
-        self.present(removeAlert, animated: true, completion: nil)
     }
     
     // MARK: Button Action
