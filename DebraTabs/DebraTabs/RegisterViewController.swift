@@ -128,7 +128,7 @@ class RegisterViewController: UIViewController {
                 switch response.result {
                 case .success(let data):
                     // Save DB Response username
-                    //dataLayer.storeTranscription(username: text!)
+                    dataLayer.storeTranscription(username: text!)
                     print("SUCCESS")
                     //Dismiss VC
                     self.dismiss(animated: true, completion: nil)
