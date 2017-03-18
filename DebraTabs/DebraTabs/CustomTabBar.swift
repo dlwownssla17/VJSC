@@ -59,15 +59,36 @@ class CustomTabBar: UITabBarController, CustomTabBarDataSource, CustomTabBarDele
                 Settings.usernameString = ""
                 Settings.datecheckString = "2000-01-01"
                 
-                let moc = dataLayer.getContext()
+                // Initialize Fetch Request
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GeneralObject")
                 
-                let result = try? moc.fetch(fetchRequest)
-                let resultData = result as! [NSManagedObject]
+                // Configure Fetch Request
+                fetchRequest.includesPropertyValues = false
                 
-                for object in resultData {
-                    moc.delete(object)
+                do {
+                    let items = try dataLayer.getContext().fetch(fetchRequest) as! [NSManagedObject]
+                    
+                    for item in items {
+                        dataLayer.getContext().delete(item)
+                    }
+                    
+                    // Save Changes
+                    try dataLayer.getContext().save()
+                    
+                } catch {
+                    // Error Handling
+                    // ...
                 }
+                
+//                let moc = dataLayer.getContext()
+//                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GeneralObject")
+//                
+//                let result = try? moc.fetch(fetchRequest)
+//                let resultData = result as! [NSManagedObject]
+//                
+//                for object in resultData {
+//                    moc.delete(object)
+//                }
                 let appDelegate = UIApplication.shared.delegate as! AppDelegate
                 appDelegate.resetAppToFirstController()
 //                exit(0)
