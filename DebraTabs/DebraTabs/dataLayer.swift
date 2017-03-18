@@ -79,6 +79,7 @@ class dataLayer {
 //            
             for trans in searchResults as! [NSManagedObject] {
                 Settings.usernameString = trans.value(forKey: "username") as! String
+              
                 if ((trans.value(forKey: "datecheck")) != nil) {
                     Settings.datecheckString = trans.value(forKey: "datecheck") as! String
                 }

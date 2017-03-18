@@ -27,18 +27,18 @@ class JSONParser {
     
     static func testJSON() {
         
-        Alamofire.request("http://130.91.134.209:8000/test").responseJSON { response in
-            print("START")
-            print(response.request)  // original URL request
-            print(response.response) // HTTP URL response
-            print(response.data)     // server data
-            print(response.result)   // result of response serialization
-            print("END")
-            
-            if let JSON = response.result.value {
-                print("JSON: \(JSON)")
-            }
-        }
+//        Alamofire.request("http://130.91.134.209:8000/test").responseJSON { response in
+//            print("START")
+//            print(response.request)  // original URL request
+//            print(response.response) // HTTP URL response
+//            print(response.data)     // server data
+//            print(response.result)   // result of response serialization
+//            print("END")
+//            
+//            if let JSON = response.result.value {
+//                print("JSON: \(JSON)")
+//            }
+//        }
         print("END2")
         
         let jsonString = "{" +
@@ -60,10 +60,10 @@ class JSONParser {
         print(json["Schedule-Items"].count)
         let scheduleItem = (json["Schedule-Items"].arrayValue)[0]
         print("HELLO")
-        let scheduleItemObject = ScheduleItem(json: scheduleItem)
-        print(scheduleItemObject.scheduleItemDescription)
-        print(scheduleItemObject.recurringID)
+        //let scheduleItemObject = ScheduleItem(json: scheduleItem, itemDay:"")
+        //print(scheduleItemObject.scheduleItemDescription)
+        //print(scheduleItemObject.recurringID)
         
-        Requests.addScheduleItemJSON(item: scheduleItemObject)
+        //Requests.addScheduleItemJSON(item: scheduleItemObject)
     }
 }

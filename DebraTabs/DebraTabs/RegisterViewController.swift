@@ -18,6 +18,7 @@ class RegisterViewController: UIViewController {
     var registerPasswordCheck: UITextField = UITextField()
     
     var registerButton: UIButton = UIButton()
+    var cancelButton: UIButton = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,6 +73,19 @@ class RegisterViewController: UIViewController {
         registerButton.addTarget(self, action: #selector(registerButtonTapped(_:)), for: .touchDown)
         self.view.addSubview(registerButton)
         
+        // Cancel Button
+        cancelButton = UIButton(frame: CGRect(x: displayWidth/3, y: barHeight + 430, width: 100, height: 44))
+        cancelButton.setTitle("Cancel", for: UIControlState.normal)
+        cancelButton.setTitleColor(blueColor, for: UIControlState.normal)
+        cancelButton.backgroundColor = UIColor.clear
+        cancelButton.layer.borderWidth = 1.0
+        cancelButton.layer.borderColor = blueColor.cgColor
+        cancelButton.layer.cornerRadius = cornerRadius
+        cancelButton.setTitleColor(UIColor.gray, for: .disabled)
+        cancelButton.setTitleShadowColor(UIColor.gray, for: .disabled)
+        cancelButton.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchDown)
+        self.view.addSubview(cancelButton)
+        
 //        registerButton.isEnabled = false
 //        registerUsername.addTarget(self, action: #selector(editingChanged(_:)), for: .editingChanged)
 //        registerPassword.addTarget(self, action: #selector(editingChanged(_:)), for: .editingChanged)
@@ -108,27 +122,37 @@ class RegisterViewController: UIViewController {
             let text = registerUsername.text?.trimmingCharacters(in: .whitespaces)
             let parameters:[String:Any] = [:]
             let headers = ["Username":text!, "Password":(text3)!]
+            print("USERNAME: \(text!)")
+            print("PASSWORD: \(text3!)")
             Alamofire.request(Settings.getRegistrationURL(), method: .post, parameters: parameters, headers:headers).validate().responseString { response in
                 switch response.result {
                 case .success(let data):
                     // Save DB Response username
-                    dataLayer.storeTranscription(username: text!)
+                    //dataLayer.storeTranscription(username: text!)
+                    print("SUCCESS")
                     //Dismiss VC
                     self.dismiss(animated: true, completion: nil)
                     let mainStoryboard = UIStoryboard(name: "Main" , bundle: nil)
                     self.present(mainStoryboard.instantiateInitialViewController()!, animated: true, completion: nil)
                 case .failure(let error):
-                    let alert = UIAlertController(title: "Alert", message: "Authentication Failed!", preferredStyle: UIAlertControllerStyle.alert)
+                    print("FAILED")
+                    print(error)
+                    let alert = UIAlertController(title: "Alert", message: "Registration Failed: Username already exists", preferredStyle: UIAlertControllerStyle.alert)
                     alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
                     self.present(alert, animated: true, completion: nil)
                 }
+
             }
             
             //Dismiss VC
-            self.dismiss(animated: true, completion: nil)
+            //self.dismiss(animated: true, completion: nil)
 
         }
         
+    }
+    
+     func cancelButtonTapped(_ sender:UIBarButtonItem) {
+        self.dismiss(animated: true, completion: nil)
     }
     
 }

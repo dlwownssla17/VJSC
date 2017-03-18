@@ -39,11 +39,11 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         view.backgroundColor = .white
         
         let x = dataLayer.getTranscriptions()
-        for trans in x as! [NSManagedObject] {
-            Settings.datecheckString = trans.value(forKey: "datecheck") as! String
-            print("AHHHHHH")
-            print("\(trans.value(forKey: "username"))")
-        }
+//        for trans in x as! [NSManagedObject] {
+//            Settings.datecheckString = trans.value(forKey: "datecheck") as! String
+//            print("AHHHHHH")
+//            print("\(trans.value(forKey: "username"))")
+//        }
         
         // HERE - Send Settings.datecheckString to send to server
         
@@ -374,7 +374,8 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
             removeAlert.addAction(UIAlertAction(title: "Remove Just Today", style: .default, handler: { (action: UIAlertAction!) in
                 let parameters = Requests.removeScheduleItem(item: self.ObjectsArray[indexPath.row], removeAllRecurring: false)
                 //"http://130.91.134.209:8000/remove"
-                Alamofire.request(Settings.getRemoveScheduleItemURL(userID: Settings.usernameString, date: self.currentDayInfo.currentDayString), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
+                let headers = [JSONProtocolNames.usernameHeaderName:Settings.usernameString, JSONProtocolNames.dateHeaderName: self.currentDayInfo.currentDayString]
+                Alamofire.request(Settings.getRemoveScheduleItemURL(), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
                     .responseString { response in
                         switch response.result {
                         case .success(let _):
@@ -392,7 +393,8 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
             if self.ObjectsArray[indexPath.row].recurringType != .NotRecurring {
                 removeAlert.addAction(UIAlertAction(title: "Remove From Every Day", style: .default, handler: { (action: UIAlertAction!) in
                     let parameters = Requests.removeScheduleItem(item: self.ObjectsArray[indexPath.row], removeAllRecurring: true)
-                    Alamofire.request(Settings.getRemoveScheduleItemURL(userID: Settings.usernameString, date: self.currentDayInfo.currentDayString), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: nil)
+                    let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: self.currentDayInfo.currentDayString]
+                    Alamofire.request(Settings.getRemoveScheduleItemURL(), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
                         .responseString { response in
                             switch response.result {
                             case .success(let _):
@@ -443,14 +445,40 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         let cell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: "MyTestCell")
 
         cell.textLabel!.text = "\(ObjectsArray[indexPath.row].scheduleItemTitle)"
-        cell.detailTextLabel?.text = "\(ObjectsArray[indexPath.row].scheduleItemStart)"
+        let calendar = Calendar.current
+        print("AHHHH")
+        print(calendar.timeZone)
+        var hour = calendar.component(.hour, from: ObjectsArray[indexPath.row].scheduleItemStart)
+        let minutes = calendar.component(.minute, from: ObjectsArray[indexPath.row].scheduleItemStart)
+        var minuteString:String = String(minutes)
+        if minutes < 10 {
+            minuteString = "0" + minuteString
+        }
+
+        if Settings.displayAMPM {
+            if hour >= 12 {
+                if hour == 12 {
+                    cell.detailTextLabel?.text = "\(hour):" + minuteString + " PM"
+                } else {
+                    cell.detailTextLabel?.text = "\(hour - 12):" + minuteString + " PM"
+                }
+            } else {
+                if hour == 0 {
+                    hour = 12
+                }
+                cell.detailTextLabel?.text = "\(hour):" + minuteString + " AM"
+            }
+        } else {
+            cell.detailTextLabel?.text = "\(hour):" + minuteString
+        }
         
         return cell
     }
     
     override func viewDidAppear(_ animated: Bool) {
         //"http://130.91.134.209:8000/test"
-        Alamofire.request(Settings.getDayViewURL(userID: Settings.usernameString, day: currentDayInfo.currentDayString), method: .get).validate().responseJSON { response in
+        let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: currentDayInfo.currentDayString]
+        Alamofire.request(Settings.getDayViewURL(), method: .get, headers: headers).validate().responseJSON { response in
             switch response.result {
             case .success(let data):
                 let json = JSON(data)
@@ -459,7 +487,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
                 let jsonObjectList = json[JSONProtocolNames.scheduleItemsListResponseName].arrayValue
                 self.ObjectsArray = []
                 for jsonObject in jsonObjectList {
-                    let scheduleItemObject = ScheduleItem(json: jsonObject)
+                    let scheduleItemObject = ScheduleItem(json: jsonObject, itemDay: self.currentDayInfo.currentDayString)
                     self.ObjectsArray.append(scheduleItemObject)
                 }
                 self.myTableView.reloadData()
@@ -469,6 +497,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
                 self.currentDateLabel = UILabel(frame: CGRect(x: 0, y: self.barHeight, width: self.displayWidth, height: 50))
                 self.currentDateLabel.text = self.currentDayInfo.currentDayString
                 self.view.addSubview(self.currentDateLabel)
+                print(TimeZone.current)
             //return scheduleItems
             case .failure(let error):
                 print("Request failed with error: \(error)")

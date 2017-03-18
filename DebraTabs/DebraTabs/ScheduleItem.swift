@@ -28,6 +28,7 @@ class ScheduleItem {
     var scheduleItemActive:Bool = false
     var scheduleItemColor:UIColor = UIColor.black
     var scheduleItemModifiable:Bool = false
+    var scheduleItemCheckedInAtStart:Bool = false
     
     init(jsonString: String) {
         //let json = JSONParser.getJSONObjectFromString(jsonString: jsonString)
@@ -37,7 +38,7 @@ class ScheduleItem {
         
     }
     
-    init(json: JSON) {
+    init(json: JSON, itemDay:String) {
         itemID = json[JSONProtocolNames.scheduleItemIDHeaderName].intValue
         recurringID = json[JSONProtocolNames.recurringIDHeaderName].intValue
         let recurringTypeCode = json[JSONProtocolNames.recurringTypeHeaderName].intValue
@@ -57,10 +58,10 @@ class ScheduleItem {
         scheduleItemType = ScheduleItemType.getScheduleItemType(code: scheduleItemTypeCode)
         let scheduleItemStartCode = json[JSONProtocolNames.scheduleItemStartHeaderName].stringValue
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "k:mm:ss"
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         let timeZone = NSTimeZone(name: "GMT")
         dateFormatter.timeZone=timeZone as TimeZone!
-        scheduleItemStart = dateFormatter.date(from: scheduleItemStartCode)!
+        scheduleItemStart = dateFormatter.date(from: itemDay + " " + scheduleItemStartCode)!
         let progressTypeCode = json[JSONProtocolNames.scheduleItemProgressTypeHeaderName].stringValue
         scheduleItemProgressType = ProgressType.getProgressType(code: progressTypeCode)
         scheduleItemDuration = json[JSONProtocolNames.scheduleItemDurationHeaderName].intValue
@@ -74,6 +75,7 @@ class ScheduleItem {
         }
         scheduleItemColor = UIColor(red: CGFloat(scheduleItemColorArray[0]) / 255.0, green: CGFloat(scheduleItemColorArray[1]) / 255.0, blue: CGFloat(scheduleItemColorArray[2]) / 255.0, alpha: CGFloat(1.0))
         scheduleItemModifiable = json[JSONProtocolNames.scheduleItemModifiableHeaderName].boolValue
+        scheduleItemCheckedInAtStart = json[JSONProtocolNames.scheduleItemCheckedInAtStartHeaderName].boolValue
     }
     
 }
