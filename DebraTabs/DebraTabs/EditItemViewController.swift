@@ -38,6 +38,8 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     // Save Button
     var saveButton: UIButton = UIButton()
     
+    var cancelButton: UIButton = UIButton()
+    
     var currentDayInfo:CurrentDayInfo = CurrentDayInfo()
 
     override func viewDidLoad() {
@@ -139,6 +141,16 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         saveButton.addTarget(self, action: #selector(saveButtonTapped(_:)), for: .touchDown)
         self.view.addSubview(saveButton)
         
+        cancelButton = UIButton(frame: CGRect(x: displayWidth/4, y: barHeight + 500, width: 100, height: 44))
+        cancelButton.setTitle("Cancel", for: UIControlState.normal)
+        cancelButton.setTitleColor(blueColor, for: UIControlState.normal)
+        cancelButton.backgroundColor = UIColor.clear
+        cancelButton.layer.borderWidth = 1.0
+        cancelButton.layer.borderColor = blueColor.cgColor
+        cancelButton.layer.cornerRadius = cornerRadius
+        cancelButton.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchDown)
+        self.view.addSubview(cancelButton)
+        
     }
     
     func saveButtonTapped(_ button: UIButton) {
@@ -169,6 +181,7 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         dateFormatterIn.dateFormat = "HH:mm a"
         editScheduleItem.scheduleItemStart = dateFormatterIn.date(from: ScheduleItemStart)!
         editScheduleItem.itemID = ActivityID
+        editScheduleItem.recurringID = -1
         
         let parameters = Requests.editScheduleItem(item: editScheduleItem)
         let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: self.currentDayInfo.currentDayString]
@@ -186,6 +199,10 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         
         
         //self.dismiss(animated: true, completion: nil)
+    }
+    
+    func cancelButtonTapped(_ button: UIButton) {
+        self.dismiss(animated: true, completion: nil)
     }
     
     func doneButtonTapped(_ sender:UIBarButtonItem) {

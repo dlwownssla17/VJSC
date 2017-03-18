@@ -82,7 +82,8 @@ class Requests {
                 JSONProtocolNames.scheduleItemTitleHeaderName: item.scheduleItemTitle,
                 JSONProtocolNames.scheduleItemDescriptionHeaderName: item.scheduleItemDescription,
                 JSONProtocolNames.scheduleItemStartHeaderName: startInformation,
-                JSONProtocolNames.scheduleItemDurationHeaderName: item.scheduleItemDuration
+                JSONProtocolNames.scheduleItemDurationHeaderName: item.scheduleItemDuration,
+                JSONProtocolNames.recurringIDHeaderName: item.recurringID
         ]
         
         return itemInformation
