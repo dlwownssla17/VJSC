@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="11759" systemVersion="15G1217" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="GeneralObject" representedClassName="GeneralObject" syncable="YES" codeGenerationType="class">
-        <attribute name="datecheck" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="datecheck" attributeType="String" defaultValueString="2000-01-01" syncable="YES"/>
         <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
