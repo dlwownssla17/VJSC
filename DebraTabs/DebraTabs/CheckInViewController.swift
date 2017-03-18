@@ -326,22 +326,51 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
             minuteString = "0" + minuteString
         }
         
+        var startTimeString:String = ""
+        
         if Settings.displayAMPM {
             if hour >= 12 {
                 if hour == 12 {
-                    cell.detailTextLabel?.text = "\(hour):" + minuteString + " PM"
+                    startTimeString = "\(hour):" + minuteString + " PM"
                 } else {
-                    cell.detailTextLabel?.text = "\(hour - 12):" + minuteString + " PM"
+                    startTimeString = "\(hour - 12):" + minuteString + " PM"
                 }
             } else {
                 if hour == 0 {
                     hour = 12
                 }
-                cell.detailTextLabel?.text = "\(hour):" + minuteString + " AM"
+                startTimeString = "\(hour):" + minuteString + " AM"
             }
         } else {
-            cell.detailTextLabel?.text = "\(hour):" + minuteString
+            startTimeString = "\(hour):" + minuteString
         }
+        cell.detailTextLabel?.text = startTimeString
+        
+        if ObjectsArray[indexPath.row].scheduleItemProgressType == .Percentage {
+            let endDate = calendar.date(byAdding: .minute, value: ObjectsArray[indexPath.row].scheduleItemDuration, to: ObjectsArray[indexPath.row].scheduleItemStart)
+            var hour2 = calendar.component(.hour, from: endDate!)
+            let minutes2 = calendar.component(.minute, from: endDate!)
+            var minuteString2:String = String(minutes2)
+            var endTimeString:String = ""
+            if Settings.displayAMPM {
+                if hour2 >= 12 {
+                    if hour2 == 12 {
+                        endTimeString = "\(hour2):" + minuteString2 + " PM"
+                    } else {
+                        endTimeString = "\(hour2 - 12):" + minuteString2 + " PM"
+                    }
+                } else {
+                    if hour2 == 0 {
+                        hour2 = 12
+                    }
+                    endTimeString = "\(hour2):" + minuteString2 + " AM"
+                }
+            } else {
+                endTimeString = "\(hour2):" + minuteString2
+            }
+            cell.detailTextLabel?.text = startTimeString + " - " + endTimeString
+        }
+        
         cell.isUserInteractionEnabled = ObjectsArray[indexPath.row].scheduleItemActive
         return cell
     }
