@@ -140,17 +140,26 @@ class CalendarViewController: UIViewController {
     
     func getAllDayItems() {
         let numDays = getNumberOfDaysInMonth()
+        let formatter  = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let currentDate = Date()
+        let currentDateString:String = formatter.string(from: currentDate)
+        let currentDateValue:Date = formatter.date(from: currentDateString)!
         for i in 1...numDays {
             let dayItem = DayItem()
-            dayItem.color = [150, 150, 150]
             dayItem.dayNumber = i
             dayItem.score = 0
             let dayString = String(currentDayInfo.currentYear) + "-" + getMonthString(month: currentDayInfo.currentMonth) + "-" + getDayString(day: i)
             dayItem.day = dayString
-            let formatter  = DateFormatter()
-            formatter.dateFormat = "yyyy-MM-dd"
+            
             //print(dayString)
             dayItem.dayValue = formatter.date(from: dayString)!
+            
+            if dayItem.dayValue < currentDateValue {
+                dayItem.color = [200, 200, 200]
+            } else {
+                dayItem.color = [255, 255, 255]
+            }
             dayItem.setInactive()
             FullObjectArray.append(dayItem)
         }
