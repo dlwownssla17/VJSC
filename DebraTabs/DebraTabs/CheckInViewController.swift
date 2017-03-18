@@ -72,6 +72,7 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.myTableView.deselectRow(at: indexPath, animated: true)
         print("Num: \(indexPath.row)")
         print("Value: \(ObjectsArray[indexPath.row].scheduleItemTitle)")
         print("Type: \(ScheduleItemType.ScheduleItemTypeStringMap[self.ObjectsArray[indexPath.row].scheduleItemType]!)")
@@ -296,6 +297,14 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         
         let cell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: "MyTestCell")
+        
+        if (self.ObjectsArray[indexPath.row].scheduleItemCheckedInAtStart) {
+            cell.backgroundColor = UIColor.yellow
+        }
+        
+        if !self.ObjectsArray[indexPath.row].scheduleItemActive {
+             cell.backgroundColor = UIColor.gray
+        }
         
         cell.textLabel!.text = "\(ObjectsArray[indexPath.row].scheduleItemTitle)"
         cell.detailTextLabel?.text = "\(ObjectsArray[indexPath.row].scheduleItemStart)"
