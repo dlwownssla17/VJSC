@@ -78,14 +78,17 @@ class dataLayer {
 //            
 //            
             for trans in searchResults as! [NSManagedObject] {
-                Settings.usernameString = trans.value(forKey: "username") as! String
+                print("in datalyer: \(trans.value(forKey: "username"))")
+                print("in datalyer: \(trans.value(forKey: "datecheck"))")
+                if ((trans.value(forKey: "username")) != nil) {
+                    Settings.usernameString = trans.value(forKey: "username") as! String
+                }
               
                 if ((trans.value(forKey: "datecheck")) != nil) {
                     Settings.datecheckString = trans.value(forKey: "datecheck") as! String
                 }
                 //get the Key Value pairs (although there may be a better way to do that...
-                print("in datalyer: \(trans.value(forKey: "username"))")
-                 print("in datalyer: \(trans.value(forKey: "datecheck"))")
+                
             }
             
             return searchResults

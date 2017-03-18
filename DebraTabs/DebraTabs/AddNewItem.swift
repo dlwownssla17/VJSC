@@ -613,6 +613,7 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         
         
         print("SaveButton pressed")
+        print("TEST2")
         
         let parameters = Requests.addScheduleItemJSON(item: newScheduleItem)
         

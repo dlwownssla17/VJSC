@@ -21,11 +21,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let x = dataLayer.getTranscriptions()
 //        var usernameString: String = String()
-        for trans in x as! [NSManagedObject] {
-            Settings.usernameString = trans.value(forKey: "username") as! String
-            print("AHHHHHH")
-            print("\(trans.value(forKey: "username"))")
-        }
+//        for trans in x as! [NSManagedObject] {
+//            Settings.usernameString = trans.value(forKey: "username") as! String
+//            print("AHHHHHH")
+//            print("\(trans.value(forKey: "username"))")
+//        }
         
         if (Settings.usernameString == "") {
             let thirdiewController:LogInViewController = LogInViewController()

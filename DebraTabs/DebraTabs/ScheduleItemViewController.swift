@@ -51,6 +51,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         // Settings.datecheckString = response_date_from_server
         
         dataLayer.storeDateTranscription(datecheck: Settings.datecheckString)
+        dataLayer.storeTranscription(username: Settings.usernameString)
         
         let jsonString1 = "{" +
             "\"Language\": {" +
@@ -485,6 +486,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
                 print(json.count)
                 print("TestCAT")
                 let jsonObjectList = json[JSONProtocolNames.scheduleItemsListResponseName].arrayValue
+                let dailyScore:Int = json[JSONProtocolNames.monthDayScoreHeaderName].intValue
                 self.ObjectsArray = []
                 for jsonObject in jsonObjectList {
                     let scheduleItemObject = ScheduleItem(json: jsonObject, itemDay: self.currentDayInfo.currentDayString)
@@ -495,7 +497,15 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
                 self.currentDateLabel.removeFromSuperview()
                 self.currentDateLabel.isHidden = true
                 self.currentDateLabel = UILabel(frame: CGRect(x: 0, y: self.barHeight, width: self.displayWidth, height: 50))
-                self.currentDateLabel.text = self.currentDayInfo.currentDayString
+                let currentDate:Date = Date()
+                let currentFormatter:DateFormatter = DateFormatter()
+                currentFormatter.dateFormat = "yyyy-MM-dd"
+                let currentDateString: String = currentFormatter.string(from: currentDate)
+                if self.currentDayInfo.currentDayString == currentDateString {
+                    self.currentDateLabel.text = self.currentDayInfo.currentDayString + " - Today's Score So Far: \(dailyScore)"
+                } else {
+                    self.currentDateLabel.text = self.currentDayInfo.currentDayString + " - Score: \(dailyScore)"
+                }
                 self.view.addSubview(self.currentDateLabel)
                 print(TimeZone.current)
             //return scheduleItems
