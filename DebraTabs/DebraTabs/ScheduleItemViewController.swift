@@ -461,6 +461,13 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         
         let cell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: "MyTestCell")
         
+        if self.ObjectsArray[indexPath.row].scheduleItemModifiable {
+            cell.accessoryType = .disclosureIndicator
+//        cell.accessoryType = .detailButton
+//        cell.accessoryType = .checkmark
+//        cell.accessoryType = .detailDisclosureButton
+        }
+        
         if !self.ObjectsArray[indexPath.row].scheduleItemActive {
             cell.backgroundColor = UIColor.gray
         }
