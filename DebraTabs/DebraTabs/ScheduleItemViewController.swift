@@ -472,6 +472,10 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         if !self.ObjectsArray[indexPath.row].scheduleItemActive {
             cell.backgroundColor = UIColor.lightGray
         }
+        
+        if self.ObjectsArray[indexPath.row].scheduleItemCheckedInAtStart && self.ObjectsArray[indexPath.row].scheduleItemActive {
+            cell.backgroundColor = UIColor.yellow
+        }
 
         cell.textLabel!.text = "\(ObjectsArray[indexPath.row].scheduleItemTitle)"
         let calendar = Calendar.current

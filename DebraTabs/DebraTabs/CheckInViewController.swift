@@ -104,13 +104,18 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
             print("You pressed OK")
             let dur = self.ObjectsArray[indexPath.row].scheduleItemDuration
             let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString]
-            var parameters = [JSONProtocolNames.scheduleItemIDHeaderName: String(self.ObjectsArray[indexPath.row].itemID)]
+//            var parameters = [JSONProtocolNames.scheduleItemIDHeaderName: String(self.ObjectsArray[indexPath.row].itemID)]
+//            if self.ObjectsArray[indexPath.row].scheduleItemCheckedInAtStart {
+//                parameters[JSONProtocolNames.progressHeaderName] = String(Double(slider.value) / Double(dur))
+//            } else {
+//                parameters[JSONProtocolNames.progressHeaderName] = String(-1)
+//            }
+            var selectedProgress:Double = 1.0
             if self.ObjectsArray[indexPath.row].scheduleItemCheckedInAtStart {
-                parameters[JSONProtocolNames.progressHeaderName] = String(Double(slider.value) / Double(dur))
-            } else {
-                parameters[JSONProtocolNames.progressHeaderName] = String(-1)
+                selectedProgress = Double(slider.value) / Double(dur)
             }
-            Alamofire.request(Settings.getCheckinURL(), method: .post, parameters: parameters, headers: headers)
+            let parameters = Requests.checkInSubmitItem(id: self.ObjectsArray[indexPath.row].itemID, progress: selectedProgress)
+            Alamofire.request(Settings.getCheckinURL(), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
                 .responseString { response in
                     switch response.result {
                     case .success(let _):
@@ -121,6 +126,7 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
                         {
                             (result : UIAlertAction) -> Void in
                             print("You pressed OK PERCENTAGE")
+                            self.viewDidAppear(true)
                         }
                         alertController2.addAction(okAction)
                         
@@ -172,9 +178,11 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.present(alertController, animated: true, completion: nil)
         } else {
             let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString]
-            var parameters = [JSONProtocolNames.scheduleItemIDHeaderName: String(self.ObjectsArray[indexPath.row].itemID)]
-            parameters[JSONProtocolNames.progressHeaderName] = String(-1)
-            Alamofire.request(Settings.getCheckinURL(), method: .post, parameters: parameters, headers: headers)
+//            var parameters = [JSONProtocolNames.scheduleItemIDHeaderName: String(self.ObjectsArray[indexPath.row].itemID)]
+//            parameters[JSONProtocolNames.progressHeaderName] = String(-1)
+            let selectedProgres:Double = 1.0
+            let parameters = Requests.checkInSubmitItem(id: self.ObjectsArray[indexPath.row].itemID, progress: selectedProgres)
+            Alamofire.request(Settings.getCheckinURL(), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
                 .responseString { response in
                     switch response.result {
                     case .success(let _):
@@ -185,10 +193,12 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
                         {
                             (result : UIAlertAction) -> Void in
                             print("You pressed OK BOOLEAN")
+                            self.viewDidAppear(true)
                         }
                         alertController2.addAction(okAction)
                         
                         self.present(alertController2, animated: true, completion: nil)
+                        
                     case .failure(let error):
                         print("Request failed with error: \(error)")
                     }
@@ -307,7 +317,31 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         
         cell.textLabel!.text = "\(ObjectsArray[indexPath.row].scheduleItemTitle)"
-        cell.detailTextLabel?.text = "\(ObjectsArray[indexPath.row].scheduleItemStart)"
+        let calendar = Calendar.current
+        //cell.detailTextLabel?.text = "\(ObjectsArray[indexPath.row].scheduleItemStart)"
+        var hour = calendar.component(.hour, from: ObjectsArray[indexPath.row].scheduleItemStart)
+        let minutes = calendar.component(.minute, from: ObjectsArray[indexPath.row].scheduleItemStart)
+        var minuteString:String = String(minutes)
+        if minutes < 10 {
+            minuteString = "0" + minuteString
+        }
+        
+        if Settings.displayAMPM {
+            if hour >= 12 {
+                if hour == 12 {
+                    cell.detailTextLabel?.text = "\(hour):" + minuteString + " PM"
+                } else {
+                    cell.detailTextLabel?.text = "\(hour - 12):" + minuteString + " PM"
+                }
+            } else {
+                if hour == 0 {
+                    hour = 12
+                }
+                cell.detailTextLabel?.text = "\(hour):" + minuteString + " AM"
+            }
+        } else {
+            cell.detailTextLabel?.text = "\(hour):" + minuteString
+        }
         cell.isUserInteractionEnabled = ObjectsArray[indexPath.row].scheduleItemActive
         return cell
     }

@@ -92,6 +92,14 @@ class Requests {
         return itemInformation
     }
     
+    static func checkInSubmitItem(id:Int, progress:Double)->[String: Any] {
+        let itemInformation: [String: Any] = [
+            JSONProtocolNames.scheduleItemIDHeaderName: id,
+            JSONProtocolNames.progressHeaderName: progress
+        ]
+        return itemInformation
+    }
+    
     static func removeScheduleItem(item:ScheduleItem, removeAllRecurring:Bool)->[String: Any] {
         var recurring:Int = -1
         if removeAllRecurring {
