@@ -283,6 +283,8 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.myTableView.deselectRow(at: indexPath, animated: true)
+
         print("Num: \(indexPath.row)")
         print("Value: \(ObjectsArray[indexPath.row].scheduleItemTitle)")
         
@@ -323,10 +325,25 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         self.present(alertController, animated: true, completion: nil)
         
     }
-
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return ObjectsArray.count
+        var numOfSections: Int = 0
+        if ObjectsArray.count > 0
+        {
+            myTableView.separatorStyle = .singleLine
+            numOfSections            = ObjectsArray.count
+            myTableView.backgroundView = nil
+        }
+        else
+        {
+            let noDataLabel: UILabel     = UILabel(frame: CGRect(x: 0, y: 0, width: tableView.bounds.size.width, height: tableView.bounds.size.height))
+            noDataLabel.text          = "No data available"
+            noDataLabel.textColor     = UIColor.black
+            noDataLabel.textAlignment = .center
+            myTableView.backgroundView  = noDataLabel
+            myTableView.separatorStyle  = .none
+        }
+        return numOfSections
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -436,7 +453,6 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
 //        }
 //    }
     
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //        let cell = tableView.dequeueReusableCell(withIdentifier: "MyCell", for: indexPath as IndexPath)
         //        cell.textLabel!.text = "\(Array[indexPath.row])"
@@ -444,6 +460,17 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         
         
         let cell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: "MyTestCell")
+        
+        if self.ObjectsArray[indexPath.row].scheduleItemModifiable {
+            cell.accessoryType = .disclosureIndicator
+//        cell.accessoryType = .detailButton
+//        cell.accessoryType = .checkmark
+//        cell.accessoryType = .detailDisclosureButton
+        }
+        
+        if !self.ObjectsArray[indexPath.row].scheduleItemActive {
+            cell.backgroundColor = UIColor.gray
+        }
 
         cell.textLabel!.text = "\(ObjectsArray[indexPath.row].scheduleItemTitle)"
         let calendar = Calendar.current
