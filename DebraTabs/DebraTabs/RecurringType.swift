@@ -52,7 +52,7 @@ enum RecurringType {
         return .NotRecurring
     }
     
-    static let DaysOfWeek:Array<String> = ["Monday","Tuesday","Wednesday","Thursday", "Friday", "Saturday", "Sunday"]
+    static let DaysOfWeek:Array<String> = ["Sunday", "Monday","Tuesday","Wednesday","Thursday", "Friday", "Saturday"]
     
     static let EveryXDaysOptions:Array<String> = ["1","2","3","4", "5", "6", "7", "8", "9", "10"]
     

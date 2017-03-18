@@ -508,25 +508,25 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         case .CertainDaysOfWeek:
             var dayList = [Int]()
             if (monButton.isSelected) {
-                dayList.append(0)
-            }
-            if (tueButton.isSelected) {
                 dayList.append(1)
             }
-            if (wedButton.isSelected) {
+            if (tueButton.isSelected) {
                 dayList.append(2)
             }
-            if (thuButton.isSelected) {
+            if (wedButton.isSelected) {
                 dayList.append(3)
             }
-            if (friButton.isSelected) {
+            if (thuButton.isSelected) {
                 dayList.append(4)
             }
-            if (satButton.isSelected) {
+            if (friButton.isSelected) {
                 dayList.append(5)
             }
-            if (sunButton.isSelected) {
+            if (satButton.isSelected) {
                 dayList.append(6)
+            }
+            if (sunButton.isSelected) {
+                dayList.append(0)
             }
             newScheduleItem.recurringValue = dayList
             if (dayList.count == 0) {
