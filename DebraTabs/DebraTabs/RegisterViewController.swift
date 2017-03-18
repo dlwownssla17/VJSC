@@ -46,6 +46,7 @@ class RegisterViewController: UIViewController {
         registerPassword.layer.borderWidth = 1
         registerPassword.layer.borderColor = blueColor.cgColor
         registerPassword.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        registerPassword.isSecureTextEntry = true
         self.view.addSubview(registerPassword)
         
         registerPasswordCheck = UITextField(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 50))
@@ -56,6 +57,7 @@ class RegisterViewController: UIViewController {
         registerPasswordCheck.layer.borderWidth = 1
         registerPasswordCheck.layer.borderColor = blueColor.cgColor
         registerPasswordCheck.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        registerPasswordCheck.isSecureTextEntry = true
         self.view.addSubview(registerPasswordCheck)
         
         // Register Button
