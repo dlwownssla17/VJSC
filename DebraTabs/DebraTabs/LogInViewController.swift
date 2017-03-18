@@ -46,6 +46,7 @@ class LogInViewController: UIViewController {
         loginPassword.layer.borderWidth = 1
         loginPassword.layer.borderColor = blueColor.cgColor
         loginPassword.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        loginPassword.isSecureTextEntry = true
         self.view.addSubview(loginPassword)
         
         // Register Button
