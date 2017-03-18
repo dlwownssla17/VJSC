@@ -18,6 +18,7 @@ class RegisterViewController: UIViewController {
     var registerPasswordCheck: UITextField = UITextField()
     
     var registerButton: UIButton = UIButton()
+    var cancelButton: UIButton = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,6 +73,19 @@ class RegisterViewController: UIViewController {
         registerButton.addTarget(self, action: #selector(registerButtonTapped(_:)), for: .touchDown)
         self.view.addSubview(registerButton)
         
+        // Cancel Button
+        cancelButton = UIButton(frame: CGRect(x: displayWidth/3, y: barHeight + 430, width: 100, height: 44))
+        cancelButton.setTitle("Cancel", for: UIControlState.normal)
+        cancelButton.setTitleColor(blueColor, for: UIControlState.normal)
+        cancelButton.backgroundColor = UIColor.clear
+        cancelButton.layer.borderWidth = 1.0
+        cancelButton.layer.borderColor = blueColor.cgColor
+        cancelButton.layer.cornerRadius = cornerRadius
+        cancelButton.setTitleColor(UIColor.gray, for: .disabled)
+        cancelButton.setTitleShadowColor(UIColor.gray, for: .disabled)
+        cancelButton.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchDown)
+        self.view.addSubview(cancelButton)
+        
 //        registerButton.isEnabled = false
 //        registerUsername.addTarget(self, action: #selector(editingChanged(_:)), for: .editingChanged)
 //        registerPassword.addTarget(self, action: #selector(editingChanged(_:)), for: .editingChanged)
@@ -114,7 +128,7 @@ class RegisterViewController: UIViewController {
                 switch response.result {
                 case .success(let data):
                     // Save DB Response username
-                    dataLayer.storeTranscription(username: text!)
+                    //dataLayer.storeTranscription(username: text!)
                     print("SUCCESS")
                     //Dismiss VC
                     self.dismiss(animated: true, completion: nil)
@@ -135,6 +149,10 @@ class RegisterViewController: UIViewController {
 
         }
         
+    }
+    
+     func cancelButtonTapped(_ sender:UIBarButtonItem) {
+        self.dismiss(animated: true, completion: nil)
     }
     
 }

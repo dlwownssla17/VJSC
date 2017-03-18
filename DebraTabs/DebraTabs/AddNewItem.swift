@@ -82,6 +82,9 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
     // Save Button
     var saveButton: UIButton = UIButton()
     
+    // Cancel Button
+    var cancelButton: UIButton = UIButton()
+    
     var currentDayInfo:CurrentDayInfo = CurrentDayInfo()
     
     override func viewDidLoad() {
@@ -402,6 +405,16 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         saveButton.addTarget(self, action: #selector(saveButtonTapped(_:)), for: .touchDown)
         self.view.addSubview(saveButton)
         
+        cancelButton = UIButton(frame: CGRect(x: displayWidth/4, y: barHeight + 500, width: 100, height: 44))
+        cancelButton.setTitle("Cancel", for: UIControlState.normal)
+        cancelButton.setTitleColor(blueColor, for: UIControlState.normal)
+        cancelButton.backgroundColor = UIColor.clear
+        cancelButton.layer.borderWidth = 1.0
+        cancelButton.layer.borderColor = blueColor.cgColor
+        cancelButton.layer.cornerRadius = cornerRadius
+        cancelButton.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchDown)
+        self.view.addSubview(cancelButton)
+        
     }
     
     
@@ -416,6 +429,10 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         scheduleEndingField2b.resignFirstResponder()
         scheduleStartTime.resignFirstResponder()
         
+    }
+    
+    func cancelButtonTapped(_ button: UIButton) {
+        self.dismiss(animated: true, completion: nil)
     }
     
     // MARK: Button Action
@@ -520,6 +537,7 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
             }
 
             let selectedEndingType = EndingType.getSelectedEndingItemType(item: scheduleEndingField.text!)
+            newScheduleItem.endingType = selectedEndingType
         
             // Ending Value
             switch selectedEndingType {
@@ -578,12 +596,18 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         }
         
         // Schedule-Item-Start
-        ScheduleItemStart = scheduleStartTime.text!
+        ScheduleItemStart = self.currentDayInfo.currentDayString + " " + scheduleStartTime.text!
         let dateFormatterIn = DateFormatter()
-        let timeZone = NSTimeZone(name: "GMT")
-        dateFormatterIn.timeZone=timeZone as TimeZone!
-        dateFormatterIn.dateFormat = "HH:mm a"
-        newScheduleItem.scheduleItemStart = dateFormatterIn.date(from: ScheduleItemStart)!
+        //dateFormatterIn.timeZone = NSTimeZone(name: "GMT") as TimeZone!
+        dateFormatterIn.dateFormat = "yyyy-MM-dd hh:mm a"
+        let selectedDate:Date = dateFormatterIn.date(from: ScheduleItemStart)!
+        
+        let dateFormatterOut = DateFormatter()
+        dateFormatterOut.timeZone = NSTimeZone(name: "GMT") as TimeZone!
+        
+        
+        newScheduleItem.scheduleItemStart = selectedDate
+        
         
         //print(Requests.addScheduleItemJSON(item: newScheduleItem))
         
@@ -602,6 +626,9 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
                     self.dismiss(animated: true, completion: nil)
                 case .failure(let error):
                     print("Request failed with error: \(error)")
+                    let alert = UIAlertController(title: "Alert", message: "Could not add Schedule Item", preferredStyle: UIAlertControllerStyle.alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
                 }
         }
         

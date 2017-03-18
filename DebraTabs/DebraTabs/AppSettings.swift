@@ -9,7 +9,8 @@
 import Foundation
 
 class Settings {
-    static let serverURL:String = "http://130.91.135.160:8000/"
+    //static let serverURL:String = "http://130.91.135.160:8000/"
+    static let serverURL:String = "http://165.123.207.125:8000/"
     //static let serverURL:String = "http://130.91.134.209:8000/"
     
     static let dayViewRootURL:String = "test"
@@ -18,6 +19,8 @@ class Settings {
     static var datecheckString: String = ""
   
     static let testUserID2:String = "123";
+    
+    static var displayAMPM:Bool = true
     
     static func getDayViewURL()->String {
         let relativeURL:String = "day/view/"

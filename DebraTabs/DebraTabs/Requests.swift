@@ -19,7 +19,7 @@ class Requests {
         let dateFormatter = DateFormatter()
         let timeZone = NSTimeZone(name: "GMT")
         dateFormatter.timeZone=timeZone as TimeZone!
-        dateFormatter.dateFormat = "hh:mm:ss"
+        dateFormatter.dateFormat = "yyyy-MM-dd hh:mm:ss"
         let startInformation = dateFormatter.string(from: item.scheduleItemStart)
         let progressType = ProgressType.getJSONCode(type: item.scheduleItemProgressType)
         
@@ -139,8 +139,8 @@ class Requests {
                 let jsonObjectList = json[JSONProtocolNames.scheduleItemsListResponseName].arrayValue
                 var scheduleItems:Array<ScheduleItem> = []
                 for jsonObject in jsonObjectList {
-                    let scheduleItemObject = ScheduleItem(json: jsonObject)
-                    scheduleItems.append(scheduleItemObject)
+                    //let scheduleItemObject = ScheduleItem(json: jsonObject)
+                    //scheduleItems.append(scheduleItemObject)
                 }
                 //return scheduleItems
             case .failure(let error):

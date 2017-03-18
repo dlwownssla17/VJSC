@@ -18,7 +18,7 @@ enum EndingType {
         if JSONProtocolNames.endingTypeMap[type] != nil {
             return JSONProtocolNames.endingTypeMap[type]!
         } else {
-            return JSONProtocolNames.never
+            return JSONProtocolNames.notRecurring
         }
     }
     
@@ -28,7 +28,7 @@ enum EndingType {
                 return type
             }
         }
-        return .Never
+        return .NotRecurring
     }
     
     static func getSelectedEndingItemType(item:String)->EndingType {

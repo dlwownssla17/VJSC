@@ -314,7 +314,7 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
                 let jsonObjectList = json[JSONProtocolNames.scheduleItemsListResponseName].arrayValue
                 self.ObjectsArray = []
                 for jsonObject in jsonObjectList {
-                    let scheduleItemObject = ScheduleItem(json: jsonObject)
+                    let scheduleItemObject = ScheduleItem(json: jsonObject, itemDay: self.currentDayInfo.currentDayString)
                     self.ObjectsArray.append(scheduleItemObject)
                 }
                 self.myTableView.reloadData()

@@ -39,11 +39,11 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         view.backgroundColor = .white
         
         let x = dataLayer.getTranscriptions()
-        for trans in x as! [NSManagedObject] {
-            Settings.datecheckString = trans.value(forKey: "datecheck") as! String
-            print("AHHHHHH")
-            print("\(trans.value(forKey: "username"))")
-        }
+//        for trans in x as! [NSManagedObject] {
+//            Settings.datecheckString = trans.value(forKey: "datecheck") as! String
+//            print("AHHHHHH")
+//            print("\(trans.value(forKey: "username"))")
+//        }
         
         // HERE - Send Settings.datecheckString to send to server
         
@@ -445,7 +445,32 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         let cell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: "MyTestCell")
 
         cell.textLabel!.text = "\(ObjectsArray[indexPath.row].scheduleItemTitle)"
-        cell.detailTextLabel?.text = "\(ObjectsArray[indexPath.row].scheduleItemStart)"
+        let calendar = Calendar.current
+        print("AHHHH")
+        print(calendar.timeZone)
+        var hour = calendar.component(.hour, from: ObjectsArray[indexPath.row].scheduleItemStart)
+        let minutes = calendar.component(.minute, from: ObjectsArray[indexPath.row].scheduleItemStart)
+        var minuteString:String = String(minutes)
+        if minutes < 10 {
+            minuteString = "0" + minuteString
+        }
+
+        if Settings.displayAMPM {
+            if hour >= 12 {
+                if hour == 12 {
+                    cell.detailTextLabel?.text = "\(hour):" + minuteString + " PM"
+                } else {
+                    cell.detailTextLabel?.text = "\(hour - 12):" + minuteString + " PM"
+                }
+            } else {
+                if hour == 0 {
+                    hour = 12
+                }
+                cell.detailTextLabel?.text = "\(hour):" + minuteString + " AM"
+            }
+        } else {
+            cell.detailTextLabel?.text = "\(hour):" + minuteString
+        }
         
         return cell
     }
@@ -462,7 +487,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
                 let jsonObjectList = json[JSONProtocolNames.scheduleItemsListResponseName].arrayValue
                 self.ObjectsArray = []
                 for jsonObject in jsonObjectList {
-                    let scheduleItemObject = ScheduleItem(json: jsonObject)
+                    let scheduleItemObject = ScheduleItem(json: jsonObject, itemDay: self.currentDayInfo.currentDayString)
                     self.ObjectsArray.append(scheduleItemObject)
                 }
                 self.myTableView.reloadData()
@@ -472,6 +497,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
                 self.currentDateLabel = UILabel(frame: CGRect(x: 0, y: self.barHeight, width: self.displayWidth, height: 50))
                 self.currentDateLabel.text = self.currentDayInfo.currentDayString
                 self.view.addSubview(self.currentDateLabel)
+                print(TimeZone.current)
             //return scheduleItems
             case .failure(let error):
                 print("Request failed with error: \(error)")

@@ -38,7 +38,7 @@ class ScheduleItem {
         
     }
     
-    init(json: JSON) {
+    init(json: JSON, itemDay:String) {
         itemID = json[JSONProtocolNames.scheduleItemIDHeaderName].intValue
         recurringID = json[JSONProtocolNames.recurringIDHeaderName].intValue
         let recurringTypeCode = json[JSONProtocolNames.recurringTypeHeaderName].intValue
@@ -58,10 +58,10 @@ class ScheduleItem {
         scheduleItemType = ScheduleItemType.getScheduleItemType(code: scheduleItemTypeCode)
         let scheduleItemStartCode = json[JSONProtocolNames.scheduleItemStartHeaderName].stringValue
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "k:mm:ss"
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         let timeZone = NSTimeZone(name: "GMT")
         dateFormatter.timeZone=timeZone as TimeZone!
-        scheduleItemStart = dateFormatter.date(from: scheduleItemStartCode)!
+        scheduleItemStart = dateFormatter.date(from: itemDay + " " + scheduleItemStartCode)!
         let progressTypeCode = json[JSONProtocolNames.scheduleItemProgressTypeHeaderName].stringValue
         scheduleItemProgressType = ProgressType.getProgressType(code: progressTypeCode)
         scheduleItemDuration = json[JSONProtocolNames.scheduleItemDurationHeaderName].intValue

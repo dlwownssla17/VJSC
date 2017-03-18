@@ -49,7 +49,8 @@ class JSONProtocolNames {
     static let endingTypeNotNeeded:String = "-1"
     
     static let endingTypeMap:Dictionary<EndingType, Int> =
-        [.Never: 0,
+        [.NotRecurring: -1,
+         .Never: 0,
          .AfterYOccurrences: 1,
          .OnT: 2]
     
