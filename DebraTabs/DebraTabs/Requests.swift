@@ -63,7 +63,10 @@ class Requests {
         let timeZone = NSTimeZone(name: "GMT")
         dateFormatter.timeZone=timeZone as TimeZone!
         dateFormatter.dateFormat = "HH:mm:ss"
+        print(item.scheduleItemStart)
+        print("CANDY")
         let startInformation = dateFormatter.string(from: item.scheduleItemStart)
+        print(startInformation)
         
 //        let itemInformation: [String: Any] = [
 //            JSONProtocolNames.scheduleItemsEditScheduleItemName: [
