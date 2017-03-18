@@ -82,11 +82,8 @@ class EditItemViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         segmentedControl.addTarget(self, action: #selector(actTypeTapped(_:)), for: .valueChanged)
         segmentedControl.selectedSegmentIndex = ActivityTypeIndex
         segmentedControl.tintColor = UIColor.lightGray
-<<<<<<< HEAD
         //segmentedControl.backgroundColor = UIColor.lightGray
-=======
 //        segmentedControl.backgroundColor = UIColor.lightGray
->>>>>>> bb2cc0154d79cf736470c629438d9cc2fa634375
         self.segmentedControl.isUserInteractionEnabled = false
         view.addSubview(segmentedControl)
         
