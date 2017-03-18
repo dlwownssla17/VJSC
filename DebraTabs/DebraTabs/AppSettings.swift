@@ -17,7 +17,7 @@ class Settings {
     static let dayViewRootURL:String = "test"
    
     static var usernameString: String = ""
-    static var datecheckString: String = ""
+    static var datecheckString: String = "2000-01-01"
   
     static let testUserID2:String = "123";
     
@@ -65,6 +65,11 @@ class Settings {
     
     static func getLoginURL()->String {
         let relativeURL:String = "login/"
+        return serverURL + relativeURL
+    }
+    
+    static func getUpdateScoresURL()->String {
+        let relativeURL:String = "update-daily-scores/"
         return serverURL + relativeURL
     }
 }

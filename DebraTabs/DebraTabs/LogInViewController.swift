@@ -110,6 +110,8 @@ class LogInViewController: UIViewController {
                 case .success(let data):
                     // Save DB Response username
                     dataLayer.storeTranscription(username: text2!)
+                    print("username textr fiel val: " + text2!)
+                    print("SUCCESS username saved: " + Settings.usernameString)
                     //Dismiss VC
                     self.dismiss(animated: true, completion: nil)
                     let mainStoryboard = UIStoryboard(name: "Main" , bundle: nil)

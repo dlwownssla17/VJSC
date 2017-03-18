@@ -38,7 +38,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         
         view.backgroundColor = .white
         
-        let x = dataLayer.getTranscriptions()
+//        let x = dataLayer.getTranscriptions()
 //        for trans in x as! [NSManagedObject] {
 //            Settings.datecheckString = trans.value(forKey: "datecheck") as! String
 //            print("AHHHHHH")
@@ -50,8 +50,8 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         // HERE - Save server response to Settings.datecheckString, see below
         // Settings.datecheckString = response_date_from_server
         
-        dataLayer.storeDateTranscription(datecheck: Settings.datecheckString)
-        dataLayer.storeTranscription(username: Settings.usernameString)
+//        dataLayer.storeDateTranscription(datecheck: Settings.datecheckString)
+//        dataLayer.storeTranscription(username: Settings.usernameString)
         
         let jsonString1 = "{" +
             "\"Language\": {" +
@@ -477,8 +477,45 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        //"http://130.91.134.209:8000/test"
         let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: currentDayInfo.currentDayString]
+        
+        //Update Scores
+        let x = dataLayer.getTranscriptions()
+        
+        // HERE - Send Settings.datecheckString to send to server
+        let currentDate:Date = Date()
+        let currentFormatter:DateFormatter = DateFormatter()
+        currentFormatter.dateFormat = "yyyy-MM-dd"
+        let currentDateString: String = currentFormatter.string(from: currentDate)
+        print("BEFORE IF STATEMENT FIRST: \(Settings.datecheckString)")
+        print("BEFORE IF STATEMENT SECOND: \(currentDateString)")
+        if Settings.datecheckString != currentDateString {
+            dataLayer.storeDateTranscription(datecheck: currentDateString)
+            dataLayer.storeTranscription(username: Settings.usernameString)
+            print("AFTER UPDATE FIRST: \(Settings.datecheckString)")
+            print("AFTER UPDATE SECOND: \(currentDateString)")
+            Alamofire.request(Settings.getUpdateScoresURL(), method: .post, headers: headers).validate().responseJSON { response in
+                switch response.result {
+                case .success(let data):
+                    let json = JSON(data)
+                    print("Updated Scores")
+                case .failure(let error):
+                    print("Request failed with error: \(error)")
+                }
+            }
+        } else {
+            print("Doesnt Need to Update Score")
+        }
+        
+        // HERE - Save server response to Settings.datecheckString, see below
+        //Settings.datecheckString = response_date_from_server
+        
+        //dataLayer.storeDateTranscription(datecheck: Settings.datecheckString)
+        //dataLayer.storeTranscription(username: Settings.usernameString)
+        
+        
+        //"http://130.91.134.209:8000/test"
+        //let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: currentDayInfo.currentDayString]
         Alamofire.request(Settings.getDayViewURL(), method: .get, headers: headers).validate().responseJSON { response in
             switch response.result {
             case .success(let data):

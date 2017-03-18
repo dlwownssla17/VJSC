@@ -28,6 +28,8 @@ class dataLayer {
         //set the entity values
         transc.setValue(username, forKey: "username")
         
+        print("got in method")
+        
         //save the object
         do {
             try context.save()
