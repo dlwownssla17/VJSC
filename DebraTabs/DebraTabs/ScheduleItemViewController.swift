@@ -469,7 +469,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         }
         
         if !self.ObjectsArray[indexPath.row].scheduleItemActive {
-            cell.backgroundColor = UIColor.gray
+            cell.backgroundColor = UIColor.lightGray
         }
 
         cell.textLabel!.text = "\(ObjectsArray[indexPath.row].scheduleItemTitle)"
@@ -530,16 +530,22 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
                 let currentFormatter:DateFormatter = DateFormatter()
                 currentFormatter.dateFormat = "yyyy-MM-dd"
                 let currentDateString: String = currentFormatter.string(from: currentDate)
-                if self.currentDayInfo.currentDayString == currentDateString {
-                    self.currentDateLabel.text = self.currentDayInfo.currentDayString + " - Today's Score So Far: \(dailyScore)"
-                } else {
-                    self.currentDateLabel.text = self.currentDayInfo.currentDayString + " - Score: \(dailyScore)"
-                }
-                self.view.addSubview(self.currentDateLabel)
+                let betterFormatter:DateFormatter = DateFormatter()
+                betterFormatter.dateFormat = "MMM dd, yyyy"
                 
                 let currentDayFormatter:DateFormatter = DateFormatter()
                 currentDayFormatter.dateFormat = "yyyy-MM-dd"
                 let currentDateValue:Date = currentDayFormatter.date(from: self.currentDayInfo.currentDayString)!
+                
+                let betterCurrentDay:String = betterFormatter.string(from: currentDateValue)
+                if self.currentDayInfo.currentDayString == currentDateString {
+                    self.currentDateLabel.text = betterCurrentDay + " - Today's Score So Far: \(dailyScore)"
+                } else {
+                    self.currentDateLabel.text = betterCurrentDay + " - Score: \(dailyScore)"
+                }
+                self.view.addSubview(self.currentDateLabel)
+                
+                
                 let actualDateValueString:String = currentDayFormatter.string(from: Date())
                 let actualDateValue:Date = currentDayFormatter.date(from: actualDateValueString)!
                 if currentDateValue < actualDateValue {
