@@ -2,11 +2,12 @@ package db;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import org.bson.Document;
 
+import model.ModelTools;
 import model.ScheduleItemRecurrence;
+import util.DateFormat;
 
 public class ScheduleItemRecurrenceDB implements DB<ScheduleItemRecurrence> {
 	
@@ -14,13 +15,18 @@ public class ScheduleItemRecurrenceDB implements DB<ScheduleItemRecurrence> {
 	public Document toDocument(ScheduleItemRecurrence recurrence) {
 		if (recurrence == null) return new Document();
 		
+		Document recurringValueDocument = new Document();
+		for (int val : recurrence.getRecurringValue()) {
+			recurringValueDocument.append(Integer.toString(val), val);
+		}
+		
 		return new Document("recurring-id", recurrence.getRecurringId())
 					.append("recurring-type", recurrence.getRecurringType())
-					.append("recurring-value", Arrays.asList(recurrence.getRecurringValue()))
-					.append("start-date-time", recurrence.getStartDateTime())
+					.append("recurring-value", recurringValueDocument)
+					.append("start-date-time", DateFormat.getFormattedString(recurrence.getStartDateTime(), ModelTools.DATE_TIME_FORMAT))
 					.append("end-type", recurrence.getEndType())
 					.append("end-after", recurrence.getEndAfter())
-					.append("end-date-time", recurrence.getEndDateTime());
+					.append("end-date-time", DateFormat.getFormattedString(recurrence.getEndDateTime(), ModelTools.DATE_TIME_FORMAT));
 	}
 	
 	@Override
@@ -29,15 +35,17 @@ public class ScheduleItemRecurrenceDB implements DB<ScheduleItemRecurrence> {
 		
 		long recurringId = document.getLong("recurring-id");
 		int recurringType = document.getInteger("recurring-type");
-		List<Integer> recurringValueList = document.get("recurring-value", List.class);
+		Document recurringValueList = document.get("recurring-value", Document.class);
 		int[] recurringValue = new int[recurringValueList.size()];
-		for (int i = 0; i < recurringValueList.size(); i++) {
-			recurringValue[i] = recurringValueList.get(i);
+		int recurringValueIdx = 0;
+		for (String valKey : recurringValueList.keySet()) {
+			recurringValue[recurringValueIdx++] = recurringValueList.getInteger(valKey);
 		}
-		Date startDateTime = document.getDate("start-date-time");
+		Arrays.sort(recurringValue);
+		Date startDateTime = DateFormat.getDate(document.getString("start-date-time"), ModelTools.DATE_TIME_FORMAT);
 		int endType = document.getInteger("end-type");
 		int endAfter = document.getInteger("end-after");
-		Date endDateTime = document.getDate("end-date-time");
+		Date endDateTime = DateFormat.getDate(document.getString("end-date-time"), ModelTools.DATE_TIME_FORMAT);
 		
 		if (endType == 0) {
 			return new ScheduleItemRecurrence(recurringId, recurringType, recurringValue, startDateTime);

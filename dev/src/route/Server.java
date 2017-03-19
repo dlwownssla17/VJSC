@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.json.JSONArray;
@@ -28,6 +29,7 @@ import model.ScheduleItem;
 import model.ScheduleItemRecurrence;
 import model.User;
 import util.CreateLookupDate;
+import util.DateAndCalendar;
 import util.DateFormat;
 import util.RGB;
 
@@ -36,6 +38,8 @@ public class Server {
 	
 	public static void main(String[] args) throws Exception {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
+        
+        server.createContext("/",  new HomeHandler());
         
         server.createContext("/register", new RegisterHandler());
         server.createContext("/login", new LoginHandler());
@@ -362,13 +366,14 @@ public class Server {
 				JSONObject requestJSON = toJSON(t.getRequestBody());
 				
 				long id = requestJSON.getLong("Schedule-Item-ID");
+				long recurringId = requestJSON.getLong("Recurring-ID");
 				String title = requestJSON.getString("Schedule-Item-Title");
 				String description = requestJSON.getString("Schedule-Item-Description");
 				String startTimeString = requestJSON.getString("Schedule-Item-Start");
 				int duration = requestJSON.getInt("Schedule-Item-Duration");
 				
 				User user = DBTools.findUser(username);
-				user.getSchedule().editScheduleItem(date, id, title, description, startTimeString, duration);
+				user.getSchedule().editScheduleItem(date, id, recurringId, title, description, startTimeString, duration);
 				
 				DBTools.updateUserSchedule(user);
 				
@@ -489,7 +494,7 @@ public class Server {
 			if (requestMethod.equals("GET")) {
 				Headers headers = t.getRequestHeaders();
 				String username = headers.getFirst("Username");
-				Date date = CreateLookupDate.getInstance(new Date());
+				Date date = CreateLookupDate.getInstance(DateAndCalendar.newDateGMT());
 				
 				JSONArray dailyItemsCheckInJSON = buildDailyItemsJSON(username, date, true);
 				
@@ -524,7 +529,7 @@ public class Server {
 			} else if (requestMethod.equals("POST")) {
 				Headers headers = t.getRequestHeaders();
 				String username = headers.getFirst("Username");
-				Date date = CreateLookupDate.getInstance(new Date());
+				Date date = CreateLookupDate.getInstance(DateAndCalendar.newDateGMT());
 				
 				JSONObject requestJSON = toJSON(t.getRequestBody());
 				
@@ -565,9 +570,12 @@ public class Server {
 				
 				JSONObject requestJSON = toJSON(t.getRequestBody());
 				
+				User user = DBTools.findUser(username);
+				
 				Date lastDayCheckedDate = CreateLookupDate.getInstance(requestJSON.getString("Last-Day-Checked"));
 				
-				User user = DBTools.findUser(username);
+				if (lastDayCheckedDate.before(user.getMemberSince()))
+					lastDayCheckedDate = CreateLookupDate.getInstance((Date) user.getMemberSince().clone());
 				user.getSchedule().updateDailyScores(lastDayCheckedDate);
 				
 				DBTools.updateUser(user);
@@ -584,6 +592,37 @@ public class Server {
 			System.out.println("handled update daily scores");
 		}
 		
+	}
+	
+	static class HomeHandler implements HttpHandler {
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling home page...");
+			
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				Headers headers = t.getRequestHeaders();
+				String username = headers.getFirst("Username");
+				
+				User user = DBTools.findUser(username);
+				
+				JSONObject responseJSON = new JSONObject();
+				responseJSON.put("User-Score",
+						user.getSchedule().getRunningScoreForDate(user.getSchedule().getLastDayChecked()));
+				
+				String response = responseJSON.toString(JSON_INDENT);
+				t.sendResponseHeaders(200, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else if (requestMethod.equals("POST")) {
+				
+			} else {
+				
+			}
+			
+			System.out.println("handled home page");
+		}
 	}
 	
 }

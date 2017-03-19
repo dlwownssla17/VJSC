@@ -2,7 +2,9 @@ package db;
 
 import org.bson.Document;
 
+import model.ModelTools;
 import model.User;
+import util.DateFormat;
 
 public class UserDB implements DB<User> {
 	
@@ -10,7 +12,7 @@ public class UserDB implements DB<User> {
 	public Document toDocument(User user) {
 		return new Document("username", user.getUsername())
 					.append("password", user.getPassword())
-					.append("member-since", user.getMemberSince())
+					.append("member-since", DateFormat.getFormattedString(user.getMemberSince(), ModelTools.DATE_TIME_FORMAT))
 					.append("info", DBTools.userInfoDB.toDocument(user.getInfo()))
 					.append("settings", DBTools.userSettingsDB.toDocument(user.getSettings()))
 					.append("diabetes-params", DBTools.userDiabetesParamsDB.toDocument(user.getDiabetesParams()))
@@ -24,7 +26,7 @@ public class UserDB implements DB<User> {
 	public User fromDocument(Document document) {
 		User user = new User(document.getString("username"), document.getString("password"));
 		
-		user.setMemberSince(document.getDate("member-since"));
+		user.setMemberSince(DateFormat.getDate(document.getString("member-since"), ModelTools.DATE_TIME_FORMAT));
 		user.setInfo(DBTools.userInfoDB.fromDocument((Document) document.get("info")));
 		user.setSettings(DBTools.userSettingsDB.fromDocument((Document) document.get("settings")));
 		user.setDiabetesParams(DBTools.userDiabetesParamsDB.fromDocument((Document) document.get("diabetes-params")));

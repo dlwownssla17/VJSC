@@ -50,28 +50,23 @@ public class SingleFileDBTools {
 	}
 	
 	public static User fromUserDB(SingleFileUserDB userDB) {
-		try {
-			User user = new User(userDB.getUsername(), userDB.getPassword());
-			
-			Date memberSince = DateFormat.getDate(userDB.getMemberSince(), MemberSinceDateTimeFormat);
-			user.setMemberSince(memberSince);
-			
-			String fitBitAccessToken = userDB.getFitBitAccessToken();
-			String fitBitRefreshToken = userDB.getFitBitRefreshToken();
-			String fitBitUserId = userDB.getFitBitUserId();
-			String fitBitScope = userDB.getFitBitScope();
-			String fitBitTokenType = userDB.getFitBitTokenType();
-			long fitBitExpiresIn = Long.parseLong(userDB.getFitBitExpiresIn());
-			
-			FitBitAccount fitBitAccount = new FitBitAccount(fitBitAccessToken, fitBitRefreshToken, fitBitUserId,
-					fitBitScope, fitBitTokenType, fitBitExpiresIn);
-			user.setFitBitAccount(fitBitAccount);
-			
-			return user;
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return null;
+		User user = new User(userDB.getUsername(), userDB.getPassword());
+		
+		Date memberSince = DateFormat.getDate(userDB.getMemberSince(), MemberSinceDateTimeFormat);
+		user.setMemberSince(memberSince);
+		
+		String fitBitAccessToken = userDB.getFitBitAccessToken();
+		String fitBitRefreshToken = userDB.getFitBitRefreshToken();
+		String fitBitUserId = userDB.getFitBitUserId();
+		String fitBitScope = userDB.getFitBitScope();
+		String fitBitTokenType = userDB.getFitBitTokenType();
+		long fitBitExpiresIn = Long.parseLong(userDB.getFitBitExpiresIn());
+		
+		FitBitAccount fitBitAccount = new FitBitAccount(fitBitAccessToken, fitBitRefreshToken, fitBitUserId,
+				fitBitScope, fitBitTokenType, fitBitExpiresIn);
+		user.setFitBitAccount(fitBitAccount);
+		
+		return user;
 	}
 	
 	// TODO fromTeamDB

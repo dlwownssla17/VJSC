@@ -85,12 +85,30 @@ public class ScheduleItemRecurrence {
 			case 1: // after X x Y days
 				calendar.add(Calendar.DATE, this.recurringValue[0] * count);
 				break;
-			case 2:
-			case 3: // after Y weeks
+			case 2: // after Y weeks (for certain days of the week)
+				boolean thisWeekIncludesAtLeastOneSpecifiedDayOfWeek = false;
+				for (int i = 0; i < recurringValue.length; i++) {
+					if (calendar.get(Calendar.DAY_OF_WEEK) <= this.recurringValue[i] + 1) {
+						thisWeekIncludesAtLeastOneSpecifiedDayOfWeek = true;
+						break;
+					}
+				}
+				if (!thisWeekIncludesAtLeastOneSpecifiedDayOfWeek) count++;
 				calendar.add(Calendar.WEEK_OF_MONTH, count);
+				calendar.set(Calendar.DAY_OF_WEEK, calendar.getActualMaximum(Calendar.DAY_OF_WEEK));
+				break;
+			case 3: // after Y weeks
+				if (calendar.get(Calendar.DAY_OF_WEEK) > this.recurringValue[0] + 1) count++;
+				calendar.add(Calendar.WEEK_OF_MONTH, count);
+				calendar.set(Calendar.DAY_OF_WEEK, calendar.getActualMaximum(Calendar.DAY_OF_WEEK));
 				break;
 			case 4: // after Y months
-				calendar.add(Calendar.MONTH, count);
+				if (calendar.get(Calendar.DAY_OF_MONTH) > recurringValue[0]) count++;
+				for (int i = 0; i < count; ) {
+					calendar.add(Calendar.MONTH, 1);
+					if (recurringValue[0] <= calendar.getActualMaximum(Calendar.DAY_OF_MONTH)) i++;
+				}
+				calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 				break;
 			default:
 				throw new IllegalStateException();

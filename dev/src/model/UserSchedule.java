@@ -1,6 +1,5 @@
 package model;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,19 +14,23 @@ public class UserSchedule {
 	private String associatedUsername;
 	private HashMap<Date, ArrayList<ScheduleItem>> items;
 	private HashMap<Date, Integer> dailyScores;
+	private HashMap<Date, Integer> dailyRunningScores;
 	private long scheduleIdCounter;
 	private long recurringIdCounter;
+	private Date lastDayChecked;
 
-	public UserSchedule(int capacity) {
+	public UserSchedule(int capacity, Date lastDayChecked) {
 		this.capacity = capacity;
 		this.items = new HashMap<>();
 		this.dailyScores = new HashMap<>();
+		this.dailyRunningScores = new HashMap<>();
 		this.scheduleIdCounter = 0;
 		this.recurringIdCounter = 0;
+		this.lastDayChecked = lastDayChecked;
 	}
 
-	public UserSchedule(int capacity, String associatedUsername) {
-		this(capacity);
+	public UserSchedule(int capacity, Date lastDayChecked, String associatedUsername) {
+		this(capacity, lastDayChecked);
 		this.associatedUsername = associatedUsername;
 	}
 
@@ -80,6 +83,19 @@ public class UserSchedule {
 		return this.dailyScores.containsKey(date) ? this.dailyScores.get(date) : 0;
 	}
 	
+	public HashMap<Date, Integer> getDailyRunningScores() {
+		return this.dailyRunningScores;
+	}
+	
+	public HashMap<Date, Integer> setDailyRunningScores(HashMap<Date, Integer> dailyRunningScores) {
+		this.dailyRunningScores = dailyRunningScores;
+		return this.dailyRunningScores;
+	}
+	
+	public int getRunningScoreForDate(Date date) {
+		return this.dailyRunningScores.containsKey(date) ? this.dailyRunningScores.get(date) : 0;
+	}
+	
 	public long getScheduleIdCounter() {
 		return this.scheduleIdCounter;
 	}
@@ -96,6 +112,15 @@ public class UserSchedule {
 	public long setRecurringIdCounter(long recurringIdCounter) {
 		this.recurringIdCounter = recurringIdCounter;
 		return this.recurringIdCounter;
+	}
+	
+	public Date getLastDayChecked() {
+		return this.lastDayChecked;
+	}
+	
+	public Date setLastDayChecked(Date lastDayChecked) {
+		this.lastDayChecked = lastDayChecked;
+		return this.lastDayChecked;
 	}
 
 	public void ensureDate(int year, int month, int day) {
@@ -151,17 +176,13 @@ public class UserSchedule {
 				recurrence = new ScheduleItemRecurrence(this.recurringIdCounter++, recurringType, recurringValue,
 						recurrenceStartDateTime, Integer.parseInt(endValue));
 			} else if (endType == 2) { // on T
-				try {
-					Date endDateTime = DateFormat.getDate(endValue, ModelTools.DATE_FORMAT);
-					Calendar calendar = DateAndCalendar.dateToCalendar(endDateTime);
-					calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(startTimeString.substring(0, 2)));
-					calendar.set(Calendar.MINUTE, Integer.parseInt(startTimeString.substring(3, 5)));
-					calendar.set(Calendar.SECOND, Integer.parseInt(startTimeString.substring(6)));
-					recurrence = new ScheduleItemRecurrence(this.recurringIdCounter++, recurringType, recurringValue,
-							recurrenceStartDateTime, DateAndCalendar.calendarToDate(calendar));
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
+				Date endDateTime = DateFormat.getDate(endValue, ModelTools.DATE_FORMAT);
+				Calendar calendar = DateAndCalendar.dateToCalendar(endDateTime);
+				calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(startTimeString.substring(0, 2)));
+				calendar.set(Calendar.MINUTE, Integer.parseInt(startTimeString.substring(3, 5)));
+				calendar.set(Calendar.SECOND, Integer.parseInt(startTimeString.substring(6)));
+				recurrence = new ScheduleItemRecurrence(this.recurringIdCounter++, recurringType, recurringValue,
+						recurrenceStartDateTime, DateAndCalendar.calendarToDate(calendar));
 			} else {
 				throw new IllegalArgumentException("invalid endType.");
 			}
@@ -234,6 +255,12 @@ public class UserSchedule {
 			while (!calendar.after(DateAndCalendar.dateToCalendar(recurrence.getEndDateTime()))) {
 				recurringDates.add(DateAndCalendar.calendarToDate(calendar));
 				calendar.add(Calendar.MONTH, 1);
+				
+				// skip months that don't contain this day of month (e.g. 31st on June, 30th on February)
+				while (calendar.getActualMaximum(Calendar.DAY_OF_MONTH) < recurrence.getRecurringValue()[0]) {
+					calendar.add(Calendar.MONTH, 1);
+					calendar.set(Calendar.DAY_OF_MONTH, recurrence.getRecurringValue()[0]);
+				}
 			}
 			break;
 		default:
@@ -257,6 +284,9 @@ public class UserSchedule {
 
 		// set recurrence
 		scheduleItem.setRecurrence(recurrence);
+		
+		// set duration
+		scheduleItem.setDuration(duration);
 
 		// make sure that the schedule items are sorted in order of start date
 		// time
@@ -274,19 +304,50 @@ public class UserSchedule {
 	}
 
 	// edit schedule item according to frontend-backend protocol
-	public synchronized void editScheduleItem(Date date, long id, String title, String description,
+	public synchronized void editScheduleItem(Date date, long id, long recurringId, String title, String description,
 			String startTimeString, int duration) {
 		date = CreateLookupDate.getInstance(date);
 		this.ensureDate(date);
 
-		for (ScheduleItem scheduleItem : this.items.get(date)) {
-			if (scheduleItem.getId() == id) {
-				scheduleItem.setTitle(title);
-				scheduleItem.setDescription(description);
-				Date startDateTime = scheduleItemStartDateTimeFromStartTimeString(date, startTimeString);
-				scheduleItem.setStartDateTime(startDateTime);
-				scheduleItem.setDuration(duration);
-				break;
+		// edit only this instance
+		if (recurringId == -1) {
+			for (ScheduleItem scheduleItem : this.items.get(date)) {
+				if (scheduleItem.getId() == id) {
+					scheduleItem.setTitle(title);
+					scheduleItem.setDescription(description);
+					Date startDateTime = scheduleItemStartDateTimeFromStartTimeString(date, startTimeString);
+					scheduleItem.setStartDateTime(startDateTime);
+					scheduleItem.setDuration(duration);
+					
+					scheduleItem.setRecurrence(null);
+					break;
+				}
+			}
+			return;
+		}
+		
+		// edit all instances with the same recurring id from given day
+		Calendar calendar = DateAndCalendar.dateToCalendar(date);
+		boolean newRecurringIdInvoked = false;
+		for (Date existingDate : this.items.keySet()) {
+			if (!calendar.after(DateAndCalendar.dateToCalendar(existingDate))) {
+				for (ScheduleItem scheduleItem : this.items.get(existingDate)) {
+					if (scheduleItem.getRecurrence() != null &&
+							scheduleItem.getRecurrence().getRecurringId() == recurringId) {
+						scheduleItem.setTitle(title);
+						scheduleItem.setDescription(description);
+						Date startDateTime = scheduleItemStartDateTimeFromStartTimeString(existingDate, startTimeString);
+						scheduleItem.setStartDateTime(startDateTime);
+						scheduleItem.setDuration(duration);
+						
+						if (!newRecurringIdInvoked) {
+							newRecurringIdInvoked = true;
+							this.recurringIdCounter++;
+						}
+						scheduleItem.getRecurrence().setRecurringId(this.recurringIdCounter);
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -318,7 +379,8 @@ public class UserSchedule {
 				ArrayList<ScheduleItem> listOfScheduleItems = this.items.get(existingDate);
 				int removeIndex = -1;
 				for (int i = 0; i < listOfScheduleItems.size(); i++) {
-					if (listOfScheduleItems.get(i).getRecurrence().getRecurringId() == recurringId) {
+					if (listOfScheduleItems.get(i).getRecurrence() != null &&
+							listOfScheduleItems.get(i).getRecurrence().getRecurringId() == recurringId) {
 						removeIndex = i;
 						break;
 					}
@@ -333,7 +395,7 @@ public class UserSchedule {
 		ArrayList<Date> filtered = new ArrayList<>();
 		for (Date date : this.dailyScores.keySet()) {
 			Calendar calendar = DateAndCalendar.dateToCalendar(date);
-			if (calendar.get(Calendar.YEAR) == year && calendar.get(Calendar.MONTH) == month) filtered.add(date);
+			if (calendar.get(Calendar.YEAR) == year && calendar.get(Calendar.MONTH) == month - 1) filtered.add(date);
 		}
 		
 		return filtered;
@@ -368,13 +430,24 @@ public class UserSchedule {
 	public void updateDailyScores(Date lastDayCheckedDate) {
 		Calendar lastDayChecked = DateAndCalendar.dateToCalendar(lastDayCheckedDate);
 		Calendar oneDayAgo = Calendar.getInstance();
-		oneDayAgo.add(Calendar.DAY_OF_MONTH, -1);
+		oneDayAgo.add(Calendar.DAY_OF_YEAR, -1);
 
 		Calendar calendar = (Calendar) lastDayChecked.clone();
+		Calendar calendarYesterday = (Calendar) lastDayChecked.clone();
+		calendarYesterday.add(Calendar.DAY_OF_YEAR, -1);
 		while (!calendar.after(oneDayAgo)) {
 			Date date = DateAndCalendar.calendarToDate(calendar);
-			this.updateScore(date, this.computeDailyScore(date));
+			Date dateYesterday = DateAndCalendar.calendarToDate(calendarYesterday);
+			
+			int dailyScore = this.computeDailyScore(date);
+			this.updateScore(date, dailyScore);
+			this.dailyRunningScores.put(date, this.dailyRunningScores.getOrDefault(dateYesterday, 0) + dailyScore);
+			
+			calendar.add(Calendar.DAY_OF_YEAR, 1);
+			calendarYesterday.add(Calendar.DAY_OF_YEAR, 1);
 		}
+		
+		this.lastDayChecked = DateAndCalendar.calendarToDate(Calendar.getInstance());
 	}
 
 	public synchronized ProgressColor getProgressColor(int year, int month, int day) {

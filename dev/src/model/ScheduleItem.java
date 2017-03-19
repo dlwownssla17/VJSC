@@ -2,6 +2,7 @@ package model;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import util.DateAndCalendar;
 
@@ -43,9 +44,11 @@ public class ScheduleItem {
 		this.type = type;
 		this.associatedUsername = associatedUsername;
 		
-		this.createdDateTime = new Date();
+		this.createdDateTime = DateAndCalendar.newDateGMT();
+		/*
 		if (startDateTime.before(this.createdDateTime))
 			throw new IllegalArgumentException("The start date time cannot be before now.");
+			*/
 		this.startDateTime = startDateTime;
 		
 		this.progress = progress;
@@ -185,10 +188,9 @@ public class ScheduleItem {
 		if (this.checkedIn) return false;
 		
 		Calendar checkInDateTime = DateAndCalendar.dateToCalendar(this.startDateTime);
+		checkInDateTime.setTimeZone(TimeZone.getDefault());
 		int activeMinutesBefore = ModelTools.START_ACTIVE_MINUTES_BEFORE;
-		int activeMinutesAfter = Math.min(ModelTools.START_ACTIVE_MINUTES_AFTER,
-				(int) Math.round((double) this.duration * ModelTools.START_ACTIVE_MINUTES_AFTER /
-						(ModelTools.START_ACTIVE_MINUTES_AFTER + ModelTools.END_ACTIVE_MINUTES_BEFORE)));
+		int activeMinutesAfter = ModelTools.START_ACTIVE_MINUTES_AFTER;
 		
 		if (this.progress instanceof PercentageProgress) {
 			if (this.checkedInAtStart) {
@@ -197,6 +199,10 @@ public class ScheduleItem {
 						(int) Math.round((double) this.duration * ModelTools.END_ACTIVE_MINUTES_BEFORE /
 								(ModelTools.START_ACTIVE_MINUTES_AFTER + ModelTools.END_ACTIVE_MINUTES_BEFORE)));
 				activeMinutesAfter = ModelTools.END_ACTIVE_MINUTES_AFTER;
+			} else {
+				activeMinutesAfter = Math.min(ModelTools.START_ACTIVE_MINUTES_AFTER,
+						(int) Math.round((double) this.duration * ModelTools.START_ACTIVE_MINUTES_AFTER /
+								(ModelTools.START_ACTIVE_MINUTES_AFTER + ModelTools.END_ACTIVE_MINUTES_BEFORE)));
 			}
 		} else if (this.progress instanceof LevelsProgress) { // not implementing LevelsProgress yet
 			return false;
@@ -204,16 +210,20 @@ public class ScheduleItem {
 		
 		Calendar acceptableRangeStart = (Calendar) checkInDateTime.clone();
 		acceptableRangeStart.add(Calendar.MINUTE, -activeMinutesBefore);
+		Date acceptableRangeStartDateTime = DateAndCalendar.calendarToDate(acceptableRangeStart);
 		
 		Calendar acceptableRangeEnd = (Calendar) checkInDateTime.clone();
 		acceptableRangeEnd.add(Calendar.MINUTE, activeMinutesAfter);
+		Date acceptableRangeEndDateTime = DateAndCalendar.calendarToDate(acceptableRangeEnd);
 		
-		Calendar now = Calendar.getInstance();
-		return now.after(acceptableRangeStart) && now.before(acceptableRangeEnd);
+		Date now = DateAndCalendar.newDateGMT();
+		return now.after(acceptableRangeStartDateTime) && now.before(acceptableRangeEndDateTime);
 	}
 	
 	// edit/remove is possible right now
 	public boolean isModifiable() {
+		if (this.checkedIn || this.checkedInAtStart) return false;
+		
 		Calendar modifiableAfterCreated = DateAndCalendar.dateToCalendar(this.createdDateTime);
 		modifiableAfterCreated.add(Calendar.MINUTE, ModelTools.MODIFIABLE_AFTER_CREATE);
 		
@@ -230,16 +240,26 @@ public class ScheduleItem {
 		return this.checkedIn;
 	}
 	
+	public boolean setCheckedIn(boolean checkedIn) {
+		this.checkedIn = checkedIn;
+		return this.checkedIn;
+	}
+	
 	public boolean isCheckedInAtStart() {
 		return this.checkedInAtStart;
 	}
 	
-	private synchronized void checkInAtEnd(double progress) {
+	public boolean setCheckedInAtStart(boolean checkedInAtStart) {
+		this.checkedInAtStart = checkedInAtStart;
+		return this.checkedInAtStart;
+	}
+	
+	public synchronized void checkInAtEnd(double progress) {
 		this.checkedIn = true;
 		this.updateScore(progress);
 	}
 	
-	private synchronized void checkInAtStart() {
+	public synchronized void checkInAtStart() {
 		this.checkedInAtStart = true;
 	}
 	

@@ -19,6 +19,7 @@ import fitbit.FitBitPeriod;
 import fitbit.FitBitTools;
 import model.Team;
 import model.User;
+import util.DateAndCalendar;
 import util.IO;
 
 public class TestingDuringDev {
@@ -36,7 +37,7 @@ public class TestingDuringDev {
 	private static void testFitBitTools() {
 		try {
 			FitBitAccount fitBitAccount = new FitBitAccount("userAuthentication.txt");
-			Date today = new Date();
+			Date today = DateAndCalendar.newDateGMT();
 			
 			BufferedWriter bw = new BufferedWriter(new FileWriter("output"));
 			

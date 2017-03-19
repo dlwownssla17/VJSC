@@ -3,6 +3,7 @@ package model;
 import java.util.Date;
 
 import fitbit.FitBitAccount;
+import util.DateAndCalendar;
 
 public class User {
 	private String username;
@@ -25,11 +26,11 @@ public class User {
 		this.password = password;
 		// TODO username and password validation
 		
-		this.memberSince = new Date();
+		this.memberSince = DateAndCalendar.newDateGMT();
 		
 		// TODO decide on initialization of all the other fields
 		
-		this.schedule = new UserSchedule(ModelTools.DEFAULT_CAPACITY, this.username);
+		this.schedule = new UserSchedule(ModelTools.DEFAULT_CAPACITY, this.memberSince, this.username);
 	}
 	
 	// TODO decide on how to initialize from initial survey upon registration
