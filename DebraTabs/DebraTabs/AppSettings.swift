@@ -14,8 +14,8 @@ class Settings {
     //static let serverURL:String = "http://165.123.207.125:8000/"
     
     //static let serverURL:String = "http://165.123.203.89:8000/"
-    //static let serverURL:String = "http://ec2-34-205-71-82.compute-1.amazonaws.com:8000/"
-    static let serverURL:String = "http://192.168.1.8:8000/"
+    static let serverURL:String = "http://ec2-34-205-71-82.compute-1.amazonaws.com:8000/"
+    //static let serverURL:String = "http://192.168.1.8:8000/"
     
     
     //static let serverURL:String = "http://130.91.134.209:8000/"
