@@ -973,14 +973,14 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
             }
             
             // Selected "Repeats Should End: After X Times"
-            if (row == 2) {
+            if (row == 1) {
                 scheduleEndingField2a.isHidden = false
             } else {
                 scheduleEndingField2a.isHidden = true
             }
             
             // Selected "Repeats Should End: On a Certain Date"
-            if (row == 3) {
+            if (row == 2) {
                 scheduleEndingField2b.isHidden = false
             } else {
                 scheduleEndingField2b.isHidden = true

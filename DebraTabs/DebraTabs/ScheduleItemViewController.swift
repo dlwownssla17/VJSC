@@ -602,6 +602,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         
         //Update Scores
         let x = dataLayer.getTranscriptions()
+        let parameters:[String: Any] = [JSONProtocolNames.lastDayCHeckedHeaderName: Settings.datecheckString]
         
         // HERE - Send Settings.datecheckString to send to server
         let currentDate:Date = Date()
@@ -610,11 +611,11 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         let currentDateString: String = currentFormatter.string(from: currentDate)
         print("BEFORE IF STATEMENT FIRST: \(Settings.datecheckString)")
         print("BEFORE IF STATEMENT SECOND: \(currentDateString)")
-        //if Settings.datecheckString != currentDateString {
-        if false {
+        if Settings.datecheckString != currentDateString {
+        //if true {
             print("AFTER UPDATE FIRST: \(Settings.datecheckString)")
             print("AFTER UPDATE SECOND: \(currentDateString)")
-            Alamofire.request(Settings.getUpdateScoresURL(), method: .post, headers: headers).validate().responseString { response in
+            Alamofire.request(Settings.getUpdateScoresURL(), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers).validate().responseString { response in
                 switch response.result {
                 case .success(let data):
                     let json = JSON(data)

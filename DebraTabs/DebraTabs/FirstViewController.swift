@@ -8,56 +8,103 @@
 
 import UIKit
 import PathMenu
+import Alamofire
 
 class FirstViewController: UIViewController {
     
     let items = ["Ray Wenderlich", "NSHipster", "iOS Developer Tips", "Jameson Quave", "Natasha The Robot", "Coding Explorer", "That Thing In Swift", "Andrew Bancroft", "iAchieved.it", "Airspeed Velocity", "Ray Wenderlich", "NSHipster", "iOS Developer Tips", "Jameson Quave", "Natasha The Robot", "Coding Explorer", "That Thing In Swift", "Andrew Bancroft", "iAchieved.it", "Airspeed Velocity"]
     
+    var currentDayInfo:CurrentDayInfo = CurrentDayInfo()
+    var scoreLabel = UILabel()
+    var scoreTextLabel = UILabel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        scoreLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 21))
+        scoreLabel.center = CGPoint(x: 160, y: 285)
+        scoreLabel.textAlignment = .center
+        scoreLabel.text = "Retrieving Score"
+        self.view.addSubview(scoreLabel)
+        
+        scoreTextLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 250, height: 21))
+        scoreTextLabel.center = CGPoint(x: self.view.frame.width / 2, y: self.view.frame.height * 0.7)
+        scoreTextLabel.text = "Your Current Score For Today"
+        self.view.addSubview(scoreTextLabel)
+        
         // Do any additional setup after loading the view, typically from a nib.
         
-//        let menuItemImage = UIImage(named: "bg-menuitem")!
-//        let menuItemHighlitedImage = UIImage(named: "bg-menuitem-highlighted")!
-//        
-//        let starImage = UIImage(named: "icon-star")!
-//        
-//        let starMenuItem1 = PathMenuItem(image: menuItemImage, highlightedImage: menuItemHighlitedImage, contentImage: starImage)
-//        
-//        let starMenuItem2 = PathMenuItem(image: menuItemImage, highlightedImage: menuItemHighlitedImage, contentImage: starImage)
-//        
-//        let starMenuItem3 = PathMenuItem(image: menuItemImage, highlightedImage: menuItemHighlitedImage, contentImage: starImage)
-//        
-//        let starMenuItem4 = PathMenuItem(image: menuItemImage, highlightedImage: menuItemHighlitedImage, contentImage: starImage)
-//        
-//        let starMenuItem5 = PathMenuItem(image: menuItemImage, highlightedImage: menuItemHighlitedImage, contentImage: starImage)
-//        
-//        let items = [starMenuItem1, starMenuItem2, starMenuItem3, starMenuItem4, starMenuItem5]
-//        
-//        let startItem = PathMenuItem(image: UIImage(named: "bg-addbutton")!,
-//                                     highlightedImage: UIImage(named: "bg-addbutton-highlighted"),
-//                                     contentImage: UIImage(named: "icon-plus"),
-//                                     highlightedContentImage: UIImage(named: "icon-plus-highlighted"))
-//        
-//        let menu = PathMenu(frame: view.bounds, startItem: startItem, items: items)
-//        menu.delegate = self
-//        menu.startPoint     = CGPoint(x: UIScreen.main.bounds.width/2, y: view.frame.size.height - 100.0)
-//        menu.menuWholeAngle = CGFloat(M_PI) - CGFloat(M_PI/5)
-//        menu.rotateAngle    = -CGFloat(M_PI_2) + CGFloat(M_PI/5) * 1/2
-//        menu.timeOffset     = 0.0
-//        menu.farRadius      = 110.0
-//        menu.nearRadius     = 90.0
-//        menu.endRadius      = 100.0
-//        menu.animationDuration = 0.5
-//        
-//        view.addSubview(menu)
-//        view.backgroundColor = UIColor(red:0.96, green:0.94, blue:0.92, alpha:1)
+
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func updateHomePage() {
+        let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString]
+        
+        Alamofire.request(Settings.getHomeScreenURL(), method: .get, headers: headers).validate().responseJSON { response in
+            switch response.result {
+            case .success(let data):
+                let json = JSON(data)
+                let score:Int = json[JSONProtocolNames.userScoreHeaderName].intValue
+                print("SCORE: \(score)")
+                print("UPDATING HOME SCREEN")
+                self.scoreLabel.removeFromSuperview()
+                //self.scoreLabel.isHidden = true
+                self.scoreLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 150, height: 150))
+                self.scoreLabel.text = String(score)
+                self.scoreLabel.center = self.view.center
+                self.scoreLabel.font = UIFont(name: self.scoreLabel.font.fontName, size: 80)
+                self.scoreLabel.textAlignment = .center
+                self.view.addSubview(self.scoreLabel)
+                print("FINSHED DISPLAYING SCORE")
+                
+            case .failure(let error):
+                print("Request failed with error: \(error)")
+            }
+        }
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: currentDayInfo.currentDayString]
+        
+        //Update Scores
+        let x = dataLayer.getTranscriptions()
+        
+        let parameters:[String: Any] = [JSONProtocolNames.lastDayCHeckedHeaderName: Settings.datecheckString]
+        
+        // HERE - Send Settings.datecheckString to send to server
+        let currentDate:Date = Date()
+        let currentFormatter:DateFormatter = DateFormatter()
+        currentFormatter.dateFormat = "yyyy-MM-dd"
+        let currentDateString: String = currentFormatter.string(from: currentDate)
+        print("BEFORE IF STATEMENT FIRST: \(Settings.datecheckString)")
+        print("BEFORE IF STATEMENT SECOND: \(currentDateString)")
+        if Settings.datecheckString != currentDateString {
+            //if false {
+            print("AFTER UPDATE FIRST: \(Settings.datecheckString)")
+            print("AFTER UPDATE SECOND: \(currentDateString)")
+            Alamofire.request(Settings.getUpdateScoresURL(), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers).validate().responseString { response in
+                switch response.result {
+                case .success(let data):
+                    //let json = JSON(data)
+                    dataLayer.storeDateTranscription(datecheck: currentDateString)
+                    dataLayer.storeTranscription(username: Settings.usernameString)
+                    print("Updated Scores")
+                    self.updateHomePage()
+                    
+                case .failure(let error):
+                    print("Request failed with error: \(error)")
+                }
+            }
+        } else {
+            self.updateHomePage()
+            print("Doesnt Need to Update Score")
+        }
     }
     
     
@@ -83,6 +130,8 @@ extension FirstViewController: PathMenuDelegate {
     func didFinishAnimationClose(on menu: PathMenu) {
         print("Menu was closed!")
     }
+    
+    
 }
 
 /*extension FirstViewController: UITableViewDelegate {

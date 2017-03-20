@@ -45,7 +45,9 @@ enum EndingType {
          .AfterYOccurrences: "Ending After X Times",
          .OnT: "Ending On a Certain Date"]
     
-    static let EndingTypeOrderedStringMap:Array<String> = ["Ending Never", "Ending After X Times", "Ending On a Certain Date"]
+    static let EndingTypeOrderedStringMap:Array<String> = ["Ending After X Times", "Ending On a Certain Date"]
+    
+    static let EndingTypeOrderedStringMapAll:Array<String> = ["Ending Never", "Ending After X Times", "Ending On a Certain Date"]
     
     static let AfterYOrruccencesOptions:Array<String> = ["1","2","3","4", "5", "6", "7", "8", "9", "10"]
 }

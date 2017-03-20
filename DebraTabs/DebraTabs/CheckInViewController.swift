@@ -375,7 +375,7 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
         return cell
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    func updateScheduleItems() {
         let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString]
         Alamofire.request(Settings.getCheckinViewURL(), method: .get, headers: headers).validate().responseJSON { response in
             switch response.result {
@@ -395,6 +395,43 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
                 print("Request failed with error: \(error)")
                 self.ObjectsArray = []
             }
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: currentDayInfo.currentDayString]
+        
+        //Update Scores
+        let x = dataLayer.getTranscriptions()
+        let parameters:[String: Any] = [JSONProtocolNames.lastDayCHeckedHeaderName: Settings.datecheckString]
+        
+        // HERE - Send Settings.datecheckString to send to server
+        let currentDate:Date = Date()
+        let currentFormatter:DateFormatter = DateFormatter()
+        currentFormatter.dateFormat = "yyyy-MM-dd"
+        let currentDateString: String = currentFormatter.string(from: currentDate)
+        print("BEFORE IF STATEMENT FIRST: \(Settings.datecheckString)")
+        print("BEFORE IF STATEMENT SECOND: \(currentDateString)")
+        if Settings.datecheckString != currentDateString {
+        //if false {
+            print("AFTER UPDATE FIRST: \(Settings.datecheckString)")
+            print("AFTER UPDATE SECOND: \(currentDateString)")
+            Alamofire.request(Settings.getUpdateScoresURL(), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers).validate().responseString { response in
+                switch response.result {
+                case .success(let data):
+                    let json = JSON(data)
+                    dataLayer.storeDateTranscription(datecheck: currentDateString)
+                    dataLayer.storeTranscription(username: Settings.usernameString)
+                    self.updateScheduleItems()
+                    print("Updated Scores")
+                    
+                case .failure(let error):
+                    print("Request failed with error: \(error)")
+                }
+            }
+        } else {
+            print("Doesnt Need to Update Score")
+            updateScheduleItems()
         }
     }
 }

@@ -95,7 +95,7 @@ class CalendarViewController: UIViewController {
             button.isEnabled = false
             button.isHidden = true
             button.removeFromSuperview()
-            print("REMOVED")
+            //print("REMOVED")
         }
         buttons = []
         self.view.setNeedsDisplay()
@@ -166,9 +166,9 @@ class CalendarViewController: UIViewController {
     }
     
     func mergeDayItemArrays() {
-        for day in ObjectsArray {
-            print("BEFORE: " + day.day)
-        }
+//        for day in ObjectsArray {
+//            print("BEFORE: " + day.day)
+//        }
         for day in ObjectsArray {
             for existingDay in FullObjectArray {
                 if day.dayNumber == existingDay.dayNumber {
@@ -180,9 +180,9 @@ class CalendarViewController: UIViewController {
                 }
             }
         }
-        for day in ObjectsArray {
-            print("AFTER" + day.day)
-        }
+//        for day in ObjectsArray {
+//            print("AFTER" + day.day)
+//        }
     }
     
     func insertButtons() {
@@ -254,11 +254,14 @@ class CalendarViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         //"http://130.91.134.209:8000/test"
         let headers:[String:String] = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.yearHeaderName: String(self.currentDayInfo.currentYear), JSONProtocolNames.monthHeaderName: String(self.currentDayInfo.currentMonth)]
+        print("CALENDAR HEADERS")
+        print(headers)
         //let headers:[String: String] = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, ]
         Alamofire.request(Settings.getMonthViewURL(), method: .get, headers: headers).validate().responseJSON { response in
             switch response.result {
             case .success(let data):
                 let json = JSON(data)
+                print(json)
                 let dayArray = json[JSONProtocolNames.monthListHeaderName].arrayValue
                 //print(dayArray)
                 self.ObjectsArray = []
