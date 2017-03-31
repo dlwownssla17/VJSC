@@ -607,8 +607,15 @@ public class Server {
 				User user = DBTools.findUser(username);
 				
 				JSONObject responseJSON = new JSONObject();
-				responseJSON.put("User-Score",
-						user.getSchedule().getRunningScoreForDate(user.getSchedule().getLastDayChecked()));
+				Date today = user.getSchedule().getLastDayChecked();
+				Calendar calendarYesterday = DateAndCalendar.dateToCalendar(today);
+				calendarYesterday.add(Calendar.DAY_OF_MONTH, -1);
+				Date yesterday = DateAndCalendar.calendarToDate(calendarYesterday);
+				int userTotalRunningScore = user.getSchedule().getRunningScoreForDate(yesterday);
+				responseJSON.put("User-Score", userTotalRunningScore);
+				responseJSON.put("Today-Score-So-Far", user.getSchedule().computeDailyScore(today));
+				
+				// TODO: change value for Today-Score-So-Far if we incorporate more advanced scoring algorithm
 				
 				String response = responseJSON.toString(JSON_INDENT);
 				t.sendResponseHeaders(200, response.getBytes().length);

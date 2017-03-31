@@ -92,6 +92,7 @@ public class UserScheduleDB implements DB<UserSchedule> {
 		
 		schedule.setScheduleIdCounter(document.getLong("schedule-id-counter"));
 		schedule.setRecurringIdCounter(document.getLong("recurring-id-counter"));
+		schedule.setLastDayChecked(DateFormat.getDate(document.getString("last-day-checked"), ModelTools.DATE_FORMAT));
 		
 		return schedule;
 	}

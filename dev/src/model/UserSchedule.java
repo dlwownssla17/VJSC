@@ -430,11 +430,11 @@ public class UserSchedule {
 	public void updateDailyScores(Date lastDayCheckedDate) {
 		Calendar lastDayChecked = DateAndCalendar.dateToCalendar(lastDayCheckedDate);
 		Calendar oneDayAgo = Calendar.getInstance();
-		oneDayAgo.add(Calendar.DAY_OF_YEAR, -1);
+		oneDayAgo.add(Calendar.DAY_OF_MONTH, -1);
 
 		Calendar calendar = (Calendar) lastDayChecked.clone();
 		Calendar calendarYesterday = (Calendar) lastDayChecked.clone();
-		calendarYesterday.add(Calendar.DAY_OF_YEAR, -1);
+		calendarYesterday.add(Calendar.DAY_OF_MONTH, -1);
 		while (!calendar.after(oneDayAgo)) {
 			Date date = DateAndCalendar.calendarToDate(calendar);
 			Date dateYesterday = DateAndCalendar.calendarToDate(calendarYesterday);
@@ -443,8 +443,8 @@ public class UserSchedule {
 			this.updateScore(date, dailyScore);
 			this.dailyRunningScores.put(date, this.dailyRunningScores.getOrDefault(dateYesterday, 0) + dailyScore);
 			
-			calendar.add(Calendar.DAY_OF_YEAR, 1);
-			calendarYesterday.add(Calendar.DAY_OF_YEAR, 1);
+			calendar.add(Calendar.DAY_OF_MONTH, 1);
+			calendarYesterday.add(Calendar.DAY_OF_MONTH, 1);
 		}
 		
 		this.lastDayChecked = DateAndCalendar.calendarToDate(Calendar.getInstance());
