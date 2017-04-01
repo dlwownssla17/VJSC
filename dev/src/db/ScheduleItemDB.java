@@ -23,7 +23,7 @@ public class ScheduleItemDB implements DB<ScheduleItem> {
 					.append("start-date-time", DateFormat.getFormattedString(item.getStartDateTime(), ModelTools.DATE_TIME_FORMAT))
 					.append("progress", DBTools.progressDB.toDocument(item.getProgress()))
 					.append("duration", item.getDuration())
-					.append("notification-params", DBTools.scheduleItemNotificationParamsDB.toDocument(item.getNotificationParams()))
+//					.append("notification-params", DBTools.scheduleItemNotificationParamsDB.toDocument(item.getNotificationParams()))
 					.append("checked-in", item.isCheckedIn())
 					.append("checked-in-at-start", item.isCheckedInAtStart())
 					.append("score", item.getScore());
@@ -41,8 +41,8 @@ public class ScheduleItemDB implements DB<ScheduleItem> {
 		Date startDateTime = DateFormat.getDate(document.getString("start-date-time"), ModelTools.DATE_TIME_FORMAT);
 		ScheduleItem item = new ScheduleItem(document.getLong("id"), document.getString("title"),
 				document.getString("description"), type, document.getString("associated-username"),
-				startDateTime, DBTools.progressDB.fromDocument((Document) document.get("progress")),
-				DBTools.scheduleItemNotificationParamsDB.fromDocument((Document) document.get("notification-params")));
+				startDateTime, DBTools.progressDB.fromDocument((Document) document.get("progress")), null);
+//				DBTools.scheduleItemNotificationParamsDB.fromDocument((Document) document.get("notification-params")));
 		item.setCreatedDateTime(DateFormat.getDate(document.getString("created-date-time"), ModelTools.DATE_TIME_FORMAT));
 		item.setRecurrence(DBTools.scheduleItemRecurrenceDB.fromDocument((Document) document.get("recurrence")));
 		item.setDuration(document.getInteger("duration"));

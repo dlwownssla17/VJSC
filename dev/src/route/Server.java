@@ -57,6 +57,10 @@ public class Server {
         
         server.createContext("/update-daily-scores", new UpdateDailyScoresHandler());
         
+        // "remove" team
+        
+        // "remove" competition
+        
         server.setExecutor(null); // creates a default executor
         server.start();
 	}
@@ -78,7 +82,10 @@ public class Server {
 	}
 	
 	public static JSONArray buildDailyItemsJSON(String username, Date date, boolean checkForActive) {
-		ArrayList<ScheduleItem> dailyItems = DBTools.findDailyItems(username, date);
+		User existingUser = DBTools.findUser(username);
+		
+		ArrayList<ScheduleItem> dailyItems = existingUser == null ? null :
+																existingUser.getSchedule().getItemsForDate(date);
 		
 		JSONArray dailyItemsJSON = new JSONArray();
 		for (ScheduleItem item : dailyItems) {
@@ -187,7 +194,7 @@ public class Server {
 				String username = headers.getFirst("Username");
 				String password = headers.getFirst("Password");
 				
-				User newUser = DBTools.registerUser(username, password);
+				User newUser = DBTools.createUser(username, password);
 				
 				String response = "";
 				int rc = newUser != null ? 200 : 401;
@@ -218,7 +225,9 @@ public class Server {
 				String username = headers.getFirst("Username");
 				String password = headers.getFirst("Password");
 				
-				User existingUser = DBTools.loginUser(username, password);
+				User existingUser = DBTools.findUser(username);
+				
+				if (existingUser != null && !existingUser.getPassword().equals(password)) existingUser = null;
 				
 				String response = "";
 				int rc = existingUser != null ? 200 : 401;
@@ -275,7 +284,10 @@ public class Server {
 				Date date = CreateLookupDate.getInstance(headers.getFirst("Date"));
 				
 				JSONArray dailyItemsJSON = buildDailyItemsJSON(username, date, false);
-				int dailyScore = DBTools.findDailyScore(username, date);
+				
+				User existingUser = DBTools.findUser(username);
+				
+				int dailyScore = existingUser == null ? -1 : existingUser.getSchedule().computeDailyScore(date);
 				
 				JSONObject responseJSON = new JSONObject();
 				responseJSON.put("Daily-Items", dailyItemsJSON);

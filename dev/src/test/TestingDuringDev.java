@@ -101,27 +101,27 @@ public class TestingDuringDev {
 			
 			spiro.setFitBitAccount(spiroFitBitAccount);
 			
-			Team teamVJ = new Team("The Voice");
-			teamVJ.addUser(vivek);
-			teamVJ.addUser(jj);
-			Team teamSC = new Team("The Kardashians");
-			teamSC.addUser(spiro);
-			teamSC.addUser(chad);
+//			Team teamVJ = new Team("The Voice");
+//			teamVJ.addUser(vivek);
+//			teamVJ.addUser(jj);
+//			Team teamSC = new Team("The Kardashians");
+//			teamSC.addUser(spiro);
+//			teamSC.addUser(chad);
 			
 			SingleFileUserDB vivekDB = SingleFileDBTools.toUserDB(vivek);
 			SingleFileUserDB jjDB = SingleFileDBTools.toUserDB(jj);
 			SingleFileUserDB spiroDB = SingleFileDBTools.toUserDB(spiro);
 			SingleFileUserDB chadDB = SingleFileDBTools.toUserDB(chad);
 			
-			SingleFileTeamDB teamVJDB = SingleFileDBTools.toTeamDB(teamVJ);
-			SingleFileTeamDB teamSCDB = SingleFileDBTools.toTeamDB(teamSC);
+//			SingleFileTeamDB teamVJDB = SingleFileDBTools.toTeamDB(teamVJ);
+//			SingleFileTeamDB teamSCDB = SingleFileDBTools.toTeamDB(teamSC);
 			
 			SingleFileDBTools.setUserDB(vivekDB);
 			SingleFileDBTools.setUserDB(jjDB);
 			SingleFileDBTools.setUserDB(spiroDB);
-			SingleFileDBTools.setTeamDB(teamVJDB);
+//			SingleFileDBTools.setTeamDB(teamVJDB);
 			SingleFileDBTools.setUserDB(chadDB);
-			SingleFileDBTools.setTeamDB(teamSCDB);
+//			SingleFileDBTools.setTeamDB(teamSCDB);
 			
 			System.out.println("---Everyone joined!---");
 			System.out.println(IO.readFile("db"));
@@ -136,7 +136,7 @@ public class TestingDuringDev {
 			jjDB = SingleFileDBTools.toUserDB(jj);
 			SingleFileDBTools.setUserDB(jjDB);
 			
-			SingleFileDBTools.removeTeamDB(teamSCDB);
+//			SingleFileDBTools.removeTeamDB(teamSCDB);
 			SingleFileDBTools.removeUserDB(chadDB);
 			
 			System.out.println("---Now what?!---");

@@ -1,6 +1,6 @@
 package model;
 
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Date;
 
 import fitbit.FitBitAccount;
@@ -17,7 +17,10 @@ public class User {
 //	private UserDiabetesParams diabetesParams;
 //	private UserAdherenceParams adherenceParams;
 //	private UserCommunityParams communityParams;
+	
 	private Team team;
+	private ArrayList<TeamInvitation> teamInvitations;
+	
 	private UserSchedule schedule;
 	
 	private FitBitAccount fitBitAccount;
@@ -28,7 +31,7 @@ public class User {
 		
 		this.memberSince = DateAndCalendar.newDateGMT();
 		
-		// TODO decide on initialization of all the other fields
+		this.teamInvitations = new ArrayList<>();
 		
 		this.schedule = new UserSchedule(ModelTools.DEFAULT_CAPACITY, this.memberSince, this.username);
 	}
@@ -106,6 +109,10 @@ public class User {
 		if (this.inTeam()) throw new IllegalStateException();
 		
 		this.team = team;
+		this.team.addMember(this);
+		
+		this.teamInvitations.clear();
+		
 		return this.team;
 	}
 	
@@ -113,6 +120,30 @@ public class User {
 		if (asLeader) team.setLeader(this);
 		
 		return this.joinTeam(team);
+	}
+	
+	public ArrayList<TeamInvitation> getTeamInvitations() {
+		return this.teamInvitations;
+	}
+	
+	public ArrayList<TeamInvitation> setTeamInvitations(ArrayList<TeamInvitation> teamInvitations) {
+		this.teamInvitations = teamInvitations;
+		return this.teamInvitations;
+	}
+	
+	public boolean addTeamInvitation(TeamInvitation teamInvitation) {
+		return this.teamInvitations.add(teamInvitation);
+	}
+	
+	public boolean declineTeamInvitation(long teamId) {
+		TeamInvitation teamInvitationToRemove = null;
+		for (TeamInvitation teamInvitation : this.teamInvitations) {
+			if (teamInvitation.getTeamId() == teamId) {
+				teamInvitationToRemove = teamInvitation;
+				break;
+			}
+		}
+		return teamInvitationToRemove != null ? this.teamInvitations.remove(teamInvitationToRemove) : false;
 	}
 	
 	public boolean isLeader() {
