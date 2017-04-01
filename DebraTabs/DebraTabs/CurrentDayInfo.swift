@@ -77,4 +77,12 @@ class CurrentDayInfo {
     func setCurrentDate(value:String) {
         currentDayString = value
     }
+    
+    func setToTomorrow() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let currentDay:Date = dateFormatter.date(from: self.currentDayString)!
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: currentDay)
+        self.currentDayString = dateFormatter.string(from: tomorrow!)
+    }
 }

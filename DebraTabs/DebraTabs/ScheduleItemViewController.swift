@@ -10,6 +10,9 @@ import UIKit
 import Alamofire
 import CoreData
 
+import  UserNotifications
+import UserNotificationsUI //framework to customize the notification
+
 class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     
@@ -139,9 +142,9 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         //self.view.addSubview(currentDate)
         
         myTableView = UITableView(frame: CGRect(x: 0, y: barHeight + 50, width: displayWidth, height: displayHeight - 200))//barHeight*1.5))
-        print("yo")
-        print(displayHeight)
-        print(barHeight)
+        //print("yo")
+        //print(displayHeight)
+        //print(barHeight)
         myTableView.register(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
         myTableView.dataSource = self
         myTableView.delegate = self
@@ -176,7 +179,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         button2.addTarget(self, action: #selector(calendarViewButtonTapped(_:)), for: .touchDown)
         self.view.addSubview(button2)
         
-        print("HELLO")
+        //print("HELLO")
         JSONParser.testJSON()
         
         Requests.getDayViewRoot()
@@ -285,8 +288,8 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.myTableView.deselectRow(at: indexPath, animated: true)
 
-        print("Num: \(indexPath.row)")
-        print("Value: \(ObjectsArray[indexPath.row].scheduleItemTitle)")
+        //print("Num: \(indexPath.row)")
+        //print("Value: \(ObjectsArray[indexPath.row].scheduleItemTitle)")
         
         let alertController = UIAlertController(title: "Details!", message: nil, preferredStyle: UIAlertControllerStyle.alert)
 
@@ -398,7 +401,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
                     .responseString { response in
                         switch response.result {
                         case .success(let _):
-                            print("TEST SPIRO")
+                            //print("TEST SPIRO")
                             self.viewDidAppear(true)
                         case .failure(let error):
                             print("Request failed with error: \(error)")
@@ -417,7 +420,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
                         .responseString { response in
                             switch response.result {
                             case .success(let _):
-                                print("TEST SPIRO")
+                                //print("TEST SPIRO")
                                 self.viewDidAppear(true)
                             case .failure(let error):
                                 print("Request failed with error: \(error)")
@@ -479,8 +482,8 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
 
         cell.textLabel!.text = "\(ObjectsArray[indexPath.row].scheduleItemTitle)"
         let calendar = Calendar.current
-        print("AHHHH")
-        print(calendar.timeZone)
+        //print("AHHHH")
+        //print(calendar.timeZone)
         var hour = calendar.component(.hour, from: ObjectsArray[indexPath.row].scheduleItemStart)
         let minutes = calendar.component(.minute, from: ObjectsArray[indexPath.row].scheduleItemStart)
         var minuteString:String = String(minutes)
@@ -552,8 +555,8 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
             switch response.result {
             case .success(let data):
                 let json = JSON(data)
-                print(json.count)
-                print("TestCAT")
+                //print(json.count)
+                //print("TestCAT")
                 //print(json)
                 let jsonObjectList = json[JSONProtocolNames.scheduleItemsListResponseName].arrayValue
                 //print(jsonObjectList)
@@ -562,6 +565,7 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
                 for jsonObject in jsonObjectList {
                     let scheduleItemObject = ScheduleItem(json: jsonObject, itemDay: self.currentDayInfo.currentDayString)
                     self.ObjectsArray.append(scheduleItemObject)
+                    print("\(scheduleItemObject.scheduleItemTitle) - \(scheduleItemObject.scheduleItemStart)")
                 }
                 self.myTableView.reloadData()
                 
@@ -636,6 +640,8 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
                     dataLayer.storeTranscription(username: Settings.usernameString)
                     self.updateScheduleItems()
                     print("Updated Scores")
+                    let notifications = UserNotifications()
+                    notifications.updateNotifications(view: self)
                     
                 case .failure(let error):
                     print("Request failed with error: \(error)")
@@ -644,6 +650,8 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         } else {
             print("Doesnt Need to Update Score")
             updateScheduleItems()
+            let notifications = UserNotifications()
+            notifications.updateNotifications(view: self)
         }
         
         // HERE - Save server response to Settings.datecheckString, see below
@@ -656,7 +664,25 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         //"http://130.91.134.209:8000/test"
         //let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: currentDayInfo.currentDayString]
         
-        print("FROM CALENDAR: " + currentDayInfo.currentDayString)
+        //print("FROM CALENDAR: " + currentDayInfo.currentDayString)
     }
     
+}
+
+extension ScheduleItemViewController:UNUserNotificationCenterDelegate{
+    
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        print("Tapped in notification")
+    }
+    
+    //This is key callback to present notification while the app is in foreground
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        
+        print("Notification being triggered")
+        //You can either present alert ,sound or increase badge while the app is in foreground too with ios 10
+        //to distinguish between notifications
+        completionHandler( [.alert,.sound,.badge])
+    }
 }

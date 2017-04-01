@@ -102,6 +102,7 @@ class JSONProtocolNames {
     static let progressHeaderName:String = "Progress"
     static let lastDayCHeckedHeaderName:String = "Last-Day-Checked"
     static let userScoreHeaderName:String = "User-Score"
+    static let todayScoreSoFarName:String = "Today-Score-So-Far"
     
     static let scheduleItemTitleMaxLength:Int = 128
     static let scheduleItemDescriptionLength:Int = 1024

@@ -668,6 +668,7 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         } else {
             newScheduleItem.scheduleItemStart = selectedDate
         }
+        print("CAT:  \(newScheduleItem.scheduleItemStart)")
         
         
         //print(Requests.addScheduleItemJSON(item: newScheduleItem))
@@ -679,7 +680,12 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         let parameters = Requests.addScheduleItemJSON(item: newScheduleItem)
         
         //"http://130.91.134.209:8000/add"
-        let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: self.currentDayInfo.currentDayString]
+        let currentDayFormatter:DateFormatter = DateFormatter()
+        currentDayFormatter.dateFormat = "yyyy-MM-dd"
+        currentDayFormatter.timeZone = NSTimeZone(name: "GMT") as TimeZone!
+        let currentDayHeaderString:String = currentDayFormatter.string(from: newScheduleItem.scheduleItemStart)
+        print("HEADER: \(currentDayHeaderString)")
+        let headers = [JSONProtocolNames.usernameHeaderName: Settings.usernameString, JSONProtocolNames.dateHeaderName: currentDayHeaderString]
         Alamofire.request(Settings.getAddScheduleItemURL(), method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             .responseString { response in
                 switch response.result {

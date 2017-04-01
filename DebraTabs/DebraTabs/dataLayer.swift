@@ -80,8 +80,8 @@ class dataLayer {
 //            
 //            
             for trans in searchResults as! [NSManagedObject] {
-                print("in datalyer: \(trans.value(forKey: "username"))")
-                print("in datalyer: \(trans.value(forKey: "datecheck"))")
+                //print("in datalyer: \(trans.value(forKey: "username"))")
+                //print("in datalyer: \(trans.value(forKey: "datecheck"))")
                 if ((trans.value(forKey: "username")) != nil) {
                     Settings.usernameString = trans.value(forKey: "username") as! String
                 }

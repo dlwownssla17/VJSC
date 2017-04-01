@@ -13,6 +13,8 @@ class Settings {
     //static let serverURL:String = "http://130.91.135.160:8000/"
     //static let serverURL:String = "http://165.123.207.125:8000/"
     
+    //static let serverURL:String = "http://158.130.193.230:8000/"
+    
     //static let serverURL:String = "http://165.123.203.89:8000/"
     static let serverURL:String = "http://ec2-34-205-71-82.compute-1.amazonaws.com:8000/"
     //static let serverURL:String = "http://192.168.1.8:8000/"
@@ -28,6 +30,8 @@ class Settings {
     static let testUserID2:String = "123";
     
     static var displayAMPM:Bool = true
+    static var notifyUser:Bool = true
+    static var notifyNumDays:Int = 5
     
     static func getDayViewURL()->String {
         let relativeURL:String = "day/view/"

@@ -16,7 +16,9 @@ class FirstViewController: UIViewController {
     
     var currentDayInfo:CurrentDayInfo = CurrentDayInfo()
     var scoreLabel = UILabel()
+    var todayScoreLabel = UILabel()
     var scoreTextLabel = UILabel()
+    var todayScoreTextLabel = UILabel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,10 +29,21 @@ class FirstViewController: UIViewController {
         scoreLabel.text = "Retrieving Score"
         self.view.addSubview(scoreLabel)
         
-        scoreTextLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 250, height: 21))
-        scoreTextLabel.center = CGPoint(x: self.view.frame.width / 2, y: self.view.frame.height * 0.7)
-        scoreTextLabel.text = "Your Current Score For Today"
+        todayScoreLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 21))
+        todayScoreLabel.center = CGPoint(x: 160, y: 185)
+        todayScoreLabel.textAlignment = .center
+        todayScoreLabel.text = "Retrieving Score"
+        self.view.addSubview(todayScoreLabel)
+        
+        scoreTextLabel = UILabel(frame: CGRect(x: 0, y: self.view.frame.height * 0.7, width: 250, height: 21))
+        scoreTextLabel.center.x = self.view.center.x
+        scoreTextLabel.text = "Your Cumulative Total Score"
         self.view.addSubview(scoreTextLabel)
+        
+        todayScoreTextLabel = UILabel(frame: CGRect(x: 0, y: self.view.frame.height * 0.4, width: 250, height: 21))
+        todayScoreTextLabel.center.x = self.view.center.x
+        todayScoreTextLabel.text = "Your Current Score For Today"
+        self.view.addSubview(todayScoreTextLabel)
         
         // Do any additional setup after loading the view, typically from a nib.
         
@@ -50,17 +63,29 @@ class FirstViewController: UIViewController {
             case .success(let data):
                 let json = JSON(data)
                 let score:Int = json[JSONProtocolNames.userScoreHeaderName].intValue
+                let todayScore:Int = json[JSONProtocolNames.todayScoreSoFarName].intValue
                 print("SCORE: \(score)")
                 print("UPDATING HOME SCREEN")
                 self.scoreLabel.removeFromSuperview()
                 //self.scoreLabel.isHidden = true
-                self.scoreLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 150, height: 150))
+                self.scoreLabel = UILabel(frame: CGRect(x: 0, y: self.view.frame.height * 0.5, width: 150, height: 150))
                 self.scoreLabel.text = String(score)
-                self.scoreLabel.center = self.view.center
+                self.scoreLabel.center.x = self.view.center.x
                 self.scoreLabel.font = UIFont(name: self.scoreLabel.font.fontName, size: 80)
                 self.scoreLabel.textAlignment = .center
                 self.view.addSubview(self.scoreLabel)
                 print("FINSHED DISPLAYING SCORE")
+                print("TODAY SCORE: \(score)")
+                
+                self.todayScoreLabel.removeFromSuperview()
+                //self.scoreLabel.isHidden = true
+                self.todayScoreLabel = UILabel(frame: CGRect(x: 0, y: 150, width: 150, height: 100))
+                self.todayScoreLabel.text = String(todayScore)
+                self.todayScoreLabel.center.x = self.view.center.x
+                self.todayScoreLabel.font = UIFont(name: self.todayScoreLabel.font.fontName, size: 80)
+                self.todayScoreLabel.textAlignment = .center
+                self.view.addSubview(self.todayScoreLabel)
+                print("TODAY SCORE: \(todayScore)")
                 
             case .failure(let error):
                 print("Request failed with error: \(error)")

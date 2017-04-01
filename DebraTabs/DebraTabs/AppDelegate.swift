@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -40,6 +41,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window!.rootViewController = mainStoryboard.instantiateInitialViewController()
         }
         window!.makeKeyAndVisible()
+        
+        //Requesting Authorization for User Interactions
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound]) { (granted, error) in
+            // Enable or disable features based on authorization.
+            Settings.notifyUser = granted
+        }
         return true
     }
 
