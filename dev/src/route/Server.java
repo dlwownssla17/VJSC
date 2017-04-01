@@ -539,6 +539,8 @@ public class Server {
 				User user = DBTools.findUser(username);
 				user.getSchedule().getItemForDate(date, id).checkIn(progress);
 				
+				// TODO: incorporate community stuff
+				
 				DBTools.updateUser(user);
 				
 				String response = "";
@@ -608,13 +610,8 @@ public class Server {
 				
 				JSONObject responseJSON = new JSONObject();
 				Date today = user.getSchedule().getLastDayChecked();
-				Calendar calendarYesterday = DateAndCalendar.dateToCalendar(today);
-				calendarYesterday.add(Calendar.DAY_OF_MONTH, -1);
-				Date yesterday = DateAndCalendar.calendarToDate(calendarYesterday);
-				int userTotalRunningScore = user.getSchedule().getRunningScoreForDate(yesterday);
-				responseJSON.put("User-Score", userTotalRunningScore);
+				responseJSON.put("User-Score", user.getTotalRunningScore());
 				responseJSON.put("Today-Score-So-Far", user.getSchedule().computeDailyScore(today));
-				
 				// TODO: change value for Today-Score-So-Far if we incorporate more advanced scoring algorithm
 				
 				String response = responseJSON.toString(JSON_INDENT);

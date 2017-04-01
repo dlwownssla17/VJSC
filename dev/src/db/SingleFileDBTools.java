@@ -42,7 +42,7 @@ public class SingleFileDBTools {
 	public static SingleFileTeamDB toTeamDB(Team team) {
 		SingleFileTeamDB teamDB = new SingleFileTeamDB(team.getTeamName());
 		
-		for (User user : team.getUsers()) {
+		for (User user : team.getMembers()) {
 			teamDB.addUsername(user.getUsername());
 		}
 		
