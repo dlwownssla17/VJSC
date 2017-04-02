@@ -665,43 +665,12 @@ public class Server {
 	
 	/* * */
 	
-//	static class HomeHandler implements HttpHandler {
-//		@Override
-//		public void handle(HttpExchange t) throws IOException {
-//			System.out.println("handling home page...");
-//			
-//			String requestMethod = t.getRequestMethod();
-//			if (requestMethod.equals("GET")) {
-//				Headers headers = t.getRequestHeaders();
-//				String username = headers.getFirst("Username");
-//				
-//				User user = DBTools.findUser(username);
-//				
-//				JSONObject responseJSON = new JSONObject();
-//				Date today = user.getSchedule().getLastDayChecked();
-//				responseJSON.put("User-Score", user.getTotalRunningScore());
-//				responseJSON.put("Today-Score-So-Far", user.getSchedule().computeDailyScore(today));
-//				// TODO: change value for Today-Score-So-Far if we incorporate more advanced scoring algorithm
-//				
-//				String response = responseJSON.toString(JSON_INDENT);
-//				t.sendResponseHeaders(200, response.getBytes().length);
-//	            OutputStream os = t.getResponseBody();
-//	            os.write(response.getBytes());
-//	            os.close();
-//			} else if (requestMethod.equals("POST")) {
-//				
-//			} else {
-//				
-//			}
-//			
-//			System.out.println("handled home page");
-//		}
-//	}
-	
 	static class CommunityHomeHandler implements HttpHandler {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling community home...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				Headers headers = t.getRequestHeaders();
@@ -828,6 +797,8 @@ public class Server {
 			} else {
 				
 			}
+			
+			System.out.println("handled community home...");
 		}
 		
 	}
@@ -836,6 +807,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling create team...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -853,6 +826,8 @@ public class Server {
 			} else {
 				
 			}
+			
+			System.out.println("handled create team...");
 		}
 		
 	}
@@ -861,6 +836,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling remove team...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -878,6 +855,8 @@ public class Server {
 			} else {
 				
 			}
+			
+			System.out.println("handled remove team...");
 		}
 		
 	}
@@ -886,6 +865,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling invite member...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -903,6 +884,8 @@ public class Server {
 			} else {
 				
 			}
+			
+			System.out.println("handled invite member...");
 		}
 		
 	}
@@ -911,6 +894,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling join team...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -928,6 +913,8 @@ public class Server {
 			} else {
 				
 			}
+			
+			System.out.println("handling join team...");
 		}
 		
 	}
@@ -936,6 +923,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling decline team invite...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -953,6 +942,8 @@ public class Server {
 			} else {
 				
 			}
+			
+			System.out.println("handled decline team invite...");
 		}
 		
 	}
@@ -961,6 +952,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling kick out member...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -978,6 +971,8 @@ public class Server {
 			} else {
 				
 			}
+			
+			System.out.println("handled kick out member...");
 		}
 		
 	}
@@ -986,6 +981,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling create competition...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -1003,6 +1000,8 @@ public class Server {
 			} else {
 				
 			}
+			
+			System.out.println("handled create competition...");
 		}
 		
 	}
@@ -1011,6 +1010,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling cancel competition...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -1028,6 +1029,8 @@ public class Server {
 			} else {
 				
 			}
+			
+			System.out.println("handled cancel competition...");
 		}
 		
 	}
@@ -1036,6 +1039,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling view competition...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -1053,6 +1058,8 @@ public class Server {
 			} else {
 				
 			}
+			
+			System.out.println("handled view competition...");
 		}
 		
 	}
@@ -1061,6 +1068,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling join competition...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -1078,6 +1087,8 @@ public class Server {
 			} else {
 				
 			}
+			
+			System.out.println("handled join competition...");
 		}
 		
 	}
@@ -1086,6 +1097,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling decline competition invite...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -1103,6 +1116,8 @@ public class Server {
 			} else {
 				
 			}
+			
+			System.out.println("handled decline competition invite...");
 		}
 		
 	}
@@ -1111,6 +1126,8 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling leave competition...");
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -1128,6 +1145,8 @@ public class Server {
 			} else {
 				
 			}
+			
+			System.out.println("handled leave competition...");
 		}
 		
 	}
