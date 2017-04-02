@@ -58,58 +58,76 @@ public class CompetitionHistory {
 		return this.competitionResult;
 	}
 	
-	public String getTeamRedName() {
-		return this.teamRedName;
+	public String getTeamName(CompetitionTeamColor color) {
+		switch(color) {
+			case RED:
+				return this.teamRedName;
+			case BLUE:
+				return this.teamBlueName;
+			default:
+				return null;
+		}
 	}
 	
-	public String setTeamRedName(String teamRedName) {
-		this.teamRedName = teamRedName;
-		return this.teamRedName;
+	public String setTeamName(CompetitionTeamColor color, String teamName) {
+		switch(color) {
+			case RED:
+				this.teamRedName = teamName;
+				return this.teamRedName;
+			case BLUE:
+				this.teamBlueName = teamName;
+				return this.teamBlueName;
+			default:
+				return null;
+		}
 	}
 	
-	public int getTeamRedScore() {
-		return this.teamRedScore;
+	public int getTeamScore(CompetitionTeamColor color) {
+		switch(color) {
+			case RED:
+				return this.teamRedScore;
+			case BLUE:
+				return this.teamBlueScore;
+			default:
+				return -1;
+		}
 	}
 	
-	public int setTeamRedScore(int teamRedScore) {
-		this.teamRedScore = teamRedScore;
-		return this.teamRedScore;
+	public int setTeamScore(CompetitionTeamColor color, int teamScore) {
+		switch(color) {
+			case RED:
+				this.teamRedScore = teamScore;
+				return this.teamRedScore;
+			case BLUE:
+				this.teamBlueScore = teamScore;
+				return this.teamBlueScore;
+			default:
+				return -1;
+		}
 	}
 	
-	public boolean getTeamRedLeft() {
-		return this.teamRedLeft;
+	public boolean getTeamLeft(CompetitionTeamColor color) {
+		switch(color) {
+			case RED:
+				return this.teamRedLeft;
+			case BLUE:
+				return this.teamBlueLeft;
+			default:
+				return false;
+		}
 	}
 	
-	public boolean setTeamRedLeft(boolean teamRedLeft) {
-		this.teamRedLeft = teamRedLeft;
-		return this.teamRedLeft;
-	}
-	
-	public String getTeamBlueName() {
-		return this.teamBlueName;
-	}
-	
-	public String setTeamBlueName(String teamBlueName) {
-		this.teamBlueName = teamBlueName;
-		return this.teamBlueName;
-	}
-	
-	public int getTeamBlueScore() {
-		return this.teamBlueScore;
-	}
-	
-	public int setTeamBlueScore(int teamBlueScore) {
-		this.teamBlueScore = teamBlueScore;
-		return this.teamBlueScore;
-	}
-	
-	public boolean getTeamBlueLeft() {
-		return this.teamBlueLeft;
-	}
-	
-	public boolean setTeamBlueLeft(boolean teamBlueLeft) {
-		this.teamBlueLeft = teamBlueLeft;
-		return this.teamBlueLeft;
+	public boolean setTeamLeft(CompetitionTeamColor color, boolean teamLeft) {
+		switch(color) {
+			case RED:
+				this.teamRedLeft = teamLeft;
+				return this.teamRedLeft;
+			case BLUE:
+				this.teamBlueLeft = teamLeft;
+				return this.teamBlueLeft;
+			default:
+				return false;
+		}
 	}
 	
 	public Date getCompetitionStartDate() {

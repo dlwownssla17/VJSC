@@ -18,7 +18,7 @@ public class User {
 //	private UserAdherenceParams adherenceParams;
 //	private UserCommunityParams communityParams;
 	
-	private Team team;
+	private long teamId;
 	private ArrayList<TeamInvitation> teamInvitations;
 	
 	private UserSchedule schedule;
@@ -31,12 +31,16 @@ public class User {
 		
 		this.memberSince = DateAndCalendar.newDateGMT();
 		
+		this.teamId = -1;
 		this.teamInvitations = new ArrayList<>();
 		
 		this.schedule = new UserSchedule(ModelTools.DEFAULT_CAPACITY, this.memberSince, this.username);
 	}
 	
-	// TODO decide on how to initialize from initial survey upon registration
+	@Override
+	public boolean equals(Object otherUser) {
+		return otherUser instanceof User && this.username.equals(((User) otherUser).getUsername());
+	}
 	
 	public String getUsername() {
 		return this.username;
@@ -97,29 +101,20 @@ public class User {
 //		return this.adherenceParams;
 //	}
 	
-	public Team getTeam() {
-		return this.team;
+	public long getTeamId() {
+		return this.teamId;
 	}
 	
 	public boolean inTeam() {
-		return this.team != null;
+		return this.teamId >= 0;
 	}
 	
-	public Team joinTeam(Team team) {
+	public long setTeamId(long teamId) {
 		if (this.inTeam()) throw new IllegalStateException();
 		
-		this.team = team;
-		this.team.addMember(this);
-		
+		this.teamId = teamId;
 		this.teamInvitations.clear();
-		
-		return this.team;
-	}
-	
-	public Team joinTeam(Team team, boolean asLeader) {
-		if (asLeader) team.setLeader(this);
-		
-		return this.joinTeam(team);
+		return this.teamId;
 	}
 	
 	public ArrayList<TeamInvitation> getTeamInvitations() {
@@ -146,8 +141,8 @@ public class User {
 		return teamInvitationToRemove != null ? this.teamInvitations.remove(teamInvitationToRemove) : false;
 	}
 	
-	public boolean isLeader() {
-		return this.inTeam() && this.username.equals(this.team.getLeader().getUsername());
+	public boolean isLeader(Team team) {
+		return this.teamId == team.getTeamId() && this.username.equals(team.getLeaderUsername());
 	}
 	
 	public UserSchedule setSchedule(UserSchedule schedule) {
@@ -176,5 +171,10 @@ public class User {
 		Date today = this.getSchedule().getLastDayChecked();
 		Date yesterday = DateAndCalendar.addDate(today, -1);
 		return this.getSchedule().getRunningScoreForDate(yesterday);
+	}
+	
+	public int getTodayScoreSoFar() {
+		Date today = this.getSchedule().getLastDayChecked();
+		return this.getSchedule().computeDailyScore(today);
 	}
 }

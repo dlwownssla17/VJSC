@@ -22,7 +22,7 @@ public class UserDB implements DB<User> {
 //					.append("adherence-params", DBTools.userAdherenceParamsDB.toDocument(user.getAdherenceParams()))
 //					.append("community-params", DBTools.userCommunityParamsDB.toDocument(user.getCommunityParams()))
 //					.append("team", DBTools.teamDB.toDocument(user.getTeam()))
-					.append("team-id", user.inTeam() ? user.getTeam().getTeamId() : -1)
+					.append("team-id", user.getTeamId())
 					.append("team-invitations", this.teamInvitationsToDocument(user))
 					.append("schedule", DBTools.userScheduleDB.toDocument(user.getSchedule()))
 					.append("fitbit-account", DBTools.fitBitAccountDB.toDocument(user.getFitBitAccount()));
@@ -30,7 +30,6 @@ public class UserDB implements DB<User> {
 	
 	@Override
 	public User fromDocument(Document document) {
-		// need to set team
 		User user = new User(document.getString("username"), document.getString("password"));
 		
 		user.setMemberSince(DateFormat.getDate(document.getString("member-since"), ModelTools.DATE_TIME_FORMAT));
@@ -39,7 +38,7 @@ public class UserDB implements DB<User> {
 //		user.setDiabetesParams(DBTools.userDiabetesParamsDB.fromDocument((Document) document.get("diabetes-params")));
 //		user.setAdherenceParams(DBTools.userAdherenceParamsDB.fromDocument((Document) document.get("adherence-params")));
 //		user.setCommunityParams(DBTools.userCommunityParamsDB.fromDocument((Document) document.get("community-params")));
-//		user.joinTeam(DBTools.teamDB.fromDocument((Document) document.get("team")));
+		user.setTeamId(document.getLong("team-id"));
 		user.setTeamInvitations(this.teamInvitationsFromDocument(document));
 		user.setSchedule(DBTools.userScheduleDB.fromDocument((Document) document.get("schedule")));
 		user.setFitBitAccount(DBTools.fitBitAccountDB.fromDocument((Document) document.get("fitbit-account")));
@@ -67,12 +66,6 @@ public class UserDB implements DB<User> {
 			teamInvitations.add(DBTools.teamInvitationDB.fromDocument(teamInvitationDocument));
 		}
 		return teamInvitations;
-	}
-	
-	/* * */
-	
-	public long getTeamIdFromDocument(Document document) {
-		return document.getLong("team-id");
 	}
 	
 }

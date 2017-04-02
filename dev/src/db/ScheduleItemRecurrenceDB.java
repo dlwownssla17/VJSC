@@ -17,7 +17,7 @@ public class ScheduleItemRecurrenceDB implements DB<ScheduleItemRecurrence> {
 		
 		Document recurringValueDocument = new Document();
 		for (int val : recurrence.getRecurringValue()) {
-			recurringValueDocument.append(Integer.toString(val), val);
+			recurringValueDocument.append(Integer.toString(val), true);
 		}
 		
 		return new Document("recurring-id", recurrence.getRecurringId())

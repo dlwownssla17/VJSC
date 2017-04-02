@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 import org.json.JSONArray;
@@ -21,12 +20,18 @@ import com.sun.net.httpserver.HttpServer;
 
 import db.DBTools;
 import model.BooleanProgress;
+import model.Competition;
+import model.CompetitionHistory;
+import model.CompetitionInvitation;
+import model.CompetitionTeamColor;
 import model.ModelTools;
 import model.PercentageProgress;
 import model.Progress;
 import model.ProgressColor;
 import model.ScheduleItem;
 import model.ScheduleItemRecurrence;
+import model.Team;
+import model.TeamInvitation;
 import model.User;
 import util.CreateLookupDate;
 import util.DateAndCalendar;
@@ -39,23 +44,30 @@ public class Server {
 	public static void main(String[] args) throws Exception {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
         
+        /* Homepage */
+        
         server.createContext("/",  new HomeHandler());
+        
+        /* Login/Logout */
         
         server.createContext("/register", new RegisterHandler());
         server.createContext("/login", new LoginHandler());
         server.createContext("/logout", new LogoutHandler());
         
+        /* Schedule */
+        
         server.createContext("/day/view", new DayViewHandler());
         server.createContext("/day/add", new DayAddHandler());
         server.createContext("/day/edit", new DayEditHandler());
         server.createContext("/day/remove", new DayRemoveHandler());
-        
         server.createContext("/month/view", new MonthViewHandler());
-        
         server.createContext("/checkin/view", new CheckInViewHandler());
         server.createContext("/checkin/submit", new CheckInSubmitHandler());
-        
         server.createContext("/update-daily-scores", new UpdateDailyScoresHandler());
+        
+        /* Community */
+        
+        
         
         // "remove" team
         
@@ -64,6 +76,8 @@ public class Server {
         server.setExecutor(null); // creates a default executor
         server.start();
 	}
+	
+	/* * */
 	
 	public static JSONObject toJSON(InputStream is) throws IOException {
 		InputStreamReader isr = new InputStreamReader(is,"utf-8");
@@ -81,11 +95,8 @@ public class Server {
 		return new JSONObject(sb.toString());
 	}
 	
-	public static JSONArray buildDailyItemsJSON(String username, Date date, boolean checkForActive) {
-		User existingUser = DBTools.findUser(username);
-		
-		ArrayList<ScheduleItem> dailyItems = existingUser == null ? null :
-																existingUser.getSchedule().getItemsForDate(date);
+	public static JSONArray buildDailyItemsJSON(User user, Date date, boolean checkForActive) {
+		ArrayList<ScheduleItem> dailyItems = user.getSchedule().getItemsForDate(date);
 		
 		JSONArray dailyItemsJSON = new JSONArray();
 		for (ScheduleItem item : dailyItems) {
@@ -180,6 +191,43 @@ public class Server {
 	}
 	*/
 	
+	/* * */
+	
+	static class HomeHandler implements HttpHandler {
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling home page...");
+			
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				Headers headers = t.getRequestHeaders();
+				String username = headers.getFirst("Username");
+				
+				User user = DBTools.findUser(username);
+				
+				JSONObject responseJSON = new JSONObject();
+				
+				responseJSON.put("User-Score", user.getTotalRunningScore());
+				responseJSON.put("Today-Score-So-Far", user.getTodayScoreSoFar());
+				// TODO: change value for Today-Score-So-Far if we incorporate more advanced scoring algorithm
+				
+				String response = responseJSON.toString(JSON_INDENT);
+				t.sendResponseHeaders(200, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else if (requestMethod.equals("POST")) {
+				
+			} else {
+				
+			}
+			
+			System.out.println("handled home page");
+		}
+	}
+	
+	/* * */
+	
 	static class RegisterHandler implements HttpHandler {
 
 		@Override
@@ -271,6 +319,8 @@ public class Server {
 		
 	}
 	
+	/* * */
+	
 	static class DayViewHandler implements HttpHandler {
 
 		@Override
@@ -283,14 +333,14 @@ public class Server {
 				String username = headers.getFirst("Username");
 				Date date = CreateLookupDate.getInstance(headers.getFirst("Date"));
 				
-				JSONArray dailyItemsJSON = buildDailyItemsJSON(username, date, false);
-				
-				User existingUser = DBTools.findUser(username);
-				
-				int dailyScore = existingUser == null ? -1 : existingUser.getSchedule().computeDailyScore(date);
-				
 				JSONObject responseJSON = new JSONObject();
+				
+				User user = DBTools.findUser(username);
+				
+				JSONArray dailyItemsJSON = user == null ? new JSONArray() : buildDailyItemsJSON(user, date, false);
 				responseJSON.put("Daily-Items", dailyItemsJSON);
+				
+				int dailyScore = user == null ? -1 : user.getSchedule().computeDailyScore(date);
 				responseJSON.put("Daily-Score", dailyScore);
 				
 				String response = responseJSON.toString(JSON_INDENT);
@@ -457,6 +507,7 @@ public class Server {
 				JSONObject responseJSON = new JSONObject();
 				
 				User user = DBTools.findUser(username);
+				
 				ArrayList<Date> datesOfMonth = user.getSchedule().getDatesOfMonthInDailyScores(username, year, month);
 				ArrayList<Integer> scores = new ArrayList<>();
 				ArrayList<ProgressColor> colors = new ArrayList<>();
@@ -508,9 +559,12 @@ public class Server {
 				String username = headers.getFirst("Username");
 				Date date = CreateLookupDate.getInstance(DateAndCalendar.newDateGMT());
 				
-				JSONArray dailyItemsCheckInJSON = buildDailyItemsJSON(username, date, true);
-				
 				JSONObject responseJSON = new JSONObject();
+				
+				User user = DBTools.findUser(username);
+				
+				JSONArray dailyItemsCheckInJSON = user == null ? new JSONArray() : buildDailyItemsJSON(user, date, true);
+				
 				responseJSON.put("Daily-Items", dailyItemsCheckInJSON);
 				
 				String response = responseJSON.toString(JSON_INDENT);
@@ -549,6 +603,7 @@ public class Server {
 				double progress = requestJSON.getDouble("Progress");
 				
 				User user = DBTools.findUser(username);
+				
 				user.getSchedule().getItemForDate(date, id).checkIn(progress);
 				
 				// TODO: incorporate community stuff
@@ -608,23 +663,160 @@ public class Server {
 		
 	}
 	
-	static class HomeHandler implements HttpHandler {
+	/* * */
+	
+//	static class HomeHandler implements HttpHandler {
+//		@Override
+//		public void handle(HttpExchange t) throws IOException {
+//			System.out.println("handling home page...");
+//			
+//			String requestMethod = t.getRequestMethod();
+//			if (requestMethod.equals("GET")) {
+//				Headers headers = t.getRequestHeaders();
+//				String username = headers.getFirst("Username");
+//				
+//				User user = DBTools.findUser(username);
+//				
+//				JSONObject responseJSON = new JSONObject();
+//				Date today = user.getSchedule().getLastDayChecked();
+//				responseJSON.put("User-Score", user.getTotalRunningScore());
+//				responseJSON.put("Today-Score-So-Far", user.getSchedule().computeDailyScore(today));
+//				// TODO: change value for Today-Score-So-Far if we incorporate more advanced scoring algorithm
+//				
+//				String response = responseJSON.toString(JSON_INDENT);
+//				t.sendResponseHeaders(200, response.getBytes().length);
+//	            OutputStream os = t.getResponseBody();
+//	            os.write(response.getBytes());
+//	            os.close();
+//			} else if (requestMethod.equals("POST")) {
+//				
+//			} else {
+//				
+//			}
+//			
+//			System.out.println("handled home page");
+//		}
+//	}
+	
+	static class CommunityHomeHandler implements HttpHandler {
+
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-			System.out.println("handling home page...");
-			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				Headers headers = t.getRequestHeaders();
 				String username = headers.getFirst("Username");
 				
-				User user = DBTools.findUser(username);
-				
 				JSONObject responseJSON = new JSONObject();
-				Date today = user.getSchedule().getLastDayChecked();
-				responseJSON.put("User-Score", user.getTotalRunningScore());
-				responseJSON.put("Today-Score-So-Far", user.getSchedule().computeDailyScore(today));
-				// TODO: change value for Today-Score-So-Far if we incorporate more advanced scoring algorithm
+				
+				User user = DBTools.findUser(username);
+				Team team = user.inTeam() ? DBTools.findTeam(user.getTeamId()) : null;
+				Competition competition = team.hasCompetition() ?
+															DBTools.findCompetition(team.getCompetitionId()) : null;
+				
+				responseJSON.put("In-Team", user.inTeam());
+				
+				JSONArray teamInvitationsJSON = new JSONArray();
+				for (TeamInvitation teamInvitation : user.getTeamInvitations()) {
+					JSONObject teamInvitationJSON = new JSONObject();
+					teamInvitationJSON.put("Team-Name", teamInvitation.getTeamName());
+					teamInvitationJSON.put("Team-ID", teamInvitation.getTeamId());
+					teamInvitationJSON.put("Team-Leader", teamInvitation.getTeamLeaderUsername());
+					teamInvitationJSON.put("Team-Created",
+							DateFormat.getFormattedString(teamInvitation.getTeamCreated(),
+																						ModelTools.DATE_TIME_FORMAT));
+					
+					teamInvitationsJSON.put(teamInvitationJSON);
+				}
+				responseJSON.put("Invitations", teamInvitationsJSON);
+				
+				JSONObject teamJSON = new JSONObject();
+				if (team != null) {
+					teamJSON.put("Is-Leader", team.getLeaderUsername().equals(username));
+					teamJSON.put("Team-Name", team.getTeamName());
+					teamJSON.put("Team-ID", team.getTeamId());
+					teamJSON.put("Max-Team-Size", team.getMaxTeamSize());
+					teamJSON.put("Team-Size", team.getTeamSize());
+					
+					JSONArray teamMembersJSON = new JSONArray();
+					for (String memberUsername : team.getMemberUsernames()) {
+						JSONObject teamMemberJSON = new JSONObject();
+						
+						User teamMember = DBTools.findUser(memberUsername);
+						
+						teamMemberJSON.put("Username", teamMember.getUsername());
+						teamMemberJSON.put("User-Score", teamMember.getTotalRunningScore());
+						teamMemberJSON.put("Today-Score-So-Far", teamMember.getTodayScoreSoFar());
+						teamMemberJSON.put("In-Team-Since",
+								DateFormat.getFormattedString(team.getInTeamSinceForMemberUsername(memberUsername),
+																						ModelTools.DATE_TIME_FORMAT));
+						teamMemberJSON.put("Is-Leader", team.getLeaderUsername().equals(memberUsername));
+						
+						teamMembersJSON.put(teamMemberJSON);
+					}
+					teamJSON.put("Team-Members", teamMembersJSON);
+					
+					JSONArray usersInvitedJSON = new JSONArray();
+					for (String usernameInvited : team.getUsersInvited()) {
+						JSONObject userInvitedJSON = new JSONObject();
+						userInvitedJSON.put("Username", usernameInvited);
+						
+						usersInvitedJSON.put(userInvitedJSON);
+					}
+					teamJSON.put("Users-Invited", usersInvitedJSON);
+					
+					JSONArray teamHistoriesJSON = new JSONArray();
+					for (CompetitionHistory competitionHistory : team.getCompetitionHistories()) {
+						JSONObject teamHistoryJSON = new JSONObject();
+						teamHistoryJSON.put("Competition-Name", competitionHistory.getCompetitionName());
+						teamHistoryJSON.put("Competition-Result", competitionHistory.getCompetitionResult().toString());
+						
+						JSONObject statsJSON = new JSONObject();
+						statsJSON.put("Team-Red-Name", competitionHistory.getTeamName(CompetitionTeamColor.RED));
+						statsJSON.put("Team-Red-Score", competitionHistory.getTeamScore(CompetitionTeamColor.RED));
+						statsJSON.put("Team-Red-Left", competitionHistory.getTeamLeft(CompetitionTeamColor.RED));
+						statsJSON.put("Team-Blue-Name", competitionHistory.getTeamName(CompetitionTeamColor.BLUE));
+						statsJSON.put("Team-Blue-Score", competitionHistory.getTeamScore(CompetitionTeamColor.BLUE));
+						statsJSON.put("Team-Blue-Left", competitionHistory.getTeamLeft(CompetitionTeamColor.BLUE));
+						teamHistoryJSON.put("Stats", statsJSON);
+						
+						teamHistoryJSON.put("Competition-Start-Date",
+								DateFormat.getFormattedString(competitionHistory.getCompetitionStartDate(),
+																						ModelTools.DATE_FORMAT));
+						teamHistoryJSON.put("Competition-End-Date",
+								DateFormat.getFormattedString(competitionHistory.getCompetitionEndDate(),
+																						ModelTools.DATE_FORMAT));
+						
+						teamHistoriesJSON.put(teamHistoryJSON);
+					}
+					teamJSON.put("Team-History", teamHistoriesJSON);
+					
+					teamJSON.put("Competition-Status",
+							competition != null ? (competition.getStatus() ? "active" : "pending") : "none");
+					teamJSON.put("Competition-ID", competition != null ? competition.getCompetitionId() : -1);
+					
+					JSONArray competitionInvitationsJSON = new JSONArray();
+					for (CompetitionInvitation competitionInvitation : team.getCompetitionInvitations()) {
+						JSONObject competitionInvitationJSON = new JSONObject();
+						competitionInvitationJSON.put("Competition-Name", competitionInvitation.getCompetitionName());
+						competitionInvitationJSON.put("Competition-ID", competitionInvitation.getCompetitionId());
+						competitionInvitationJSON.put("Competition-Start-Date",
+								DateFormat.getFormattedString(competitionInvitation.getCompetitionStartDate(),
+																							ModelTools.DATE_FORMAT));
+						competitionInvitationJSON.put("Competition-End-Date",
+								DateFormat.getFormattedString(competitionInvitation.getCompetitionEndDate(),
+																							ModelTools.DATE_FORMAT));
+						competitionInvitationJSON.put("Other-Team-Name", competitionInvitation.getOtherTeamName());
+						competitionInvitationJSON.put("Other-Team-Leader",
+																competitionInvitation.getOtherTeamLeaderUsername());
+						competitionInvitationJSON.put("Other-Team-Color",
+																competitionInvitation.getOtherTeamColor().toString());
+						
+						competitionInvitationsJSON.put(competitionInvitationJSON);
+					}
+					teamJSON.put("Competition-Invitations", competitionInvitationsJSON);
+				}
+				responseJSON.put("Team", teamJSON);
 				
 				String response = responseJSON.toString(JSON_INDENT);
 				t.sendResponseHeaders(200, response.getBytes().length);
@@ -636,9 +828,308 @@ public class Server {
 			} else {
 				
 			}
-			
-			System.out.println("handled home page");
 		}
+		
+	}
+	
+	static class CreateTeamHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				
+			} else if (requestMethod.equals("POST")) {
+				Headers headers = t.getRequestHeaders();
+				String foo = headers.getFirst("Foo");
+				
+				// to do
+				
+				String response = "";
+				t.sendResponseHeaders(200, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else {
+				
+			}
+		}
+		
+	}
+	
+	static class RemoveTeamHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				
+			} else if (requestMethod.equals("POST")) {
+				Headers headers = t.getRequestHeaders();
+				String foo = headers.getFirst("Foo");
+				
+				// to do
+				
+				String response = "";
+				t.sendResponseHeaders(200, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else {
+				
+			}
+		}
+		
+	}
+	
+	static class InviteMemberHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				
+			} else if (requestMethod.equals("POST")) {
+				Headers headers = t.getRequestHeaders();
+				String foo = headers.getFirst("Foo");
+				
+				// to do
+				
+				String response = "";
+				t.sendResponseHeaders(200, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else {
+				
+			}
+		}
+		
+	}
+	
+	static class JoinTeamHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				
+			} else if (requestMethod.equals("POST")) {
+				Headers headers = t.getRequestHeaders();
+				String foo = headers.getFirst("Foo");
+				
+				// to do
+				
+				String response = "";
+				t.sendResponseHeaders(200, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else {
+				
+			}
+		}
+		
+	}
+	
+	static class DeclineTeamInviteHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				
+			} else if (requestMethod.equals("POST")) {
+				Headers headers = t.getRequestHeaders();
+				String foo = headers.getFirst("Foo");
+				
+				// to do
+				
+				String response = "";
+				t.sendResponseHeaders(200, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else {
+				
+			}
+		}
+		
+	}
+	
+	static class KickOutMemberHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				
+			} else if (requestMethod.equals("POST")) {
+				Headers headers = t.getRequestHeaders();
+				String foo = headers.getFirst("Foo");
+				
+				// to do
+				
+				String response = "";
+				t.sendResponseHeaders(200, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else {
+				
+			}
+		}
+		
+	}
+	
+	static class CreateCompetitionHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				
+			} else if (requestMethod.equals("POST")) {
+				Headers headers = t.getRequestHeaders();
+				String foo = headers.getFirst("Foo");
+				
+				// to do
+				
+				String response = "";
+				t.sendResponseHeaders(200, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else {
+				
+			}
+		}
+		
+	}
+	
+	static class CancelCompetitionHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				
+			} else if (requestMethod.equals("POST")) {
+				Headers headers = t.getRequestHeaders();
+				String foo = headers.getFirst("Foo");
+				
+				// to do
+				
+				String response = "";
+				t.sendResponseHeaders(200, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else {
+				
+			}
+		}
+		
+	}
+	
+	static class ViewCompetitionHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				
+			} else if (requestMethod.equals("POST")) {
+				Headers headers = t.getRequestHeaders();
+				String foo = headers.getFirst("Foo");
+				
+				// to do
+				
+				String response = "";
+				t.sendResponseHeaders(200, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else {
+				
+			}
+		}
+		
+	}
+	
+	static class JoinCompetitionHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				
+			} else if (requestMethod.equals("POST")) {
+				Headers headers = t.getRequestHeaders();
+				String foo = headers.getFirst("Foo");
+				
+				// to do
+				
+				String response = "";
+				t.sendResponseHeaders(200, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else {
+				
+			}
+		}
+		
+	}
+	
+	static class DeclineCompetitionInviteHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				
+			} else if (requestMethod.equals("POST")) {
+				Headers headers = t.getRequestHeaders();
+				String foo = headers.getFirst("Foo");
+				
+				// to do
+				
+				String response = "";
+				t.sendResponseHeaders(200, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else {
+				
+			}
+		}
+		
+	}
+	
+	static class LeaveCompetitionHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				
+			} else if (requestMethod.equals("POST")) {
+				Headers headers = t.getRequestHeaders();
+				String foo = headers.getFirst("Foo");
+				
+				// to do
+				
+				String response = "";
+				t.sendResponseHeaders(200, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else {
+				
+			}
+		}
+		
 	}
 	
 }

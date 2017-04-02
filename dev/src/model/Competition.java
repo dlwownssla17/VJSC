@@ -1,6 +1,8 @@
 package model;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Set;
 
 import util.CreateLookupDate;
 
@@ -10,15 +12,18 @@ public class Competition {
 	
 	private Date competitionStartDate, competitionEndDate;
 	
-	private Team teamRed, teamBlue;
-	private int teamRedScore, teamBlueScore;
+	private long teamRedId, teamBlueId;
+	private String teamRedName, teamBlueName;
+	private String teamRedLeaderUsername, teamBlueLeaderUsername;
+	private HashMap<String, Integer> teamRedScores, teamBlueScores;
 	private boolean teamRedLeft, teamBlueLeft;
 	
 	private boolean showTeamMembers;
 	private boolean status; // true - active, false - pending
 	
 	public Competition(String competitionName, long competitionId, Date competitionStartDate, Date competitionEndDate,
-			Team teamRed, Team teamBlue, boolean showTeamMembers) {
+			long teamRedId, long teamBlueId, String teamRedName, String teamBlueName,
+			String teamRedLeaderUsername, String teamBlueLeaderUsername, boolean showTeamMembers) {
 		this.competitionName = competitionName;
 		this.competitionId = competitionId;
 		
@@ -28,16 +33,26 @@ public class Competition {
 		this.competitionStartDate = competitionStartDate;
 		this.competitionEndDate = competitionEndDate;
 		
-		if (teamRed.equals(teamBlue)) throw new IllegalArgumentException("Teams must be different.");
-		this.teamRed = teamRed;
-		this.teamBlue = teamBlue;
-		this.teamRedScore = 0;
-		this.teamBlueScore = 0;
+		if (teamRedId == teamBlueId) throw new IllegalArgumentException("Teams must be different.");
+		this.teamRedId = teamRedId;
+		this.teamBlueId = teamBlueId;
+		this.teamRedName = teamRedName;
+		this.teamBlueName = teamBlueName;
+		this.teamRedLeaderUsername = teamRedLeaderUsername;
+		this.teamBlueLeaderUsername = teamBlueLeaderUsername;
+		this.teamRedScores = new HashMap<>();
+		this.teamBlueScores = new HashMap<>();
 		this.teamRedLeft = false;
 		this.teamBlueLeft = false;
 		
 		this.showTeamMembers = showTeamMembers;
 		this.status = false;
+	}
+	
+	@Override
+	public boolean equals(Object otherCompetition) {
+		return otherCompetition instanceof Competition &&
+				this.competitionId == ((Competition) otherCompetition).getCompetitionId();
 	}
 	
 	public String getCompetitionName() {
@@ -76,68 +91,241 @@ public class Competition {
 		return this.competitionEndDate;
 	}
 	
-	public Team getTeamRed() {
-		return this.teamRed;
+	public long getTeamId(CompetitionTeamColor color) {
+		switch(color) {
+			case RED:
+				return this.teamRedId;
+			case BLUE:
+				return this.teamBlueId;
+			default:
+				return -1;
+		}
 	}
 	
-	public Team setTeamRed(Team teamRed) {
-		this.teamRed = teamRed;
-		return this.teamRed;
+	public long setTeamId(CompetitionTeamColor color, long teamId) {
+		switch(color) {
+			case RED:
+				this.teamRedId = teamId;
+				return this.teamRedId;
+			case BLUE:
+				this.teamBlueId = teamId;
+				return this.teamBlueId;
+			default:
+				return -1;
+		}
 	}
 	
-	public Team getTeamBlue() {
-		return this.teamBlue;
+	public String getTeamName(CompetitionTeamColor color) {
+		switch(color) {
+			case RED:
+				return this.teamRedName;
+			case BLUE:
+				return this.teamBlueName;
+			default:
+				return null;
+		}
 	}
 	
-	public Team setTeamBlue(Team teamBlue) {
-		this.teamBlue = teamBlue;
-		return this.teamBlue;
+	public String setTeamName(CompetitionTeamColor color, String teamName) {
+		switch(color) {
+			case RED:
+				this.teamRedName = teamName;
+				return this.teamRedName;
+			case BLUE:
+				this.teamBlueName = teamName;
+				return this.teamBlueName;
+			default:
+				return null;
+		}
 	}
 	
-	synchronized public int getTeamRedScore() {
-		return this.teamRedScore;
+	public String getTeamLeaderUsername(CompetitionTeamColor color) {
+		switch(color) {
+			case RED:
+				return this.teamRedLeaderUsername;
+			case BLUE:
+				return this.teamBlueLeaderUsername;
+			default:
+				return null;
+		}
 	}
 	
-	synchronized public int setTeamRedScore(int teamRedScore) {
-		this.teamRedScore = teamRedScore;
-		return this.teamRedScore;
+	public String setTeamLeaderUsername(CompetitionTeamColor color, String teamLeaderUsername) {
+		switch(color) {
+			case RED:
+				this.teamRedLeaderUsername = teamLeaderUsername;
+				return this.teamRedLeaderUsername;
+			case BLUE:
+				this.teamBlueLeaderUsername = teamLeaderUsername;
+				return this.teamBlueLeaderUsername;
+			default:
+				return null;
+		}
 	}
 	
-	synchronized public int addTeamRedScore(int teamRedScoreToAdd) {
-		this.teamRedScore += teamRedScoreToAdd;
-		return this.teamRedScore;
+	synchronized public HashMap<String, Integer> getTeamScores(CompetitionTeamColor color) {
+		switch(color) {
+			case RED:
+				return this.teamRedScores;
+			case BLUE:
+				return this.teamBlueScores;
+			default:
+				return null;
+		}
 	}
 	
-	synchronized public int getTeamBlueScore() {
-		return this.teamBlueScore;
+	synchronized public HashMap<String, Integer> setTeamScores(CompetitionTeamColor color,
+																		HashMap<String, Integer> teamScores) {
+		switch(color) {
+			case RED:
+				this.teamRedScores = teamScores;
+				return this.teamRedScores;
+			case BLUE:
+				this.teamBlueScores = teamScores;
+				return this.teamBlueScores;
+			default:
+				return null;
+		}
 	}
 	
-	synchronized public int setTeamBlueScore(int teamBlueScore) {
-		this.teamBlueScore = teamBlueScore;
-		return this.teamBlueScore;
+	synchronized public Set<String> getTeamMembers(CompetitionTeamColor color) {
+		switch(color) {
+			case RED:
+				return this.teamRedScores.keySet();
+			case BLUE:
+				return this.teamBlueScores.keySet();
+			default:
+				return null;
+		}
 	}
 	
-	synchronized public int addTeamBlueScore(int teamBlueScoreToAdd) {
-		this.teamBlueScore += teamBlueScoreToAdd;
-		return this.teamBlueScore;
+	synchronized public boolean hasTeamMemberScore(CompetitionTeamColor color, String memberUsername) {
+		switch(color) {
+			case RED:
+				return this.teamRedScores.containsKey(memberUsername);
+			case BLUE:
+				return this.teamBlueScores.containsKey(memberUsername);
+			default:
+				return false;
+		}
 	}
 	
-	public boolean getTeamRedLeft() {
-		return this.teamRedLeft;
+	synchronized public int createTeamMemberScore(CompetitionTeamColor color, String memberUsername) {
+		HashMap<String, Integer> teamScores = null;
+		switch(color) {
+			case RED:
+				teamScores = this.teamRedScores;
+				break;
+			case BLUE:
+				teamScores = this.teamBlueScores;
+				break;
+			default:
+				return -1;
+		}
+		if (teamScores.get(memberUsername) == null) teamScores.put(memberUsername, 0);
+		return teamScores.get(memberUsername);
 	}
 	
-	public boolean setTeamRedLeft(boolean teamRedLeft) {
-		this.teamRedLeft = teamRedLeft;
-		return this.teamRedLeft;
+	synchronized public int getTeamMemberScore(CompetitionTeamColor color, String memberUsername) {
+		HashMap<String, Integer> teamScores = null;
+		switch(color) {
+			case RED:
+				teamScores = this.teamRedScores;
+				break;
+			case BLUE:
+				teamScores = this.teamBlueScores;
+				break;
+			default:
+				return -1;
+		}
+		return teamScores.get(memberUsername) == null ? teamScores.get(memberUsername) : -1;
 	}
 	
-	public boolean getTeamBlueLeft() {
-		return this.teamBlueLeft;
+	synchronized public int setTeamMemberScore(CompetitionTeamColor color, String memberUsername, int score) {
+		HashMap<String, Integer> teamScores = null;
+		switch(color) {
+			case RED:
+				teamScores = this.teamRedScores;
+				break;
+			case BLUE:
+				teamScores = this.teamBlueScores;
+				break;
+			default:
+				return -1;
+		}
+		teamScores.put(memberUsername, score);
+		return score;
 	}
 	
-	public boolean setTeamBlueLeft(boolean teamBlueLeft) {
-		this.teamBlueLeft = teamBlueLeft;
-		return this.teamBlueLeft;
+	synchronized public int addTeamMemberScore(CompetitionTeamColor color, String memberUsername, int scoreAdded) {
+		HashMap<String, Integer> teamScores = null;
+		switch(color) {
+			case RED:
+				teamScores = this.teamRedScores;
+				break;
+			case BLUE:
+				teamScores = this.teamBlueScores;
+				break;
+			default:
+				return -1;
+		}
+		int newScore = teamScores.get(memberUsername) + scoreAdded;
+		teamScores.put(memberUsername, newScore);
+		return newScore;
+	}
+	
+	synchronized public int removeTeamMemberScore(CompetitionTeamColor color, String memberUsername) {
+		switch(color) {
+			case RED:
+				return this.teamRedScores.remove(memberUsername);
+			case BLUE:
+				return this.teamBlueScores.remove(memberUsername);
+			default:
+				return -1;
+		}
+	}
+	
+	synchronized public int getTeamTotalScore(CompetitionTeamColor color) {
+		HashMap<String, Integer> teamScores = null;
+		switch(color) {
+			case RED:
+				teamScores = this.teamRedScores;
+				break;
+			case BLUE:
+				teamScores = this.teamBlueScores;
+				break;
+			default:
+				return -1;
+		}
+		int sum = 0;
+		for (String memberUsername : teamScores.keySet()) {
+			sum += teamScores.get(memberUsername);
+		}
+		return sum;
+	}
+	
+	public boolean getTeamLeft(CompetitionTeamColor color) {
+		switch(color) {
+			case RED:
+				return this.teamRedLeft;
+			case BLUE:
+				return this.teamBlueLeft;
+			default:
+				return false;
+		}
+	}
+	
+	public boolean setTeamLeft(CompetitionTeamColor color, boolean teamLeft) {
+		switch(color) {
+			case RED:
+				this.teamRedLeft = teamLeft;
+				return this.teamRedLeft;
+			case BLUE:
+				this.teamBlueLeft = teamLeft;
+				return this.teamBlueLeft;
+			default:
+				return false;
+		}
 	}
 	
 	public boolean getShowTeamMembers() {
@@ -158,24 +346,28 @@ public class Competition {
 		return this.status;
 	}
 	
-	public CompetitionInvitation toCompetitionInvitation(Team team) {
-		if (!(this.teamRed.equals(team) || this.teamBlue.equals(team)))
+	public CompetitionInvitation toCompetitionInvitation(long teamId) {
+		if (!(this.teamRedId == teamId || this.teamBlueId == teamId))
 			throw new IllegalArgumentException("Invalid team.");
-		return new CompetitionInvitation(this.competitionName, this.competitionId, this.competitionStartDate,
-				this.competitionEndDate, team.getTeamName(), team.getLeader().getUsername(),
-				this.teamRed.equals(team) ? CompetitionTeamColor.RED : CompetitionTeamColor.BLUE);
+		return new CompetitionInvitation(this.competitionName, this.competitionId,
+				this.competitionStartDate, this.competitionEndDate,
+				this.teamRedId == teamId ? this.teamRedName : this.teamBlueName,
+				this.teamRedId == teamId ? this.teamRedLeaderUsername : this.teamBlueLeaderUsername,
+				this.teamRedId == teamId ? CompetitionTeamColor.RED : CompetitionTeamColor.BLUE);
 	}
 	
-	public CompetitionHistory toCompetitionHistory(Team team) {
-		if (!(this.teamRed.equals(team) || this.teamBlue.equals(team)))
+	public CompetitionHistory toCompetitionHistory(long teamId) {
+		if (!(this.teamRedId == teamId || this.teamBlueId == teamId))
 			throw new IllegalArgumentException("Invalid team.");
-		int redBlueDiff = this.teamRedScore - this.teamBlueScore;
+		int teamRedTotalScore = this.getTeamTotalScore(CompetitionTeamColor.RED);
+		int teamBlueTotalScore = this.getTeamTotalScore(CompetitionTeamColor.BLUE);
+		int redBlueDiff = teamRedTotalScore - teamBlueTotalScore;
 		CompetitionResult competitionResult = redBlueDiff == 0 ? CompetitionResult.TIED :
-					this.teamRed.equals(team) ? (redBlueDiff > 0 ? CompetitionResult.WON : CompetitionResult.LOST) :
+					this.teamRedId == teamId ? (redBlueDiff > 0 ? CompetitionResult.WON : CompetitionResult.LOST) :
 												(redBlueDiff > 0 ? CompetitionResult.LOST : CompetitionResult.WON);
 					
 		return new CompetitionHistory(this.competitionName, this.competitionId, competitionResult,
-				this.teamRed.getTeamName(), this.teamBlue.getTeamName(), this.teamRedScore, this.teamBlueScore,
+				this.teamRedName, this.teamBlueName, teamRedTotalScore, teamBlueTotalScore,
 				this.teamRedLeft, this.teamBlueLeft, this.competitionStartDate, this.competitionEndDate);
 	}
 }

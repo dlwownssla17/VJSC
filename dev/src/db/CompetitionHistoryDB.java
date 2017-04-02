@@ -4,6 +4,7 @@ import org.bson.Document;
 
 import model.CompetitionHistory;
 import model.CompetitionResult;
+import model.CompetitionTeamColor;
 import model.ModelTools;
 import util.DateFormat;
 
@@ -14,12 +15,12 @@ public class CompetitionHistoryDB implements DB<CompetitionHistory> {
 		return new Document("competition-name", competitionHistory.getCompetitionName())
 					.append("competition-id", competitionHistory.getCompetitionId())
 					.append("competition-result", competitionHistory.getCompetitionResult().toString())
-					.append("team-red-name", competitionHistory.getTeamRedName())
-					.append("team-blue-name", competitionHistory.getTeamBlueName())
-					.append("team-red-score", competitionHistory.getTeamRedScore())
-					.append("team-blue-score", competitionHistory.getTeamBlueScore())
-					.append("team-red-left", competitionHistory.getTeamRedLeft())
-					.append("team-blue-left", competitionHistory.getTeamBlueLeft())
+					.append("team-red-name", competitionHistory.getTeamName(CompetitionTeamColor.RED))
+					.append("team-blue-name", competitionHistory.getTeamName(CompetitionTeamColor.BLUE))
+					.append("team-red-score", competitionHistory.getTeamScore(CompetitionTeamColor.RED))
+					.append("team-blue-score", competitionHistory.getTeamScore(CompetitionTeamColor.BLUE))
+					.append("team-red-left", competitionHistory.getTeamLeft(CompetitionTeamColor.RED))
+					.append("team-blue-left", competitionHistory.getTeamLeft(CompetitionTeamColor.BLUE))
 					.append("competition-start-date",
 							DateFormat.getFormattedString(competitionHistory.getCompetitionStartDate(),
 																					ModelTools.DATE_FORMAT))

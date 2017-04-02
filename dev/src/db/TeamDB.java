@@ -3,6 +3,7 @@ package db;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.bson.Document;
 
@@ -10,7 +11,6 @@ import model.CompetitionHistory;
 import model.CompetitionInvitation;
 import model.ModelTools;
 import model.Team;
-import model.User;
 import util.DateFormat;
 
 public class TeamDB implements DB<Team> {
@@ -22,20 +22,24 @@ public class TeamDB implements DB<Team> {
 					.append("team-created",
 							DateFormat.getFormattedString(team.getTeamCreated(), ModelTools.DATE_TIME_FORMAT))
 					.append("max-team-size", team.getMaxTeamSize())
-					.append("leader-username", team.getLeader().getUsername())
-					.append("members", this.membersToDocument(team))
-					.append("competition-id", team.hasCompetition() ? team.getCompetition().getCompetitionId() : -1)
+					.append("leader-username", team.getLeaderUsername())
+					.append("member-usernames", this.memberUsernamesToDocument(team))
+					.append("users-invited", this.usersInvitedToDocument(team))
+					.append("competition-id", team.getCompetitionId())
 					.append("competition-invitations", this.competitionInvitationsToDocument(team))
 					.append("competition-histories", this.competitionHistoriesToDocument(team));
 	}
 
 	@Override
 	public Team fromDocument(Document document) {
-		// need to set leader, members, inTeamSince, and competition
-		Team team = new Team(document.getLong("team-id"), document.getString("team-name"), null,
-																			document.getInteger("max-team-size"));
+		Team team = new Team(document.getLong("team-id"), document.getString("team-name"),
+				document.getString("leader-username"), document.getInteger("max-team-size"));
 		
 		team.setTeamCreated(DateFormat.getDate(document.getString("team-created"), ModelTools.DATE_TIME_FORMAT));
+		team.setMemberUsernames(this.memberUsernamesFromDocument(document));
+		team.setInTeamSince(this.inTeamSinceFromDocument(document));
+		team.setUsersInvited(this.usersInvitedFromDocument(document));
+		team.setCompetitionId(document.getLong("competition-id"));
 		team.setCompetitionInvitations(this.competitionInvitationsFromDocument(document));
 		team.setCompetitionHistories(this.competitionHistoriesFromDocument(document));
 		
@@ -44,15 +48,52 @@ public class TeamDB implements DB<Team> {
 	
 	/* * */
 	
-	public Document membersToDocument(Team team) {
-		Document membersDocument = new Document();
-		for (User member : team.getMembers()) {
-			membersDocument.append(member.getUsername(),
-					new Document("username", member.getUsername())
-						.append("in-team-since", DateFormat.getFormattedString(team.getInTeamSinceForMember(member),
+	public Document memberUsernamesToDocument(Team team) {
+		Document memberUsernamesDocument = new Document();
+		for (String memberUsername : team.getMemberUsernames()) {
+			memberUsernamesDocument.append(memberUsername,
+					new Document("username", memberUsername)
+						.append("in-team-since",
+								DateFormat.getFormattedString(team.getInTeamSinceForMemberUsername(memberUsername),
 																						ModelTools.DATE_TIME_FORMAT)));
 		}
-		return membersDocument;
+		return memberUsernamesDocument;
+	}
+	
+	public ArrayList<String> memberUsernamesFromDocument(Document document) {
+		ArrayList<String> memberUsernames = new ArrayList<>();
+		Document memberUsernamesDocument = document.get("member-usernames", Document.class);
+		for (String memberUsername : memberUsernamesDocument.keySet()) {
+			memberUsernames.add(memberUsername);
+		}
+		return memberUsernames;
+	}
+	
+	public HashMap<String, Date> inTeamSinceFromDocument(Document document) {
+		HashMap<String, Date> inTeamSince = new HashMap<>();
+		Document memberUsernamesDocument = document.get("member-usernames", Document.class);
+		for (String memberUsername : memberUsernamesDocument.keySet()) {
+			inTeamSince.put(memberUsername, DateFormat.getDate(memberUsernamesDocument.getString(memberUsername),
+																						ModelTools.DATE_TIME_FORMAT));
+		}
+		return inTeamSince;
+	}
+	
+	public Document usersInvitedToDocument(Team team) {
+		Document usersInvitedDocument = new Document();
+		for (String usernameInvited : team.getUsersInvited()) {
+			usersInvitedDocument.append(usernameInvited, true);
+		}
+		return usersInvitedDocument;
+	}
+	
+	public HashSet<String> usersInvitedFromDocument(Document document) {
+		HashSet<String> usersInvited = new HashSet<>();
+		Document usersInvitedDocument = document.get("users-invited", Document.class);
+		for (String usernameInvited : usersInvitedDocument.keySet()) {
+			usersInvited.add(usernameInvited);
+		}
+		return usersInvited;
 	}
 	
 	public Document competitionInvitationsToDocument(Team team) {
@@ -93,36 +134,5 @@ public class TeamDB implements DB<Team> {
 			competitionHistories.add(DBTools.competitionHistoryDB.fromDocument(competitionHistoryDocument));
 		}
 		return competitionHistories;
-	}
-	
-	/* * */
-	
-	public String getLeaderUsernameFromDocument(Document document) {
-		return document.getString("leader-username");
-	}
-	
-	public ArrayList<String> getMemberUsernamesFromDocument(Document document) {
-		ArrayList<String> memberUsernames = new ArrayList<>();
-		Document membersDocument = document.get("members", Document.class);
-		for (String memberUsername : membersDocument.keySet()) {
-			memberUsernames.add(memberUsername);
-		}
-		return memberUsernames;
-	}
-
-	public HashMap<String, Date> getMemberUsernamesInTeamSinceFromDocument(Document document) {
-		HashMap<String, Date> memberUsernamesInTeamSince = new HashMap<>();
-		Document membersDocument = document.get("members", Document.class);
-		for (String memberUsername : membersDocument.keySet()) {
-			Document memberInTeamSinceDocument = membersDocument.get(memberUsername, Document.class);
-			memberUsernamesInTeamSince.put(memberUsername,
-					DateFormat.getDate(memberInTeamSinceDocument.getString("in-team-since"),
-																					ModelTools.DATE_TIME_FORMAT));
-		}
-		return memberUsernamesInTeamSince;
-	}
-	
-	public long getCompetitionIdFromDocument(Document document) {
-		return document.getLong("competition-id");
 	}
 }
