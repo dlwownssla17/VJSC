@@ -31,21 +31,23 @@ public class CompetitionHistoryDB implements DB<CompetitionHistory> {
 
 	@Override
 	public CompetitionHistory fromDocument(Document document) {
-		CompetitionResult competitionResult = null;
-		String competitionResultString = document.getString("competition-result");
-		for (CompetitionResult res : CompetitionResult.values()) {
-			if (res.toString().equals(competitionResultString)) {
-				competitionResult = res;
-				break;
-			}
-		}
-		
-		return new CompetitionHistory(document.getString("competition-name"), document.getLong("competition-id"),
-				competitionResult, document.getString("team-red-name"), document.getString("team-blue-name"),
+		return new CompetitionHistory(document.getString("competition-name"),
+				document.getLong("competition-id"), this.competitionResultFromDocument(document),
+				document.getString("team-red-name"), document.getString("team-blue-name"),
 				document.getInteger("team-red-score"), document.getInteger("team-blue-score"),
 				document.getBoolean("team-red-left"), document.getBoolean("team-blue-left"),
 				DateFormat.getDate(document.getString("competition-start-date"), ModelTools.DATE_FORMAT),
 				DateFormat.getDate(document.getString("competition-end-date"), ModelTools.DATE_FORMAT));
+	}
+	
+	/* * */
+	
+	public CompetitionResult competitionResultFromDocument(Document document) {
+		String competitionResultString = document.getString("competition-result");
+		for (CompetitionResult competitionResult : CompetitionResult.values()) {
+			if (competitionResult.toString().equals(competitionResultString)) return competitionResult;
+		}
+		return null;
 	}
 
 }

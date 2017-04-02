@@ -26,19 +26,21 @@ public class CompetitionInvitationDB implements DB<CompetitionInvitation> {
 
 	@Override
 	public CompetitionInvitation fromDocument(Document document) {
-		CompetitionTeamColor otherTeamColor = null;
-		String otherTeamColorString = document.getString("other-team-color");
-		for (CompetitionTeamColor color : CompetitionTeamColor.values()) {
-			if (otherTeamColorString.equals(color.toString())) {
-				otherTeamColor = color;
-				break;
-			}
-		}
-		
 		return new CompetitionInvitation(document.getString("competition-name"), document.getLong("competition-id"),
 				DateFormat.getDate(document.getString("competition-start-date"), ModelTools.DATE_FORMAT),
 				DateFormat.getDate(document.getString("competition-end-date"), ModelTools.DATE_FORMAT),
-				document.getString("other-team-name"), document.getString("other-team-leader-username"), otherTeamColor);
+				document.getString("other-team-name"), document.getString("other-team-leader-username"),
+				this.otherTeamColorFromDocument(document));
+	}
+	
+	/* * */
+	
+	public CompetitionTeamColor otherTeamColorFromDocument(Document document) {
+		String otherTeamColorString = document.getString("other-team-color");
+		for (CompetitionTeamColor otherTeamColor : CompetitionTeamColor.values()) {
+			if (otherTeamColor.toString().equals(otherTeamColorString)) return otherTeamColor;
+		}
+		return null;
 	}
 
 }

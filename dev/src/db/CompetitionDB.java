@@ -57,6 +57,8 @@ public class CompetitionDB implements DB<Competition> {
 		return competition;
 	}
 	
+	/* * */
+	
 	public Document teamScoresToDocument(Competition competition, CompetitionTeamColor color) {
 		Document teamScoresDocument = new Document();
 		HashMap<String, Integer> teamScores = competition.getTeamScores(color);

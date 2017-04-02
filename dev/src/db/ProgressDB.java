@@ -10,14 +10,9 @@ public class ProgressDB implements DB<Progress> {
 	
 	@Override
 	public Document toDocument(Progress progress) {
-		String progressType = null;
-		if (progress instanceof BooleanProgress) {
-			progressType = "boolean";
-		} else if (progress instanceof PercentageProgress) {
-			progressType = "percentage";
-		} else { // level progress type not implemented yet
-			return null;
-		}
+		// level progress type not implemented yet
+		String progressType = progress instanceof BooleanProgress ?
+				"boolean" : (progress instanceof PercentageProgress ? "percnetage" : null);
 		
 		return new Document("progress-type", progressType)
 					.append("progress-value", progress.getProgress());
@@ -28,16 +23,10 @@ public class ProgressDB implements DB<Progress> {
 		String progressType = document.getString("progress-type");
 		double progressValue = document.getDouble("progress-value");
 		
-		Progress progress = null;
-		if (progressType.equals("boolean")) {
-			progress = new BooleanProgress();
-			progress.setProgress(progressValue);
-		} else if (progressType.equals("percentage")) {
-			progress = new PercentageProgress();
-			progress.setProgress(progressValue);
-		} else { // level progress type not implemented yet
-			return null;
-		}
+		// level progress type not implemented yet
+		Progress progress = progressType.equals("boolean") ?
+				new BooleanProgress() : (progressType.equals("percentage") ? new PercentageProgress() : null);
+		progress.setProgress(progressValue);
 		
 		return progress;
 	}
