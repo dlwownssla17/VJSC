@@ -24,6 +24,7 @@ import model.Competition;
 import model.CompetitionHistory;
 import model.CompetitionInvitation;
 import model.CompetitionTeamColor;
+import model.IDCounter;
 import model.ModelTools;
 import model.PercentageProgress;
 import model.Progress;
@@ -38,10 +39,13 @@ import util.DateAndCalendar;
 import util.DateFormat;
 import util.RGB;
 
-public class Server {
+public class Server {	
 	public static int JSON_INDENT = 4;
 	
+	private static IDCounter ID_COUNTER;
+	
 	public static void main(String[] args) throws Exception {
+		ID_COUNTER = DBTools.idCounterDB.fromDocument(DBTools.readIDCounter());
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
         
         /* Homepage */
@@ -67,7 +71,19 @@ public class Server {
         
         /* Community */
         
-        
+        server.createContext("/team/view", new TeamViewHandler());
+        server.createContext("/team/leader/create", new TeamCreateHandler());
+        server.createContext("/team/leader/remove", new TeamRemoveHandler());
+        server.createContext("/team/leader/invite", new TeamInviteHandler());
+        server.createContext("/team/member/join", new TeamJoinHandler());
+        server.createContext("/team/member/decline", new TeamDeclineHandler());
+        server.createContext("/team/leader/dismiss", new TeamDismissHandler());
+        server.createContext("/competition/view", new CompetitionViewHandler());
+        server.createContext("/competition/leader/create", new CompetitionCreateHandler());
+        server.createContext("/competition/leader/cancel", new CompetitionCancelHandler());
+        server.createContext("/competition/leader/join", new CompetitionJoinHandler());
+        server.createContext("/competition/leader/decline", new CompetitionDeclineHandler());
+        server.createContext("/competition/leader/leave", new CompetitionLeaveHandler());
         
         // "remove" team
         
@@ -665,7 +681,7 @@ public class Server {
 	
 	/* * */
 	
-	static class CommunityHomeHandler implements HttpHandler {
+	static class TeamViewHandler implements HttpHandler {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
@@ -803,7 +819,7 @@ public class Server {
 		
 	}
 	
-	static class CreateTeamHandler implements HttpHandler {
+	static class TeamCreateHandler implements HttpHandler {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
@@ -814,9 +830,14 @@ public class Server {
 				
 			} else if (requestMethod.equals("POST")) {
 				Headers headers = t.getRequestHeaders();
-				String foo = headers.getFirst("Foo");
+				String username = headers.getFirst("Username");
 				
-				// to do
+				JSONObject requestJSON = toJSON(t.getRequestBody());
+				
+				String teamName = requestJSON.getString("Team-Name");
+				int maxTeamSize = requestJSON.getInt("Max-Team-Size");
+				
+				
 				
 				String response = "";
 				t.sendResponseHeaders(200, response.getBytes().length);
@@ -832,7 +853,7 @@ public class Server {
 		
 	}
 	
-	static class RemoveTeamHandler implements HttpHandler {
+	static class TeamRemoveHandler implements HttpHandler {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
@@ -861,7 +882,7 @@ public class Server {
 		
 	}
 	
-	static class InviteMemberHandler implements HttpHandler {
+	static class TeamInviteHandler implements HttpHandler {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
@@ -890,7 +911,7 @@ public class Server {
 		
 	}
 	
-	static class JoinTeamHandler implements HttpHandler {
+	static class TeamJoinHandler implements HttpHandler {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
@@ -919,7 +940,7 @@ public class Server {
 		
 	}
 	
-	static class DeclineTeamInviteHandler implements HttpHandler {
+	static class TeamDeclineHandler implements HttpHandler {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
@@ -948,7 +969,7 @@ public class Server {
 		
 	}
 	
-	static class KickOutMemberHandler implements HttpHandler {
+	static class TeamDismissHandler implements HttpHandler {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
@@ -977,7 +998,7 @@ public class Server {
 		
 	}
 	
-	static class CreateCompetitionHandler implements HttpHandler {
+	static class CompetitionCreateHandler implements HttpHandler {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
@@ -1006,7 +1027,7 @@ public class Server {
 		
 	}
 	
-	static class CancelCompetitionHandler implements HttpHandler {
+	static class CompetitionCancelHandler implements HttpHandler {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
@@ -1035,7 +1056,7 @@ public class Server {
 		
 	}
 	
-	static class ViewCompetitionHandler implements HttpHandler {
+	static class CompetitionViewHandler implements HttpHandler {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
@@ -1064,7 +1085,7 @@ public class Server {
 		
 	}
 	
-	static class JoinCompetitionHandler implements HttpHandler {
+	static class CompetitionJoinHandler implements HttpHandler {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
@@ -1093,7 +1114,7 @@ public class Server {
 		
 	}
 	
-	static class DeclineCompetitionInviteHandler implements HttpHandler {
+	static class CompetitionDeclineHandler implements HttpHandler {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
@@ -1122,7 +1143,7 @@ public class Server {
 		
 	}
 	
-	static class LeaveCompetitionHandler implements HttpHandler {
+	static class CompetitionLeaveHandler implements HttpHandler {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {

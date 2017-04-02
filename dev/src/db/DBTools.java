@@ -1,6 +1,7 @@
 package db;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.exists;
 
 import java.util.Date;
 
@@ -11,6 +12,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 import model.Competition;
+import model.IDCounter;
 import model.Team;
 import model.User;
 
@@ -18,12 +20,15 @@ public class DBTools {
 	public static String HOST = "localhost";
 	public static int PORT = 27017;
 	public static String DATABASE_NAME = "debradb";
+	
+	public static String IDCOUNTERDB = "idcounter";
 	public static String USERDB = "user";
 	public static String TEAMDB = "team";
 	public static String COMPETITIONDB = "competition";
 	
 	public static MongoClient client;
 	public static MongoDatabase database;
+	public static MongoCollection<Document> idCounters; // only one
 	public static MongoCollection<Document> users;
 	public static MongoCollection<Document> teams;
 	public static MongoCollection<Document> competitions;
@@ -32,6 +37,7 @@ public class DBTools {
 	public static CompetitionHistoryDB competitionHistoryDB = new CompetitionHistoryDB();
 	public static CompetitionInvitationDB competitionInvitationDB = new CompetitionInvitationDB();
 	public static FitBitAccountDB fitBitAccountDB = new FitBitAccountDB();
+	public static IDCounterDB idCounterDB = new IDCounterDB();
 	public static ProgressDB progressDB = new ProgressDB();
 	public static ScheduleItemDB scheduleItemDB = new ScheduleItemDB();
 //	public static ScheduleItemNotificationParamsDB scheduleItemNotificationParamsDB = new ScheduleItemNotificationParamsDB();
@@ -52,6 +58,7 @@ public class DBTools {
 		client = new MongoClient(HOST, PORT);
 		database = client.getDatabase(DATABASE_NAME);
 		
+		idCounters = database.getCollection(IDCOUNTERDB);
 		users = database.getCollection(USERDB);
 		teams = database.getCollection(TEAMDB);
 		competitions = database.getCollection(COMPETITIONDB);
@@ -65,6 +72,7 @@ public class DBTools {
 		open();
 		
 		Document dummy = new Document();
+		if (idCounters.count() == 0) idCounters.insertOne(idCounterDB.toDocument(new IDCounter()));
 		users.insertOne(dummy);
 		users.deleteOne(dummy);
 		teams.insertOne(dummy);
@@ -76,6 +84,24 @@ public class DBTools {
 	}
 	
 	/* * */
+	
+	public static Document readIDCounter() {
+		open();
+		
+		Document idCounterDocument = idCounters.find().first();
+		
+		close();
+		
+		return idCounterDocument;
+	}
+	
+	public static void writeIDCounter(IDCounter idCounter) {
+		open();
+		
+		idCounters.replaceOne(exists("team-id-counter"), idCounterDB.toDocument(idCounter));
+		
+		close();
+	}
 	
 	public static Document findUserDocument(String username) {
 		open();

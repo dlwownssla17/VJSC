@@ -15,8 +15,7 @@ public class UserSchedule {
 	private HashMap<Date, ArrayList<ScheduleItem>> items;
 	private HashMap<Date, Integer> dailyScores;
 	private HashMap<Date, Integer> dailyRunningScores;
-	private long scheduleIdCounter;
-	private long recurringIdCounter;
+	private long scheduleIdCounter, recurringIdCounter;
 	private Date lastDayChecked;
 
 	public UserSchedule(int capacity, Date lastDayChecked) {
