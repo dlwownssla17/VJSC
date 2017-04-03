@@ -180,6 +180,37 @@ public class Server {
 		return dailyItemsJSON;
 	}
 	
+//	public static void inTeamCheck(User user) {
+//		if (!user.inTeam()) throw new IllegalStateException("User is not in team.");
+//	}
+	
+	public static void leaderCheck(String username, Team team) {
+		if (!team.isLeader(username)) throw new IllegalStateException("User is not a leader.");
+	}
+	
+	public static void hasCompetitionCheck(Team team) {
+		if (!team.hasCompetition()) throw new IllegalStateException("Team does not have competition.");
+	}
+	
+	public static void endCompetition(Team team1, Team team2, Competition competition, Team teamLeaving) {
+		if (teamLeaving != null && !(team1 == teamLeaving || team2 == teamLeaving))
+			throw new IllegalArgumentException("teamLeaving must be null or referentially same as one of two teams.");
+		
+		if (teamLeaving != null) {
+			CompetitionTeamColor color = teamLeaving.getTeamId() == competition.getTeamId(CompetitionTeamColor.RED) ?
+					CompetitionTeamColor.RED : CompetitionTeamColor.BLUE;
+			competition.setTeamLeft(color, true);
+		}
+		
+		team1.addCompetitionHistory(competition.toCompetitionHistory(team1.getTeamId()));
+		team2.addCompetitionHistory(competition.toCompetitionHistory(team2.getTeamId()));
+		
+		team1.setCompetitionId(-1);
+		team2.setCompetitionId(-1);
+		
+		competition.setValid(false);
+	}
+	
 	/*
 	static class TemplateHandler implements HttpHandler {
 
@@ -624,7 +655,7 @@ public class Server {
 				
 				// TODO: incorporate community stuff
 				
-				DBTools.updateUser(user);
+				DBTools.updateUserSchedule(user);
 				
 				String response = "";
 				t.sendResponseHeaders(200, response.getBytes().length);
@@ -717,7 +748,7 @@ public class Server {
 				
 				JSONObject teamJSON = new JSONObject();
 				if (team != null) {
-					teamJSON.put("Is-Leader", team.getLeaderUsername().equals(username));
+					teamJSON.put("Is-Leader", team.isLeader(username));
 					teamJSON.put("Team-Name", team.getTeamName());
 					teamJSON.put("Team-ID", team.getTeamId());
 					teamJSON.put("Max-Team-Size", team.getMaxTeamSize());
@@ -735,7 +766,7 @@ public class Server {
 						teamMemberJSON.put("In-Team-Since",
 								DateFormat.getFormattedString(team.getInTeamSinceForMemberUsername(memberUsername),
 																						ModelTools.DATE_TIME_FORMAT));
-						teamMemberJSON.put("Is-Leader", team.getLeaderUsername().equals(memberUsername));
+						teamMemberJSON.put("Is-Leader", team.isLeader(memberUsername));
 						
 						teamMembersJSON.put(teamMemberJSON);
 					}
@@ -837,7 +868,15 @@ public class Server {
 				String teamName = requestJSON.getString("Team-Name");
 				int maxTeamSize = requestJSON.getInt("Max-Team-Size");
 				
+				User user = DBTools.findUser(username);
+				Team team = DBTools.createTeam(ID_COUNTER.nextTeamIdCounter(), teamName, username, maxTeamSize);
 				
+				user.setTeamId(team.getTeamId());
+				user.clearTeamInvitations();
+				
+				DBTools.updateUserTeamInvitations(user);
+				DBTools.updateUserTeamId(user);
+				DBTools.writeIDCounter(ID_COUNTER);
 				
 				String response = "";
 				t.sendResponseHeaders(200, response.getBytes().length);
@@ -864,9 +903,49 @@ public class Server {
 				
 			} else if (requestMethod.equals("POST")) {
 				Headers headers = t.getRequestHeaders();
-				String foo = headers.getFirst("Foo");
+				String username = headers.getFirst("Username");
 				
-				// to do
+				JSONObject requestJSON = toJSON(t.getRequestBody());
+				
+				long teamId = requestJSON.getLong("Team-ID");
+				
+				Team team = DBTools.findTeam(teamId);
+				leaderCheck(username, team);
+				
+				// leave competition if team has competition
+				if (team.hasCompetition()) {
+					Competition competition = DBTools.findCompetition(team.getCompetitionId());
+					Team otherTeam = DBTools.findTeam(competition.otherTeamId(teamId));
+					endCompetition(team, otherTeam, competition, team);
+					
+					DBTools.updateTeamCompetitionHistories(otherTeam);
+					DBTools.updateTeamCompetitionId(otherTeam);
+					DBTools.updateCompetition(competition);
+				}
+				
+				// undo all team invitations to users
+				for (String usernameInvited : team.getUsersInvited()) {
+					User userInvited = DBTools.findUser(usernameInvited);
+					
+					team.removeUserInvited(usernameInvited);
+					userInvited.removeTeamInvitation(teamId);
+					
+					DBTools.updateUserTeamInvitations(userInvited);
+				}
+				
+				// remove reference to this team for all current members
+				for (String memberUsername : team.getMemberUsernames()) {
+					User member = DBTools.findUser(memberUsername);
+					
+					member.setTeamId(-1);
+					
+					DBTools.updateUserTeamId(member);
+				}
+				
+				// set valid to false
+				team.setValid(false);
+				
+				DBTools.updateTeam(team);
 				
 				String response = "";
 				t.sendResponseHeaders(200, response.getBytes().length);
@@ -893,7 +972,7 @@ public class Server {
 				
 			} else if (requestMethod.equals("POST")) {
 				Headers headers = t.getRequestHeaders();
-				String foo = headers.getFirst("Foo");
+				String username = headers.getFirst("Username");
 				
 				// to do
 				
@@ -922,7 +1001,7 @@ public class Server {
 				
 			} else if (requestMethod.equals("POST")) {
 				Headers headers = t.getRequestHeaders();
-				String foo = headers.getFirst("Foo");
+				String username = headers.getFirst("Username");
 				
 				// to do
 				
@@ -951,9 +1030,20 @@ public class Server {
 				
 			} else if (requestMethod.equals("POST")) {
 				Headers headers = t.getRequestHeaders();
-				String foo = headers.getFirst("Foo");
+				String username = headers.getFirst("Username");
 				
-				// to do
+				JSONObject requestJSON = toJSON(t.getRequestBody());
+				
+				long teamIdInviting = requestJSON.getLong("Team-ID");
+				
+				User userInvited = DBTools.findUser(username);
+				Team teamInviting = DBTools.findTeam(teamIdInviting);
+				
+				userInvited.removeTeamInvitation(teamIdInviting);
+				teamInviting.removeUserInvited(username);
+				
+				DBTools.updateTeamUsersInvited(teamInviting);
+				DBTools.updateUserTeamInvitations(userInvited);
 				
 				String response = "";
 				t.sendResponseHeaders(200, response.getBytes().length);
@@ -980,7 +1070,7 @@ public class Server {
 				
 			} else if (requestMethod.equals("POST")) {
 				Headers headers = t.getRequestHeaders();
-				String foo = headers.getFirst("Foo");
+				String username = headers.getFirst("Username");
 				
 				// to do
 				
@@ -1009,7 +1099,7 @@ public class Server {
 				
 			} else if (requestMethod.equals("POST")) {
 				Headers headers = t.getRequestHeaders();
-				String foo = headers.getFirst("Foo");
+				String username = headers.getFirst("Username");
 				
 				// to do
 				
@@ -1038,7 +1128,7 @@ public class Server {
 				
 			} else if (requestMethod.equals("POST")) {
 				Headers headers = t.getRequestHeaders();
-				String foo = headers.getFirst("Foo");
+				String username = headers.getFirst("Username");
 				
 				// to do
 				
@@ -1067,7 +1157,7 @@ public class Server {
 				
 			} else if (requestMethod.equals("POST")) {
 				Headers headers = t.getRequestHeaders();
-				String foo = headers.getFirst("Foo");
+				String username = headers.getFirst("Username");
 				
 				// to do
 				
@@ -1096,7 +1186,7 @@ public class Server {
 				
 			} else if (requestMethod.equals("POST")) {
 				Headers headers = t.getRequestHeaders();
-				String foo = headers.getFirst("Foo");
+				String username = headers.getFirst("Username");
 				
 				// to do
 				
@@ -1125,7 +1215,7 @@ public class Server {
 				
 			} else if (requestMethod.equals("POST")) {
 				Headers headers = t.getRequestHeaders();
-				String foo = headers.getFirst("Foo");
+				String username = headers.getFirst("Username");
 				
 				// to do
 				
@@ -1154,9 +1244,25 @@ public class Server {
 				
 			} else if (requestMethod.equals("POST")) {
 				Headers headers = t.getRequestHeaders();
-				String foo = headers.getFirst("Foo");
+				String username = headers.getFirst("Username");
 				
-				// to do
+				JSONObject requestJSON = toJSON(t.getRequestBody());
+				
+				long teamId = requestJSON.getLong("Team-ID");
+				
+				Team team = DBTools.findTeam(teamId);
+				leaderCheck(username, team);
+				hasCompetitionCheck(team);
+				Competition competition = DBTools.findCompetition(team.getCompetitionId());
+				Team otherTeam = DBTools.findTeam(competition.otherTeamId(teamId));
+				
+				endCompetition(team, otherTeam, competition, team);
+				
+				DBTools.updateTeamCompetitionHistories(team);
+				DBTools.updateTeamCompetitionId(team);
+				DBTools.updateTeamCompetitionHistories(otherTeam);
+				DBTools.updateTeamCompetitionId(otherTeam);
+				DBTools.updateCompetition(competition);
 				
 				String response = "";
 				t.sendResponseHeaders(200, response.getBytes().length);

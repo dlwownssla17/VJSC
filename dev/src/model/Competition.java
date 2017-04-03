@@ -21,6 +21,8 @@ public class Competition {
 	private boolean showTeamMembers;
 	private boolean status; // true - active, false - pending
 	
+	private boolean valid; // true until competition is removed (competition remains in database but no longer valid)
+	
 	public Competition(String competitionName, long competitionId, Date competitionStartDate, Date competitionEndDate,
 			long teamRedId, long teamBlueId, String teamRedName, String teamBlueName,
 			String teamRedLeaderUsername, String teamBlueLeaderUsername, boolean showTeamMembers) {
@@ -47,6 +49,8 @@ public class Competition {
 		
 		this.showTeamMembers = showTeamMembers;
 		this.status = false;
+		
+		this.valid = true;
 	}
 	
 	@Override
@@ -113,6 +117,10 @@ public class Competition {
 			default:
 				return -1;
 		}
+	}
+	
+	public long otherTeamId(long teamId) {
+		return teamId == this.teamRedId ? this.teamBlueId : (teamId == this.teamBlueId ? this.teamRedId : -1);
 	}
 	
 	public String getTeamName(CompetitionTeamColor color) {
@@ -346,9 +354,19 @@ public class Competition {
 		return this.status;
 	}
 	
+	public boolean getValid() {
+		return this.valid;
+	}
+	
+	public boolean setValid(boolean valid) {
+		this.valid = valid;
+		return this.valid;
+	}
+	
 	public CompetitionInvitation toCompetitionInvitation(long teamId) {
 		if (!(this.teamRedId == teamId || this.teamBlueId == teamId))
 			throw new IllegalArgumentException("Invalid team.");
+		
 		return new CompetitionInvitation(this.competitionName, this.competitionId,
 				this.competitionStartDate, this.competitionEndDate,
 				this.teamRedId == teamId ? this.teamRedName : this.teamBlueName,
@@ -359,13 +377,21 @@ public class Competition {
 	public CompetitionHistory toCompetitionHistory(long teamId) {
 		if (!(this.teamRedId == teamId || this.teamBlueId == teamId))
 			throw new IllegalArgumentException("Invalid team.");
+		
 		int teamRedTotalScore = this.getTeamTotalScore(CompetitionTeamColor.RED);
 		int teamBlueTotalScore = this.getTeamTotalScore(CompetitionTeamColor.BLUE);
-		int redBlueDiff = teamRedTotalScore - teamBlueTotalScore;
-		CompetitionResult competitionResult = redBlueDiff == 0 ? CompetitionResult.TIED :
-					this.teamRedId == teamId ? (redBlueDiff > 0 ? CompetitionResult.WON : CompetitionResult.LOST) :
-												(redBlueDiff > 0 ? CompetitionResult.LOST : CompetitionResult.WON);
-					
+		CompetitionResult competitionResult = null;
+		if (this.teamRedLeft) {
+			competitionResult = this.teamRedId == teamId ? CompetitionResult.LOST : CompetitionResult.WON;
+		} else if (this.teamBlueLeft) {
+			competitionResult = this.teamRedId == teamId ? CompetitionResult.WON : CompetitionResult.LOST;
+		} else {
+			int redBlueDiff = teamRedTotalScore - teamBlueTotalScore;
+			competitionResult = redBlueDiff == 0 ? CompetitionResult.TIED :
+				this.teamRedId == teamId ? (redBlueDiff > 0 ? CompetitionResult.WON : CompetitionResult.LOST) :
+											(redBlueDiff > 0 ? CompetitionResult.LOST : CompetitionResult.WON);
+		}
+				
 		return new CompetitionHistory(this.competitionName, this.competitionId, competitionResult,
 				this.teamRedName, this.teamBlueName, teamRedTotalScore, teamBlueTotalScore,
 				this.teamRedLeft, this.teamBlueLeft, this.competitionStartDate, this.competitionEndDate);

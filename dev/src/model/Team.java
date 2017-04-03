@@ -13,14 +13,16 @@ public class Team {
 	private int maxTeamSize;
 	
 	private String leaderUsername;
-	private ArrayList<String> memberUsernames;
+	private HashSet<String> memberUsernames;
 	private HashMap<String, Date> inTeamSince;
 	
-	private HashSet<String> usersInvited;
+	private ArrayList<String> usersInvited;
 	
 	private long competitionId;
 	private ArrayList<CompetitionInvitation> competitionInvitations;
 	private ArrayList<CompetitionHistory> competitionHistories;
+	
+	private boolean valid; // true until team is removed (team remains in database but no longer valid)
 	
 	public Team(long teamId, String teamName, String leaderUsername, int maxTeamSize) {
 		this.teamId = teamId;
@@ -30,14 +32,17 @@ public class Team {
 		this.maxTeamSize = maxTeamSize;
 		
 		this.leaderUsername = leaderUsername;
-		this.memberUsernames = new ArrayList<>();
+		this.memberUsernames = new HashSet<>();
 		this.inTeamSince = new HashMap<>();
+		this.addMemberUsername(leaderUsername);
 		
-		this.usersInvited = new HashSet<>();
+		this.usersInvited = new ArrayList<>();
 		
 		this.competitionId = -1;
 		this.competitionInvitations = new ArrayList<>();
 		this.competitionHistories = new ArrayList<>();
+		
+		this.valid = true;
 	}
 	
 	@Override
@@ -91,11 +96,15 @@ public class Team {
 		return this.leaderUsername;
 	}
 	
-	public ArrayList<String> getMemberUsernames() {
+	public boolean isLeader(String username) {
+		return this.leaderUsername.equals(username);
+	}
+	
+	public HashSet<String> getMemberUsernames() {
 		return this.memberUsernames;
 	}
 	
-	public ArrayList<String> setMemberUsernames(ArrayList<String> memberUsernames) {
+	public HashSet<String> setMemberUsernames(HashSet<String> memberUsernames) {
 		this.memberUsernames = memberUsernames;
 		return this.memberUsernames;
 	}
@@ -109,15 +118,7 @@ public class Team {
 	}
 	
 	synchronized boolean removeMemberUsername(String username) {
-		String memberUsernameToRemove = null;
-		for (String memberUsername : this.memberUsernames) {
-			if (memberUsername.equals(username)) {
-				memberUsernameToRemove = memberUsername;
-				break;
-			}
-		}
-		return memberUsernameToRemove != null ? this.memberUsernames.remove(memberUsernameToRemove) &&
-										this.inTeamSince.remove(memberUsernameToRemove) != null : false;
+		return this.memberUsernames.remove(username) && this.inTeamSince.remove(username) != null;
 	}
 	
 	public int getTeamSize() {
@@ -137,11 +138,11 @@ public class Team {
 		return this.inTeamSince.get(username);
 	}
 	
-	public HashSet<String> getUsersInvited() {
+	public ArrayList<String> getUsersInvited() {
 		return this.usersInvited;
 	}
 	
-	public HashSet<String> setUsersInvited(HashSet<String> usersInvited) {
+	public ArrayList<String> setUsersInvited(ArrayList<String> usersInvited) {
 		this.usersInvited = usersInvited;
 		return this.usersInvited;
 	}
@@ -197,6 +198,10 @@ public class Team {
 				this.competitionInvitations.remove(competitionInvitationToRemove) : false;
 	}
 	
+	public void clearCompetitionInvitations() {
+		this.competitionInvitations.clear();
+	}
+	
 	public ArrayList<CompetitionHistory> getCompetitionHistories() {
 		return this.competitionHistories;
 	}
@@ -208,6 +213,15 @@ public class Team {
 	
 	public boolean addCompetitionHistory(CompetitionHistory competitionHistory) {
 		return this.competitionHistories.add(competitionHistory);
+	}
+	
+	public boolean getValid() {
+		return this.valid;
+	}
+	
+	public boolean setValid(boolean valid) {
+		this.valid = valid;
+		return this.valid;
 	}
 	
 	public TeamInvitation toTeamInvitation() {

@@ -27,7 +27,8 @@ public class TeamDB implements DB<Team> {
 					.append("users-invited", this.usersInvitedToDocument(team))
 					.append("competition-id", team.getCompetitionId())
 					.append("competition-invitations", this.competitionInvitationsToDocument(team))
-					.append("competition-histories", this.competitionHistoriesToDocument(team));
+					.append("competition-histories", this.competitionHistoriesToDocument(team))
+					.append("valid", team.getValid());
 	}
 
 	@Override
@@ -42,6 +43,7 @@ public class TeamDB implements DB<Team> {
 		team.setCompetitionId(document.getLong("competition-id"));
 		team.setCompetitionInvitations(this.competitionInvitationsFromDocument(document));
 		team.setCompetitionHistories(this.competitionHistoriesFromDocument(document));
+		team.setValid(document.getBoolean("valid"));
 		
 		return team;
 	}
@@ -60,8 +62,8 @@ public class TeamDB implements DB<Team> {
 		return memberUsernamesDocument;
 	}
 	
-	public ArrayList<String> memberUsernamesFromDocument(Document document) {
-		ArrayList<String> memberUsernames = new ArrayList<>();
+	public HashSet<String> memberUsernamesFromDocument(Document document) {
+		HashSet<String> memberUsernames = new HashSet<>();
 		Document memberUsernamesDocument = document.get("member-usernames", Document.class);
 		for (String memberUsername : memberUsernamesDocument.keySet()) {
 			memberUsernames.add(memberUsername);
@@ -87,8 +89,8 @@ public class TeamDB implements DB<Team> {
 		return usersInvitedDocument;
 	}
 	
-	public HashSet<String> usersInvitedFromDocument(Document document) {
-		HashSet<String> usersInvited = new HashSet<>();
+	public ArrayList<String> usersInvitedFromDocument(Document document) {
+		ArrayList<String> usersInvited = new ArrayList<>();
 		Document usersInvitedDocument = document.get("users-invited", Document.class);
 		for (String usernameInvited : usersInvitedDocument.keySet()) {
 			usersInvited.add(usernameInvited);

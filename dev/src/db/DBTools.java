@@ -262,6 +262,16 @@ public class DBTools {
 		close();
 	}
 	
+	public static void updateTeamUsersInvited(Team team) {
+		open();
+		
+		Document newTeamUsersInvited = new Document("users-invited", teamDB.usersInvitedToDocument(team));
+		
+		teams.updateOne(eq("team-id", team.getTeamId()), new Document("$set", newTeamUsersInvited));
+		
+		close();
+	}
+	
 	public static void updateTeamCompetitionId(Team team) {
 		open();
 		

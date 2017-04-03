@@ -32,7 +32,8 @@ public class CompetitionDB implements DB<Competition> {
 					.append("team-red-left", competition.getTeamLeft(CompetitionTeamColor.RED))
 					.append("team-blue-left", competition.getTeamLeft(CompetitionTeamColor.BLUE))
 					.append("show-team-members", competition.getShowTeamMembers())
-					.append("status", competition.getStatus());
+					.append("status", competition.getStatus())
+					.append("valid", competition.getValid());
 	}
 
 	@Override
@@ -53,6 +54,7 @@ public class CompetitionDB implements DB<Competition> {
 		competition.setTeamLeft(CompetitionTeamColor.RED, document.getBoolean("team-red-left"));
 		competition.setTeamLeft(CompetitionTeamColor.BLUE, document.getBoolean("team-blue-left"));
 		competition.setStatus(document.getBoolean("status"));
+		competition.setValid(document.getBoolean("valid"));
 		
 		return competition;
 	}

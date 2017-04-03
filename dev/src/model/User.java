@@ -130,7 +130,7 @@ public class User {
 		return this.teamInvitations.add(teamInvitation);
 	}
 	
-	public boolean declineTeamInvitation(long teamId) {
+	public boolean removeTeamInvitation(long teamId) {
 		TeamInvitation teamInvitationToRemove = null;
 		for (TeamInvitation teamInvitation : this.teamInvitations) {
 			if (teamInvitation.getTeamId() == teamId) {
@@ -139,6 +139,10 @@ public class User {
 			}
 		}
 		return teamInvitationToRemove != null ? this.teamInvitations.remove(teamInvitationToRemove) : false;
+	}
+	
+	public void clearTeamInvitations() {
+		 this.teamInvitations.clear();
 	}
 	
 	public boolean isLeader(Team team) {
