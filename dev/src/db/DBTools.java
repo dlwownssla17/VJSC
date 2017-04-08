@@ -4,11 +4,15 @@ import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.exists;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.bson.Document;
 
 import com.mongodb.MongoClient;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
 import model.Competition;
@@ -294,6 +298,22 @@ public class DBTools {
 		close();
 		
 		return existingCompetitionDocument == null ? null : competitionDB.fromDocument(existingCompetitionDocument);
+	}
+	
+	public static Set<Competition> findAllCompetitions() {
+		open();
+		
+		FindIterable<Document> iterable = competitions.find();
+		
+		close();
+		
+		Set<Competition> competitions = new HashSet<>();
+		MongoCursor<Document> cursor = iterable.iterator();
+		while (cursor.hasNext()) {
+			competitions.add(competitionDB.fromDocument(cursor.next()));
+		}
+		
+		return competitions;
 	}
 	
 	public static Competition createCompetition(String competitionName, long competitionId,

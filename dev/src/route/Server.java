@@ -23,6 +23,7 @@ import model.BooleanProgress;
 import model.Competition;
 import model.CompetitionHistory;
 import model.CompetitionInvitation;
+import model.CompetitionProcessor;
 import model.CompetitionTeamColor;
 import model.IDCounter;
 import model.ModelTools;
@@ -43,9 +44,11 @@ public class Server {
 	public static int JSON_INDENT = 4;
 	
 	private static IDCounter ID_COUNTER;
+	private static CompetitionProcessor COMPETITION_PROCESSOR;
 	
 	public static void main(String[] args) throws Exception {
 		ID_COUNTER = DBTools.idCounterDB.fromDocument(DBTools.readIDCounter());
+		
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
         
         /* Homepage */
@@ -86,12 +89,11 @@ public class Server {
         server.createContext("/competition/leader/decline", new CompetitionDeclineHandler());
         server.createContext("/competition/leader/leave", new CompetitionLeaveHandler());
         
-        // "remove" team
-        
-        // "remove" competition
-        
         server.setExecutor(null); // create a default executor
         server.start();
+        
+        COMPETITION_PROCESSOR = new CompetitionProcessor();
+        COMPETITION_PROCESSOR.start();
 	}
 	
 	/* * */
@@ -1306,6 +1308,7 @@ public class Server {
 				responseJSON.put("Team-Color", teamColor == null ? null : teamColor.toString());
 				
 				responseJSON.put("Show-Team-Members", competition.getShowTeamMembers());
+				responseJSON.put("Competition-Status", competition.getStatus());
 				
 				String response = responseJSON.toString(JSON_INDENT);
 				t.sendResponseHeaders(200, response.getBytes().length);

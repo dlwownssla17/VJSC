@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.bson.Document;
 
@@ -62,8 +63,8 @@ public class TeamDB implements DB<Team> {
 		return memberUsernamesDocument;
 	}
 	
-	public HashSet<String> memberUsernamesFromDocument(Document document) {
-		HashSet<String> memberUsernames = new HashSet<>();
+	public Set<String> memberUsernamesFromDocument(Document document) {
+		Set<String> memberUsernames = new HashSet<>();
 		Document memberUsernamesDocument = document.get("member-usernames", Document.class);
 		for (String memberUsername : memberUsernamesDocument.keySet()) {
 			memberUsernames.add(memberUsername);

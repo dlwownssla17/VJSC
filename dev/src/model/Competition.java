@@ -187,6 +187,28 @@ public class Competition {
 		}
 	}
 	
+	public synchronized boolean joinedCompetition(CompetitionTeamColor color) {
+		switch(color) {
+			case RED:
+				return this.teamRedScores.size() > 0;
+			case BLUE:
+				return this.teamBlueScores.size() > 0;
+			default:
+				return false;
+		}
+	}
+	
+	public synchronized Set<String> getTeamMembers(CompetitionTeamColor color) {
+		switch(color) {
+			case RED:
+				return this.teamRedScores.keySet();
+			case BLUE:
+				return this.teamBlueScores.keySet();
+			default:
+				return null;
+		}
+	}
+	
 	public synchronized HashMap<String, Integer> getTeamScores(CompetitionTeamColor color) {
 		switch(color) {
 			case RED:
@@ -207,17 +229,6 @@ public class Competition {
 			case BLUE:
 				this.teamBlueScores = teamScores;
 				return this.teamBlueScores;
-			default:
-				return null;
-		}
-	}
-	
-	public synchronized Set<String> getTeamMembers(CompetitionTeamColor color) {
-		switch(color) {
-			case RED:
-				return this.teamRedScores.keySet();
-			case BLUE:
-				return this.teamBlueScores.keySet();
 			default:
 				return null;
 		}

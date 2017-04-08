@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 public class Team {
 	private long teamId;
@@ -13,7 +14,7 @@ public class Team {
 	private int maxTeamSize;
 	
 	private String leaderUsername;
-	private HashSet<String> memberUsernames;
+	private Set<String> memberUsernames;
 	private HashMap<String, Date> inTeamSince;
 	
 	private ArrayList<String> usersInvited;
@@ -100,11 +101,11 @@ public class Team {
 		return this.leaderUsername.equals(username);
 	}
 	
-	public HashSet<String> getMemberUsernames() {
+	public Set<String> getMemberUsernames() {
 		return this.memberUsernames;
 	}
 	
-	public HashSet<String> setMemberUsernames(HashSet<String> memberUsernames) {
+	public Set<String> setMemberUsernames(Set<String> memberUsernames) {
 		this.memberUsernames = memberUsernames;
 		return this.memberUsernames;
 	}
