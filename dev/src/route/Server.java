@@ -43,13 +43,21 @@ import util.RGB;
 public class Server {	
 	public static int JSON_INDENT = 4;
 	
+	private static HttpServer server;
+	
 	private static IDCounter ID_COUNTER;
 	private static CompetitionProcessor COMPETITION_PROCESSOR;
 	
 	public static void main(String[] args) throws Exception {
+		start();
+	}
+	
+	public static void start() throws Exception {
+		DBTools.open();
+		
 		ID_COUNTER = DBTools.idCounterDB.fromDocument(DBTools.readIDCounter());
 		
-        HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
+        server = HttpServer.create(new InetSocketAddress(8000), 0);
         
         /* Homepage */
         
@@ -89,11 +97,21 @@ public class Server {
         server.createContext("/competition/leader/decline", new CompetitionDeclineHandler());
         server.createContext("/competition/leader/leave", new CompetitionLeaveHandler());
         
+        /* Server Stop */
+        
+        server.createContext("/stop", new ServerStopHandler());
+        
         server.setExecutor(null); // create a default executor
         server.start();
         
         COMPETITION_PROCESSOR = new CompetitionProcessor();
         COMPETITION_PROCESSOR.start();
+	}
+	
+	public static void stop() {
+		COMPETITION_PROCESSOR.stop();
+		server.stop(0);
+		DBTools.close();
 	}
 	
 	/* * */
@@ -1588,6 +1606,38 @@ public class Server {
 			}
 			
 			System.out.println("handled competition leave...");
+		}
+		
+	}
+	
+	/* * */
+	
+	static class ServerStopHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling server stop...");
+			
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				
+			} else if (requestMethod.equals("POST")) {
+				Headers headers = t.getRequestHeaders();
+				String adminKey = headers.getFirst("Admin-Key");
+				
+				int rc = adminKey.equals("jms") ? 200 : 401;
+				if (rc == 200) stop();
+				
+				String response = "";
+				t.sendResponseHeaders(rc, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else {
+				
+			}
+			
+			System.out.println("handled server stop...");
 		}
 		
 	}
