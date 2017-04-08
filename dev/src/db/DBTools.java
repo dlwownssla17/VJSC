@@ -96,6 +96,8 @@ public class DBTools {
 		idCounters.replaceOne(exists("team-id-counter"), idCounterDB.toDocument(idCounter));
 	}
 	
+	/* * */
+	
 	public static User findUser(String username) {
 		Document existingUserDocument = users.find(eq("username", username)).first();
 		return existingUserDocument == null ? null : userDB.fromDocument(existingUserDocument);
