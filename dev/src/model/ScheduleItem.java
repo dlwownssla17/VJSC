@@ -254,23 +254,21 @@ public class ScheduleItem {
 		return this.checkedInAtStart;
 	}
 	
-	public synchronized void checkInAtEnd(double progress) {
+	public synchronized int checkInAtEnd(double progress) {
 		this.checkedIn = true;
-		this.updateScore(progress);
+		return this.updateScore(progress);
 	}
 	
-	public synchronized void checkInAtStart() {
+	public synchronized int checkInAtStart() {
 		this.checkedInAtStart = true;
+		return 0;
 	}
 	
-	public synchronized void checkIn(double progress) {
-		if (this.progress instanceof BooleanProgress) {
-			checkInAtEnd(progress);
-		} else if (this.progress instanceof PercentageProgress) {
-			if (!this.checkedInAtStart) checkInAtStart();
-			else checkInAtEnd(progress);
-		}
+	public synchronized int checkIn(double progress) {
 		// not implementing LevelsProgress yet
+		return this.progress instanceof BooleanProgress ||
+				(this.progress instanceof PercentageProgress && this.checkedInAtStart) ? checkInAtEnd(progress) :
+					(this.progress instanceof PercentageProgress ? checkInAtStart() : -1);
 	}
 	
 	public int getScore() {
@@ -285,7 +283,7 @@ public class ScheduleItem {
 	// TODO: Improve schedule item level scoring algorithm
 	private int updateScore(double progress) {
 		this.progress.setProgress(progress);
-		this.score += (int) Math.round(this.type.scoreBaseByScheduleItemType() * progress);
+		this.score = (int) Math.round(this.type.scoreBaseByScheduleItemType() * progress);
 		return this.score;
 	}
 

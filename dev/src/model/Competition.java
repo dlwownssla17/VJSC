@@ -123,6 +123,11 @@ public class Competition {
 		return teamId == this.teamRedId ? this.teamBlueId : (teamId == this.teamBlueId ? this.teamRedId : -1);
 	}
 	
+	public CompetitionTeamColor getTeamColor(long teamId) {
+		return teamId == this.teamRedId ? CompetitionTeamColor.RED :
+			(teamId == this.teamBlueId ? CompetitionTeamColor.BLUE : null);
+	}
+	
 	public String getTeamName(CompetitionTeamColor color) {
 		switch(color) {
 			case RED:
@@ -171,7 +176,18 @@ public class Competition {
 		}
 	}
 	
-	synchronized public HashMap<String, Integer> getTeamScores(CompetitionTeamColor color) {
+	public boolean isTeamLeader(CompetitionTeamColor color, String teamMemberUsername) {
+		switch(color) {
+			case RED:
+				return this.teamRedLeaderUsername.equals(teamMemberUsername);
+			case BLUE:
+				return this.teamBlueLeaderUsername.equals(teamMemberUsername);
+			default:
+				return false;
+		}
+	}
+	
+	public synchronized HashMap<String, Integer> getTeamScores(CompetitionTeamColor color) {
 		switch(color) {
 			case RED:
 				return this.teamRedScores;
@@ -182,7 +198,7 @@ public class Competition {
 		}
 	}
 	
-	synchronized public HashMap<String, Integer> setTeamScores(CompetitionTeamColor color,
+	public synchronized HashMap<String, Integer> setTeamScores(CompetitionTeamColor color,
 																		HashMap<String, Integer> teamScores) {
 		switch(color) {
 			case RED:
@@ -196,7 +212,7 @@ public class Competition {
 		}
 	}
 	
-	synchronized public Set<String> getTeamMembers(CompetitionTeamColor color) {
+	public synchronized Set<String> getTeamMembers(CompetitionTeamColor color) {
 		switch(color) {
 			case RED:
 				return this.teamRedScores.keySet();
@@ -207,7 +223,7 @@ public class Competition {
 		}
 	}
 	
-	synchronized public boolean hasTeamMemberScore(CompetitionTeamColor color, String memberUsername) {
+	public synchronized boolean hasTeamMemberScore(CompetitionTeamColor color, String memberUsername) {
 		switch(color) {
 			case RED:
 				return this.teamRedScores.containsKey(memberUsername);
@@ -218,7 +234,7 @@ public class Competition {
 		}
 	}
 	
-	synchronized public int createTeamMemberScore(CompetitionTeamColor color, String memberUsername) {
+	public synchronized int createTeamMemberScore(CompetitionTeamColor color, String memberUsername) {
 		HashMap<String, Integer> teamScores = null;
 		switch(color) {
 			case RED:
@@ -234,7 +250,7 @@ public class Competition {
 		return teamScores.get(memberUsername);
 	}
 	
-	synchronized public int getTeamMemberScore(CompetitionTeamColor color, String memberUsername) {
+	public synchronized int getTeamMemberScore(CompetitionTeamColor color, String memberUsername) {
 		HashMap<String, Integer> teamScores = null;
 		switch(color) {
 			case RED:
@@ -249,7 +265,7 @@ public class Competition {
 		return teamScores.get(memberUsername) == null ? teamScores.get(memberUsername) : -1;
 	}
 	
-	synchronized public int setTeamMemberScore(CompetitionTeamColor color, String memberUsername, int score) {
+	public synchronized int setTeamMemberScore(CompetitionTeamColor color, String memberUsername, int score) {
 		HashMap<String, Integer> teamScores = null;
 		switch(color) {
 			case RED:
@@ -265,7 +281,7 @@ public class Competition {
 		return score;
 	}
 	
-	synchronized public int addTeamMemberScore(CompetitionTeamColor color, String memberUsername, int scoreAdded) {
+	public synchronized int addTeamMemberScore(CompetitionTeamColor color, String memberUsername, int scoreAdded) {
 		HashMap<String, Integer> teamScores = null;
 		switch(color) {
 			case RED:
@@ -282,7 +298,7 @@ public class Competition {
 		return newScore;
 	}
 	
-	synchronized public int removeTeamMemberScore(CompetitionTeamColor color, String memberUsername) {
+	public synchronized int removeTeamMemberScore(CompetitionTeamColor color, String memberUsername) {
 		switch(color) {
 			case RED:
 				return this.teamRedScores.remove(memberUsername);
@@ -293,7 +309,7 @@ public class Competition {
 		}
 	}
 	
-	synchronized public int getTeamTotalScore(CompetitionTeamColor color) {
+	public synchronized int getTeamTotalScore(CompetitionTeamColor color) {
 		HashMap<String, Integer> teamScores = null;
 		switch(color) {
 			case RED:

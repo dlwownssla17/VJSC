@@ -78,6 +78,7 @@ public class Server {
         server.createContext("/team/member/join", new TeamJoinHandler());
         server.createContext("/team/member/decline", new TeamDeclineHandler());
         server.createContext("/team/leader/dismiss", new TeamDismissHandler());
+        server.createContext("/team/member/leave", new TeamLeaveHandler());
         server.createContext("/competition/view", new CompetitionViewHandler());
         server.createContext("/competition/leader/create", new CompetitionCreateHandler());
         server.createContext("/competition/leader/cancel", new CompetitionCancelHandler());
@@ -89,7 +90,7 @@ public class Server {
         
         // "remove" competition
         
-        server.setExecutor(null); // creates a default executor
+        server.setExecutor(null); // create a default executor
         server.start();
 	}
 	
@@ -180,12 +181,12 @@ public class Server {
 		return dailyItemsJSON;
 	}
 	
-//	public static void inTeamCheck(User user) {
-//		if (!user.inTeam()) throw new IllegalStateException("User is not in team.");
-//	}
-	
 	public static void leaderCheck(String username, Team team) {
 		if (!team.isLeader(username)) throw new IllegalStateException("User is not a leader.");
+	}
+	
+	public static void inTeamCheck(User user) {
+		if (!user.inTeam()) throw new IllegalStateException("User is not in team.");
 	}
 	
 	public static void hasCompetitionCheck(Team team) {
@@ -208,6 +209,12 @@ public class Server {
 		team1.setCompetitionId(-1);
 		team2.setCompetitionId(-1);
 		
+		competition.setValid(false);
+	}
+	
+	public static void declineCompetition(Team teamDeclining, Team teamInviting, Competition competition) {
+		teamDeclining.removeCompetitionInvitation(competition.getCompetitionId());
+		teamInviting.setCompetitionId(-1);
 		competition.setValid(false);
 	}
 	
@@ -290,9 +297,9 @@ public class Server {
 				String password = headers.getFirst("Password");
 				
 				User newUser = DBTools.createUser(username, password);
+				int rc = newUser != null ? 200 : 401;
 				
 				String response = "";
-				int rc = newUser != null ? 200 : 401;
 				t.sendResponseHeaders(rc, response.getBytes().length);
 	            OutputStream os = t.getResponseBody();
 	            os.write(response.getBytes());
@@ -323,9 +330,9 @@ public class Server {
 				User existingUser = DBTools.findUser(username);
 				
 				if (existingUser != null && !existingUser.getPassword().equals(password)) existingUser = null;
+				int rc = existingUser != null ? 200 : 401;
 				
 				String response = "";
-				int rc = existingUser != null ? 200 : 401;
 				t.sendResponseHeaders(rc, response.getBytes().length);
 	            OutputStream os = t.getResponseBody();
 	            os.write(response.getBytes());
@@ -482,7 +489,8 @@ public class Server {
 				int duration = requestJSON.getInt("Schedule-Item-Duration");
 				
 				User user = DBTools.findUser(username);
-				user.getSchedule().editScheduleItem(date, id, recurringId, title, description, startTimeString, duration);
+				user.getSchedule().editScheduleItem(date, id, recurringId, title, description,
+																						startTimeString, duration);
 				
 				DBTools.updateUserSchedule(user);
 				
@@ -520,6 +528,7 @@ public class Server {
 				long recurringId = requestJSON.getLong("Recurring-ID");
 				
 				User user = DBTools.findUser(username);
+				
 				user.getSchedule().removeScheduleItem(date, id, recurringId);
 				
 				DBTools.updateUserSchedule(user);
@@ -610,7 +619,8 @@ public class Server {
 				
 				User user = DBTools.findUser(username);
 				
-				JSONArray dailyItemsCheckInJSON = user == null ? new JSONArray() : buildDailyItemsJSON(user, date, true);
+				JSONArray dailyItemsCheckInJSON = user == null ? new JSONArray() :
+																			buildDailyItemsJSON(user, date, true);
 				
 				responseJSON.put("Daily-Items", dailyItemsCheckInJSON);
 				
@@ -651,9 +661,21 @@ public class Server {
 				
 				User user = DBTools.findUser(username);
 				
-				user.getSchedule().getItemForDate(date, id).checkIn(progress);
+				int itemNewScore = user.getSchedule().getItemForDate(date, id).checkIn(progress);
 				
-				// TODO: incorporate community stuff
+				// update competition if user is in team that has competition
+				if (user.inTeam()) {
+					Team team = DBTools.findTeam(user.getTeamId());
+					
+					if (team.hasCompetition()) {
+						Competition competition = DBTools.findCompetition(team.getCompetitionId());
+						
+						competition.addTeamMemberScore(competition.getTeamColor(team.getTeamId()),
+																							username, itemNewScore);
+						
+						DBTools.updateCompetition(competition);
+					}
+				}
 				
 				DBTools.updateUserSchedule(user);
 				
@@ -691,7 +713,7 @@ public class Server {
 				Date lastDayCheckedDate = CreateLookupDate.getInstance(requestJSON.getString("Last-Day-Checked"));
 				
 				if (lastDayCheckedDate.before(user.getMemberSince()))
-					lastDayCheckedDate = CreateLookupDate.getInstance((Date) user.getMemberSince().clone());
+					lastDayCheckedDate = CreateLookupDate.getInstance(user.getMemberSince());
 				user.getSchedule().updateDailyScores(lastDayCheckedDate);
 				
 				DBTools.updateUser(user);
@@ -716,7 +738,7 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-			System.out.println("handling community home...");
+			System.out.println("handling team view...");
 			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
@@ -845,7 +867,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled community home...");
+			System.out.println("handled team view...");
 		}
 		
 	}
@@ -854,7 +876,7 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-			System.out.println("handling create team...");
+			System.out.println("handling team create...");
 			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
@@ -868,18 +890,22 @@ public class Server {
 				String teamName = requestJSON.getString("Team-Name");
 				int maxTeamSize = requestJSON.getInt("Max-Team-Size");
 				
-				User user = DBTools.findUser(username);
 				Team team = DBTools.createTeam(ID_COUNTER.nextTeamIdCounter(), teamName, username, maxTeamSize);
+				int rc = team == null ? 401 : 200;
 				
-				user.setTeamId(team.getTeamId());
-				user.clearTeamInvitations();
-				
-				DBTools.updateUserTeamInvitations(user);
-				DBTools.updateUserTeamId(user);
-				DBTools.writeIDCounter(ID_COUNTER);
+				if (rc == 200) {
+					User user = DBTools.findUser(username);
+	
+					user.setTeamId(team.getTeamId());
+					user.clearTeamInvitations();
+					
+					DBTools.updateUserTeamInvitations(user);
+					DBTools.updateUserTeamId(user);
+					DBTools.writeIDCounter(ID_COUNTER);
+				}
 				
 				String response = "";
-				t.sendResponseHeaders(200, response.getBytes().length);
+				t.sendResponseHeaders(rc, response.getBytes().length);
 	            OutputStream os = t.getResponseBody();
 	            os.write(response.getBytes());
 	            os.close();
@@ -887,7 +913,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled create team...");
+			System.out.println("handled team create...");
 		}
 		
 	}
@@ -896,7 +922,7 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-			System.out.println("handling remove team...");
+			System.out.println("handling team remove...");
 			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
@@ -916,10 +942,22 @@ public class Server {
 				if (team.hasCompetition()) {
 					Competition competition = DBTools.findCompetition(team.getCompetitionId());
 					Team otherTeam = DBTools.findTeam(competition.otherTeamId(teamId));
+					
 					endCompetition(team, otherTeam, competition, team);
 					
 					DBTools.updateTeamCompetitionHistories(otherTeam);
 					DBTools.updateTeamCompetitionId(otherTeam);
+					DBTools.updateCompetition(competition);
+				}
+				
+				// decline all competition invitations
+				for (CompetitionInvitation competitionInvitation : team.getCompetitionInvitations()) {
+					Competition competition = DBTools.findCompetition(competitionInvitation.getCompetitionId());
+					Team teamInviting = DBTools.findTeam(competitionInvitation.getOtherTeamName());
+					
+					declineCompetition(team, teamInviting, competition);
+					
+					DBTools.updateTeamCompetitionId(teamInviting);
 					DBTools.updateCompetition(competition);
 				}
 				
@@ -956,7 +994,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled remove team...");
+			System.out.println("handled team remove...");
 		}
 		
 	}
@@ -965,7 +1003,7 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-			System.out.println("handling invite member...");
+			System.out.println("handling team invite...");
 			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
@@ -974,10 +1012,29 @@ public class Server {
 				Headers headers = t.getRequestHeaders();
 				String username = headers.getFirst("Username");
 				
-				// to do
+				JSONObject requestJSON = toJSON(t.getRequestBody());
+				
+				long teamId = requestJSON.getLong("Team-ID");
+				String usernameInvited = requestJSON.getString("Member-Username");
+				
+				Team team = DBTools.findTeam(teamId);
+				leaderCheck(username, team);
+				User userInvited = DBTools.findUser(usernameInvited);
+				
+				int rc = userInvited == null ? 401 :
+					(userInvited.getTeamId() == teamId ? 402 :
+					(userInvited.inTeam() ? 403 : 
+					(team.getUsersInvited().contains(usernameInvited) ? 404 : 200)));
+				if (rc == 200) {
+					team.getUsersInvited().add(usernameInvited);
+					userInvited.addTeamInvitation(team.toTeamInvitation());
+					
+					DBTools.updateUserTeamInvitations(userInvited);
+					DBTools.updateTeamUsersInvited(team);
+				}
 				
 				String response = "";
-				t.sendResponseHeaders(200, response.getBytes().length);
+				t.sendResponseHeaders(rc, response.getBytes().length);
 	            OutputStream os = t.getResponseBody();
 	            os.write(response.getBytes());
 	            os.close();
@@ -985,7 +1042,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled invite member...");
+			System.out.println("handled team invite...");
 		}
 		
 	}
@@ -994,7 +1051,7 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-			System.out.println("handling join team...");
+			System.out.println("handling team join...");
 			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
@@ -1003,10 +1060,36 @@ public class Server {
 				Headers headers = t.getRequestHeaders();
 				String username = headers.getFirst("Username");
 				
-				// to do
+				JSONObject requestJSON = toJSON(t.getRequestBody());
+				
+				long teamId = requestJSON.getLong("Team-ID");
+				
+				Team team = DBTools.findTeam(teamId);
+				
+				int rc = team.addMemberUsername(username) ? 200 : 401;
+				if (rc == 200) {
+					User user = DBTools.findUser(username);
+					
+					team.removeUserInvited(username);
+					user.setTeamId(teamId);
+					user.clearTeamInvitations();
+					
+					if (team.hasCompetition()) {
+						Competition competition = DBTools.findCompetition(team.getCompetitionId());
+						
+						competition.createTeamMemberScore(competition.getTeamColor(teamId), username);
+						
+						DBTools.updateCompetition(competition);
+					}
+					
+					DBTools.updateUserTeamInvitations(user);
+					DBTools.updateUserTeamId(user);
+					DBTools.updateTeamUsersInvited(team);
+					DBTools.updateTeamMemberUsernames(team);
+				}
 				
 				String response = "";
-				t.sendResponseHeaders(200, response.getBytes().length);
+				t.sendResponseHeaders(rc, response.getBytes().length);
 	            OutputStream os = t.getResponseBody();
 	            os.write(response.getBytes());
 	            os.close();
@@ -1014,7 +1097,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handling join team...");
+			System.out.println("handling team join...");
 		}
 		
 	}
@@ -1023,7 +1106,7 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-			System.out.println("handling decline team invite...");
+			System.out.println("handling team decline...");
 			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
@@ -1054,7 +1137,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled decline team invite...");
+			System.out.println("handled team decline...");
 		}
 		
 	}
@@ -1063,7 +1146,7 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-			System.out.println("handling kick out member...");
+			System.out.println("handling team dismiss...");
 			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
@@ -1072,7 +1155,28 @@ public class Server {
 				Headers headers = t.getRequestHeaders();
 				String username = headers.getFirst("Username");
 				
-				// to do
+				JSONObject requestJSON = toJSON(t.getRequestBody());
+				
+				long teamId = requestJSON.getLong("Team-ID");
+				String usernameDismissed = requestJSON.getString("Member-Username");
+				
+				Team team = DBTools.findTeam(teamId);
+				leaderCheck(username, team);
+				User userDismissed = DBTools.findUser(usernameDismissed);
+				
+				if (team.hasCompetition()) {
+					Competition competition = DBTools.findCompetition(team.getCompetitionId());
+
+					competition.removeTeamMemberScore(competition.getTeamColor(teamId), usernameDismissed);
+					
+					DBTools.updateCompetition(competition);
+				}
+				
+				team.removeMemberUsername(usernameDismissed);
+				userDismissed.setTeamId(-1);
+				
+				DBTools.updateUserTeamId(userDismissed);
+				DBTools.updateTeamMemberUsernames(team);
 				
 				String response = "";
 				t.sendResponseHeaders(200, response.getBytes().length);
@@ -1083,16 +1187,16 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled kick out member...");
+			System.out.println("handled team dismiss...");
 		}
 		
 	}
 	
-	static class CompetitionCreateHandler implements HttpHandler {
+	static class TeamLeaveHandler implements HttpHandler {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-			System.out.println("handling create competition...");
+			System.out.println("handling team leave...");
 			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
@@ -1101,7 +1205,27 @@ public class Server {
 				Headers headers = t.getRequestHeaders();
 				String username = headers.getFirst("Username");
 				
-				// to do
+				JSONObject requestJSON = toJSON(t.getRequestBody());
+				
+				long teamId = requestJSON.getLong("Team-ID");
+				
+				User user = DBTools.findUser(username);
+				inTeamCheck(user);
+				Team team = DBTools.findTeam(teamId);
+				
+				if (team.hasCompetition()) {
+					Competition competition = DBTools.findCompetition(team.getCompetitionId());
+
+					competition.removeTeamMemberScore(competition.getTeamColor(teamId), username);
+					
+					DBTools.updateCompetition(competition);
+				}
+				
+				team.removeMemberUsername(username);
+				user.setTeamId(-1);
+				
+				DBTools.updateUserTeamId(user);
+				DBTools.updateTeamMemberUsernames(team);
 				
 				String response = "";
 				t.sendResponseHeaders(200, response.getBytes().length);
@@ -1112,36 +1236,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled create competition...");
-		}
-		
-	}
-	
-	static class CompetitionCancelHandler implements HttpHandler {
-
-		@Override
-		public void handle(HttpExchange t) throws IOException {
-			System.out.println("handling cancel competition...");
-			
-			String requestMethod = t.getRequestMethod();
-			if (requestMethod.equals("GET")) {
-				
-			} else if (requestMethod.equals("POST")) {
-				Headers headers = t.getRequestHeaders();
-				String username = headers.getFirst("Username");
-				
-				// to do
-				
-				String response = "";
-				t.sendResponseHeaders(200, response.getBytes().length);
-	            OutputStream os = t.getResponseBody();
-	            os.write(response.getBytes());
-	            os.close();
-			} else {
-				
-			}
-			
-			System.out.println("handled cancel competition...");
+			System.out.println("handled team leave...");
 		}
 		
 	}
@@ -1150,7 +1245,89 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-			System.out.println("handling view competition...");
+			System.out.println("handling competition view...");
+			
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				Headers headers = t.getRequestHeaders();
+				String username = headers.getFirst("Username");
+				
+				JSONObject responseJSON = new JSONObject();
+				
+				User user = DBTools.findUser(username);
+				inTeamCheck(user);
+				Team team = DBTools.findTeam(user.getTeamId());
+				hasCompetitionCheck(team);
+				Competition competition = DBTools.findCompetition(team.getCompetitionId());
+				
+				responseJSON.put("Competition-Name", competition.getCompetitionName());
+				
+				JSONObject statsJSON = new JSONObject();
+				
+				statsJSON.put("Team-Red-Name", competition.getTeamName(CompetitionTeamColor.RED));
+				statsJSON.put("Team-Red-ID", competition.getTeamId(CompetitionTeamColor.RED));
+				statsJSON.put("Team-Red-Score", competition.getTeamTotalScore(CompetitionTeamColor.RED));
+				
+				JSONArray teamRedMemberScoresJSON = new JSONArray();
+				for (String teamRedMemberUsername : competition.getTeamMembers(CompetitionTeamColor.RED)) {
+					JSONObject teamRedMemberScoreJSON = new JSONObject();
+					teamRedMemberScoreJSON.put("Username", teamRedMemberUsername);
+					teamRedMemberScoreJSON.put("User-Competition-Score",
+							competition.getTeamMemberScore(CompetitionTeamColor.RED, teamRedMemberUsername));
+					teamRedMemberScoreJSON.put("Is-Leader",
+							competition.isTeamLeader(CompetitionTeamColor.RED, teamRedMemberUsername));
+					teamRedMemberScoresJSON.put(teamRedMemberScoreJSON);
+				}
+				statsJSON.put("Team-Red-Member-Scores", teamRedMemberScoresJSON);
+				
+				statsJSON.put("Team-Blue-Name", competition.getTeamName(CompetitionTeamColor.BLUE));
+				statsJSON.put("Team-Blue-ID", competition.getTeamId(CompetitionTeamColor.BLUE));
+				statsJSON.put("Team-Blue-Score", competition.getTeamTotalScore(CompetitionTeamColor.BLUE));
+				
+				JSONArray teamBlueMemberScoresJSON = new JSONArray();
+				for (String teamBlueMemberUsername : competition.getTeamMembers(CompetitionTeamColor.BLUE)) {
+					JSONObject teamBlueMemberScoreJSON = new JSONObject();
+					teamBlueMemberScoreJSON.put("Username", teamBlueMemberUsername);
+					teamBlueMemberScoreJSON.put("User-Competition-Score",
+							competition.getTeamMemberScore(CompetitionTeamColor.BLUE, teamBlueMemberUsername));
+					teamBlueMemberScoreJSON.put("Is-Leader",
+							competition.isTeamLeader(CompetitionTeamColor.BLUE, teamBlueMemberUsername));
+					teamBlueMemberScoresJSON.put(teamBlueMemberScoreJSON);
+				}
+				statsJSON.put("Team-Blue-Member-Scores", teamBlueMemberScoresJSON);
+				responseJSON.put("Stats", statsJSON);
+				
+				responseJSON.put("Competition-Start-Date",
+						DateFormat.getFormattedString(competition.getCompetitionStartDate(), ModelTools.DATE_FORMAT));
+				responseJSON.put("Competition-End-Date",
+						DateFormat.getFormattedString(competition.getCompetitionEndDate(), ModelTools.DATE_FORMAT));
+				
+				CompetitionTeamColor teamColor = competition.getTeamColor(team.getTeamId());
+				responseJSON.put("Team-Color", teamColor == null ? null : teamColor.toString());
+				
+				responseJSON.put("Show-Team-Members", competition.getShowTeamMembers());
+				
+				String response = responseJSON.toString(JSON_INDENT);
+				t.sendResponseHeaders(200, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else if (requestMethod.equals("POST")) {
+				
+			} else {
+				
+			}
+			
+			System.out.println("handled competition view...");
+		}
+		
+	}
+	
+	static class CompetitionCreateHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling competition create...");
 			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
@@ -1159,10 +1336,53 @@ public class Server {
 				Headers headers = t.getRequestHeaders();
 				String username = headers.getFirst("Username");
 				
-				// to do
+				JSONObject requestJSON = toJSON(t.getRequestBody());
+				
+				String otherTeamName = requestJSON.getString("Other-Team-Name");
+				Team otherTeam = DBTools.findTeam(otherTeamName);
+				int rc = otherTeam == null ? 401 : (otherTeam.hasCompetition() ? 402 : 200);
+				if (rc == 200) {
+					long teamId = requestJSON.getLong("Team-ID");
+					
+					Team team = DBTools.findTeam(teamId);
+					leaderCheck(username, team);
+					
+					String competitionName = requestJSON.getString("Competition-Name");
+					Date competitionStartDate = DateFormat.getDate(requestJSON.getString("Competition-Start-Date"),
+																								ModelTools.DATE_FORMAT);
+					Date competitionEndDate = DateFormat.getDate(requestJSON.getString("Competition-End-Date"),
+																								ModelTools.DATE_FORMAT);
+					String teamColorString = requestJSON.getString("Team-Color");
+					boolean showTeamMembers = requestJSON.getBoolean("Show-Team-Members");
+					
+					Competition competition = null;
+					if (teamColorString.equals("red")) {
+						competition = DBTools.createCompetition(competitionName, ID_COUNTER.nextCompetitionIdCounter(),
+								competitionStartDate, competitionEndDate, teamId, otherTeam.getTeamId(),
+								team.getTeamName(), otherTeam.getTeamName(), team.getLeaderUsername(),
+								otherTeam.getLeaderUsername(), showTeamMembers);
+					} else if (teamColorString.equals("blue")) {
+						competition = DBTools.createCompetition(competitionName, ID_COUNTER.nextCompetitionIdCounter(),
+								competitionStartDate, competitionEndDate, otherTeam.getTeamId(), teamId,
+								otherTeam.getTeamName(), team.getTeamName(), otherTeam.getLeaderUsername(),
+								team.getLeaderUsername(), showTeamMembers);
+					} else {
+						throw new IllegalStateException("Invalid color.");
+					}
+					
+					for (String memberUsername : team.getMemberUsernames()) {
+						competition.createTeamMemberScore(competition.getTeamColor(teamId), memberUsername);
+					}
+					
+					team.setCompetitionId(competition.getCompetitionId());
+					
+					DBTools.updateTeamCompetitionId(team);
+					DBTools.updateCompetition(competition);
+					DBTools.writeIDCounter(ID_COUNTER);
+				}
 				
 				String response = "";
-				t.sendResponseHeaders(200, response.getBytes().length);
+				t.sendResponseHeaders(rc, response.getBytes().length);
 	            OutputStream os = t.getResponseBody();
 	            os.write(response.getBytes());
 	            os.close();
@@ -1170,7 +1390,57 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled view competition...");
+			System.out.println("handled competition create...");
+		}
+		
+	}
+	
+	static class CompetitionCancelHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			System.out.println("handling competition cancel...");
+			
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				
+			} else if (requestMethod.equals("POST")) {
+				Headers headers = t.getRequestHeaders();
+				String username = headers.getFirst("Username");
+				
+				JSONObject requestJSON = toJSON(t.getRequestBody());
+				
+				long teamId = requestJSON.getLong("Team-ID");
+				long competitionId = requestJSON.getLong("Competition-ID");
+				
+				Team team = DBTools.findTeam(teamId);
+				leaderCheck(username, team);
+				hasCompetitionCheck(team);
+				Competition competition = DBTools.findCompetition(competitionId);
+				
+				int rc = competition.getStatus() ? 401 : 200; // 401 if no longer pending
+				if (rc == 200) {
+					long teamInvitedId = competition.otherTeamId(teamId);
+					
+					Team teamInvited = DBTools.findTeam(teamInvitedId);
+					
+					declineCompetition(teamInvited, team, competition);
+					
+					DBTools.updateTeamCompetitionInvitations(teamInvited);
+					DBTools.updateTeamCompetitionId(team);
+					DBTools.updateCompetition(competition);
+				}
+				
+				String response = "";
+				t.sendResponseHeaders(rc, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else {
+				
+			}
+			
+			System.out.println("handled competition cancel...");
 		}
 		
 	}
@@ -1179,7 +1449,7 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-			System.out.println("handling join competition...");
+			System.out.println("handling competition join...");
 			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
@@ -1188,10 +1458,33 @@ public class Server {
 				Headers headers = t.getRequestHeaders();
 				String username = headers.getFirst("Username");
 				
-				// to do
+				JSONObject requestJSON = toJSON(t.getRequestBody());
+				
+				long teamId = requestJSON.getLong("Team-ID");
+				long competitionId = requestJSON.getLong("Competition-ID");
+				
+				Team team = DBTools.findTeam(teamId);
+				leaderCheck(username, team);
+				hasCompetitionCheck(team);
+				Competition competition = DBTools.findCompetition(competitionId);
+				
+				int rc = competition == null ? 401 : 200;
+				
+				if (rc == 200) {
+					for (String memberUsername : team.getMemberUsernames()) {
+						competition.createTeamMemberScore(competition.getTeamColor(teamId), memberUsername);
+					}
+					competition.setStatus(true);
+					team.setCompetitionId(competitionId);
+					team.removeCompetitionInvitation(competitionId);
+					
+					DBTools.updateTeamCompetitionInvitations(team);
+					DBTools.updateTeamCompetitionId(team);
+					DBTools.updateCompetition(competition);
+				}
 				
 				String response = "";
-				t.sendResponseHeaders(200, response.getBytes().length);
+				t.sendResponseHeaders(rc, response.getBytes().length);
 	            OutputStream os = t.getResponseBody();
 	            os.write(response.getBytes());
 	            os.close();
@@ -1199,7 +1492,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled join competition...");
+			System.out.println("handled competition join...");
 		}
 		
 	}
@@ -1208,7 +1501,7 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-			System.out.println("handling decline competition invite...");
+			System.out.println("handling competition decline...");
 			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
@@ -1217,7 +1510,25 @@ public class Server {
 				Headers headers = t.getRequestHeaders();
 				String username = headers.getFirst("Username");
 				
-				// to do
+				JSONObject requestJSON = toJSON(t.getRequestBody());
+				
+				long teamId = requestJSON.getLong("Team-ID");
+				long competitionId = requestJSON.getLong("Competition-ID");
+				
+				Team team = DBTools.findTeam(teamId);
+				leaderCheck(username, team);
+				hasCompetitionCheck(team);
+				Competition competition = DBTools.findCompetition(competitionId);
+				
+				long teamInvitingId = competition.otherTeamId(teamId);
+				
+				Team teamInviting = DBTools.findTeam(teamInvitingId);
+				
+				declineCompetition(team, teamInviting, competition);
+				
+				DBTools.updateTeamCompetitionInvitations(team);
+				DBTools.updateTeamCompetitionId(teamInviting);
+				DBTools.updateCompetition(competition);
 				
 				String response = "";
 				t.sendResponseHeaders(200, response.getBytes().length);
@@ -1228,7 +1539,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled decline competition invite...");
+			System.out.println("handled competition decline...");
 		}
 		
 	}
@@ -1237,7 +1548,7 @@ public class Server {
 
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-			System.out.println("handling leave competition...");
+			System.out.println("handling competition leave...");
 			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
@@ -1273,7 +1584,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled leave competition...");
+			System.out.println("handled competition leave...");
 		}
 		
 	}

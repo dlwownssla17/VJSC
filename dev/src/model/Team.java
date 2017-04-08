@@ -109,20 +109,24 @@ public class Team {
 		return this.memberUsernames;
 	}
 	
-	synchronized boolean addMemberUsername(String username) {
-		if (this.maxTeamSize > 0 && this.memberUsernames.size() >= this.maxTeamSize) return false;
+	public synchronized boolean addMemberUsername(String username) {
+		if (this.maxTeamSize > 0 && this.isFull()) return false;
 		
 		this.memberUsernames.add(username);
 		this.inTeamSince.put(username, new Date());
 		return true;
 	}
 	
-	synchronized boolean removeMemberUsername(String username) {
+	public synchronized boolean removeMemberUsername(String username) {
 		return this.memberUsernames.remove(username) && this.inTeamSince.remove(username) != null;
 	}
 	
 	public int getTeamSize() {
 		return this.memberUsernames.size();
+	}
+	
+	public boolean isFull() {
+		return this.maxTeamSize >= this.getTeamSize();
 	}
 	
 	public HashMap<String, Date> getInTeamSince() {
@@ -186,7 +190,7 @@ public class Team {
 		return this.competitionInvitations.add(competitionInvitation);
 	}
 	
-	public boolean declineCompetitionInvitation(long competitionId) {
+	public boolean removeCompetitionInvitation(long competitionId) {
 		CompetitionInvitation competitionInvitationToRemove = null;
 		for (CompetitionInvitation competitionInvitation : this.competitionInvitations) {
 			if (competitionInvitation.getCompetitionId() == competitionId) {

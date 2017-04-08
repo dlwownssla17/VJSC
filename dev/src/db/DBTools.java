@@ -103,22 +103,14 @@ public class DBTools {
 		close();
 	}
 	
-	public static Document findUserDocument(String username) {
+	public static User findUser(String username) {
 		open();
 		
 		Document existingUserDocument = users.find(eq("username", username)).first();
 		
 		close();
 		
-		return existingUserDocument;
-	}
-	
-	public static User findUser(Document existingUserDocument) {
 		return existingUserDocument == null ? null : userDB.fromDocument(existingUserDocument);
-	}
-	
-	public static User findUser(String username) {
-		return findUser(findUserDocument(username));
 	}
 	
 	public static User createUser(String username, String password) {
@@ -187,36 +179,24 @@ public class DBTools {
 	
 	/* * */
 	
-	public static Document findTeamDocument(long teamId) {
+	public static Team findTeam(long teamId) {
 		open();
 		
 		Document existingTeamDocument = teams.find(eq("team-id", teamId)).first();
 		
 		close();
 		
-		return existingTeamDocument;
+		return existingTeamDocument == null ? null : teamDB.fromDocument(existingTeamDocument);
 	}
 	
-	public static Document findTeamDocument(String teamName) {
+	public static Team findTeam(String teamName) {
 		open();
 		
 		Document existingTeamDocument = teams.find(eq("team-name", teamName)).first();
 		
 		close();
 		
-		return existingTeamDocument;
-	}
-	
-	public static Team findTeam(Document existingTeamDocument) {
 		return existingTeamDocument == null ? null : teamDB.fromDocument(existingTeamDocument);
-	}
-	
-	public static Team findTeam(long teamId) {
-		return findTeam(findTeamDocument(teamId));
-	}
-	
-	public static Team findTeam(String teamName) {
-		return findTeam(findTeamDocument(teamName));
 	}
 	
 	public static Team createTeam(long teamId, String teamName, String leaderUsername, int maxTeamSize) {
@@ -306,22 +286,14 @@ public class DBTools {
 	
 	/* * */
 	
-	public static Document findCompetitionDocument(long competitionId) {
+	public static Competition findCompetition(long competitionId) {
 		open();
 		
 		Document existingCompetitionDocument = competitions.find(eq("competition-id", competitionId)).first();
 		
 		close();
 		
-		return existingCompetitionDocument;
-	}
-	
-	public static Competition findCompetition(Document existingCompetitionDocument) {
 		return existingCompetitionDocument == null ? null : competitionDB.fromDocument(existingCompetitionDocument);
-	}
-	
-	public static Competition findCompetition(long competitionId) {
-		return findCompetition(findCompetitionDocument(competitionId));
 	}
 	
 	public static Competition createCompetition(String competitionName, long competitionId,
