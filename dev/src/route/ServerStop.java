@@ -7,7 +7,7 @@ public class ServerStop {
 	public static void main(String[] args) {
 		HttpURLConnection connection = null;
 		try {
-			URL url = new URL("http://localhost:8000/stop");
+			URL url = new URL("http://165.123.192.175:8000/stop");
 			connection = (HttpURLConnection) url.openConnection();
 		    connection.setRequestMethod("POST");
 		    connection.setRequestProperty("Content-Type", 

@@ -101,6 +101,7 @@ public class Server {
         
         server.createContext("/stop", new ServerStopHandler());
         
+        
         server.setExecutor(null); // create a default executor
         server.start();
         
@@ -769,7 +770,7 @@ public class Server {
 				
 				User user = DBTools.findUser(username);
 				Team team = user.inTeam() ? DBTools.findTeam(user.getTeamId()) : null;
-				Competition competition = team.hasCompetition() ?
+				Competition competition = team != null && team.hasCompetition() ?
 															DBTools.findCompetition(team.getCompetitionId()) : null;
 				
 				responseJSON.put("In-Team", user.inTeam());
@@ -916,11 +917,13 @@ public class Server {
 				if (rc == 200) {
 					User user = DBTools.findUser(username);
 	
+					team.addMemberUsername(username);
 					user.setTeamId(team.getTeamId());
 					user.clearTeamInvitations();
 					
 					DBTools.updateUserTeamInvitations(user);
 					DBTools.updateUserTeamId(user);
+					DBTools.updateTeamMemberUsernames(team);
 					DBTools.writeIDCounter(ID_COUNTER);
 				}
 				
@@ -1281,6 +1284,7 @@ public class Server {
 				Competition competition = DBTools.findCompetition(team.getCompetitionId());
 				
 				responseJSON.put("Competition-Name", competition.getCompetitionName());
+				responseJSON.put("Competition-ID", competition.getCompetitionId());
 				
 				JSONObject statsJSON = new JSONObject();
 				
@@ -1618,6 +1622,8 @@ public class Server {
 		public void handle(HttpExchange t) throws IOException {
 			System.out.println("handling server stop...");
 			
+			boolean processExit = false;
+			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
 				
@@ -1626,18 +1632,23 @@ public class Server {
 				String adminKey = headers.getFirst("Admin-Key");
 				
 				int rc = adminKey.equals("jms") ? 200 : 401;
-				if (rc == 200) stop();
 				
 				String response = "";
 				t.sendResponseHeaders(rc, response.getBytes().length);
 	            OutputStream os = t.getResponseBody();
 	            os.write(response.getBytes());
 	            os.close();
+	            
+	            if (rc == 200) {
+	            	stop();
+	            	processExit = true;
+	            }
 			} else {
 				
 			}
 			
 			System.out.println("handled server stop...");
+			if (processExit) System.exit(0);
 		}
 		
 	}
