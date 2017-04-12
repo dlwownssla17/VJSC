@@ -127,7 +127,7 @@ public class Team {
 	}
 	
 	public boolean isFull() {
-		return this.maxTeamSize >= this.getTeamSize();
+		return this.maxTeamSize <= this.getTeamSize();
 	}
 	
 	public HashMap<String, Date> getInTeamSince() {

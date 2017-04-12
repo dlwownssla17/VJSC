@@ -110,10 +110,7 @@ public class User {
 	}
 	
 	public long setTeamId(long teamId) {
-		if (this.inTeam()) throw new IllegalStateException();
-		
 		this.teamId = teamId;
-		this.teamInvitations.clear();
 		return this.teamId;
 	}
 	

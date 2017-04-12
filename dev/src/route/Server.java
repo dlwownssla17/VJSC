@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -212,6 +213,20 @@ public class Server {
 	
 	public static void hasCompetitionCheck(Team team) {
 		if (!team.hasCompetition()) throw new IllegalStateException("Team does not have competition.");
+	}
+	
+	public static void clearTeamInvitations(User user) {
+		for (TeamInvitation teamInvitation : user.getTeamInvitations()) {
+			Team teamInviting = DBTools.findTeam(teamInvitation.getTeamId());
+			
+			teamInviting.removeUserInvited(user.getUsername());
+			
+			DBTools.updateTeamUsersInvited(teamInviting);
+		}
+		
+		user.clearTeamInvitations();
+		
+		DBTools.updateUserTeamInvitations(user);
 	}
 	
 	public static void endCompetition(Team team1, Team team2, Competition competition, Team teamLeaving) {
@@ -919,9 +934,8 @@ public class Server {
 	
 					team.addMemberUsername(username);
 					user.setTeamId(team.getTeamId());
-					user.clearTeamInvitations();
+					clearTeamInvitations(user);
 					
-					DBTools.updateUserTeamInvitations(user);
 					DBTools.updateUserTeamId(user);
 					DBTools.updateTeamMemberUsernames(team);
 					DBTools.writeIDCounter(ID_COUNTER);
@@ -949,7 +963,7 @@ public class Server {
 			
 			String requestMethod = t.getRequestMethod();
 			if (requestMethod.equals("GET")) {
-				
+					
 			} else if (requestMethod.equals("POST")) {
 				Headers headers = t.getRequestHeaders();
 				String username = headers.getFirst("Username");
@@ -985,7 +999,9 @@ public class Server {
 				}
 				
 				// undo all team invitations to users
-				for (String usernameInvited : team.getUsersInvited()) {
+				Iterator<String> usersInvitedItr = team.getUsersInvited().iterator();
+				while (usersInvitedItr.hasNext()) {
+					String usernameInvited = usersInvitedItr.next();
 					User userInvited = DBTools.findUser(usernameInvited);
 					
 					team.removeUserInvited(usernameInvited);
@@ -1093,9 +1109,8 @@ public class Server {
 				if (rc == 200) {
 					User user = DBTools.findUser(username);
 					
-					team.removeUserInvited(username);
 					user.setTeamId(teamId);
-					user.clearTeamInvitations();
+					clearTeamInvitations(user);
 					
 					if (team.hasCompetition()) {
 						Competition competition = DBTools.findCompetition(team.getCompetitionId());
@@ -1105,9 +1120,7 @@ public class Server {
 						DBTools.updateCompetition(competition);
 					}
 					
-					DBTools.updateUserTeamInvitations(user);
 					DBTools.updateUserTeamId(user);
-					DBTools.updateTeamUsersInvited(team);
 					DBTools.updateTeamMemberUsernames(team);
 				}
 				
@@ -1120,7 +1133,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handling team join...");
+			System.out.println("handled team join...");
 		}
 		
 	}

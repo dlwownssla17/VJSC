@@ -76,7 +76,8 @@ public class TeamDB implements DB<Team> {
 		HashMap<String, Date> inTeamSince = new HashMap<>();
 		Document memberUsernamesDocument = document.get("member-usernames", Document.class);
 		for (String memberUsername : memberUsernamesDocument.keySet()) {
-			inTeamSince.put(memberUsername, DateFormat.getDate(memberUsernamesDocument.getString(memberUsername),
+			Document memberInfoDocument = memberUsernamesDocument.get(memberUsername, Document.class);
+			inTeamSince.put(memberUsername, DateFormat.getDate(memberInfoDocument.getString("in-team-since"),
 																						ModelTools.DATE_TIME_FORMAT));
 		}
 		return inTeamSince;
