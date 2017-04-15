@@ -84,6 +84,8 @@ public class Server {
         /* Community */
         
         server.createContext("/team/view", new TeamViewHandler());
+        server.createContext("/team/leader/competition-invitations-view",
+        									new TeamCompetitionInvitationsViewHandler());
         server.createContext("/team/leader/create", new TeamCreateHandler());
         server.createContext("/team/leader/remove", new TeamRemoveHandler());
         server.createContext("/team/leader/invite", new TeamInviteHandler());
@@ -868,27 +870,6 @@ public class Server {
 					teamJSON.put("Competition-Status",
 							competition != null ? (competition.getStatus() ? "active" : "pending") : "none");
 					teamJSON.put("Competition-ID", competition != null ? competition.getCompetitionId() : -1);
-					
-					JSONArray competitionInvitationsJSON = new JSONArray();
-					for (CompetitionInvitation competitionInvitation : team.getCompetitionInvitations()) {
-						JSONObject competitionInvitationJSON = new JSONObject();
-						competitionInvitationJSON.put("Competition-Name", competitionInvitation.getCompetitionName());
-						competitionInvitationJSON.put("Competition-ID", competitionInvitation.getCompetitionId());
-						competitionInvitationJSON.put("Competition-Start-Date",
-								DateFormat.getFormattedString(competitionInvitation.getCompetitionStartDate(),
-																							ModelTools.DATE_FORMAT));
-						competitionInvitationJSON.put("Competition-End-Date",
-								DateFormat.getFormattedString(competitionInvitation.getCompetitionEndDate(),
-																							ModelTools.DATE_FORMAT));
-						competitionInvitationJSON.put("Other-Team-Name", competitionInvitation.getOtherTeamName());
-						competitionInvitationJSON.put("Other-Team-Leader",
-																competitionInvitation.getOtherTeamLeaderUsername());
-						competitionInvitationJSON.put("Other-Team-Color",
-																competitionInvitation.getOtherTeamColor().toString());
-						
-						competitionInvitationsJSON.put(competitionInvitationJSON);
-					}
-					teamJSON.put("Competition-Invitations", competitionInvitationsJSON);
 				}
 				responseJSON.put("Team", teamJSON);
 				
@@ -903,9 +884,65 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled team view...");
+			System.out.println("handled team view");
 		}
 		
+	}
+	
+	static class TeamCompetitionInvitationsViewHandler implements HttpHandler {
+		
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			System.out.println("Handling team competition invitations view...");
+			
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				Headers headers = t.getRequestHeaders();
+				String username = headers.getFirst("Username");
+				
+				JSONObject requestJSON = toJSON(t.getRequestBody());
+				
+				long teamId = requestJSON.getLong("Team-ID");
+				
+				Team team = DBTools.findTeam(teamId);
+				leaderCheck(username, team);
+				
+				JSONObject responseJSON = new JSONObject();
+				
+				JSONArray competitionInvitationsJSON = new JSONArray();
+				for (CompetitionInvitation competitionInvitation : team.getCompetitionInvitations()) {
+					JSONObject competitionInvitationJSON = new JSONObject();
+					competitionInvitationJSON.put("Competition-Name", competitionInvitation.getCompetitionName());
+					competitionInvitationJSON.put("Competition-ID", competitionInvitation.getCompetitionId());
+					competitionInvitationJSON.put("Competition-Start-Date",
+							DateFormat.getFormattedString(competitionInvitation.getCompetitionStartDate(),
+																						ModelTools.DATE_FORMAT));
+					competitionInvitationJSON.put("Competition-End-Date",
+							DateFormat.getFormattedString(competitionInvitation.getCompetitionEndDate(),
+																						ModelTools.DATE_FORMAT));
+					competitionInvitationJSON.put("Other-Team-Name", competitionInvitation.getOtherTeamName());
+					competitionInvitationJSON.put("Other-Team-Leader",
+															competitionInvitation.getOtherTeamLeaderUsername());
+					competitionInvitationJSON.put("Other-Team-Color",
+															competitionInvitation.getOtherTeamColor().toString());
+					
+					competitionInvitationsJSON.put(competitionInvitationJSON);
+				}
+				responseJSON.put("Competition-Invitations", competitionInvitationsJSON);
+				
+				String response = responseJSON.toString(JSON_INDENT);
+				t.sendResponseHeaders(200, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else if (requestMethod.equals("POST")) {
+				
+			} else {
+				
+			}
+			
+			System.out.println("Handled team competition invitations view");
+		}
 	}
 	
 	static class TeamCreateHandler implements HttpHandler {
@@ -950,7 +987,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled team create...");
+			System.out.println("handled team create");
 		}
 		
 	}
@@ -1004,7 +1041,7 @@ public class Server {
 					String usernameInvited = usersInvitedItr.next();
 					User userInvited = DBTools.findUser(usernameInvited);
 					
-					team.removeUserInvited(usernameInvited);
+					usersInvitedItr.remove();
 					userInvited.removeTeamInvitation(teamId);
 					
 					DBTools.updateUserTeamInvitations(userInvited);
@@ -1033,7 +1070,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled team remove...");
+			System.out.println("handled team remove");
 		}
 		
 	}
@@ -1081,7 +1118,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled team invite...");
+			System.out.println("handled team invite");
 		}
 		
 	}
@@ -1133,7 +1170,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled team join...");
+			System.out.println("handled team join");
 		}
 		
 	}
@@ -1173,7 +1210,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled team decline...");
+			System.out.println("handled team decline");
 		}
 		
 	}
@@ -1223,7 +1260,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled team dismiss...");
+			System.out.println("handled team dismiss");
 		}
 		
 	}
@@ -1272,7 +1309,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled team leave...");
+			System.out.println("handled team leave");
 		}
 		
 	}
@@ -1356,7 +1393,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled competition view...");
+			System.out.println("handled competition view");
 		}
 		
 	}
@@ -1428,7 +1465,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled competition create...");
+			System.out.println("handled competition create");
 		}
 		
 	}
@@ -1478,7 +1515,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled competition cancel...");
+			System.out.println("handled competition cancel");
 		}
 		
 	}
@@ -1530,7 +1567,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled competition join...");
+			System.out.println("handled competition join");
 		}
 		
 	}
@@ -1577,7 +1614,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled competition decline...");
+			System.out.println("handled competition decline");
 		}
 		
 	}
@@ -1622,7 +1659,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled competition leave...");
+			System.out.println("handled competition leave");
 		}
 		
 	}
@@ -1660,7 +1697,7 @@ public class Server {
 				
 			}
 			
-			System.out.println("handled server stop...");
+			System.out.println("handled server stop");
 			if (processExit) System.exit(0);
 		}
 		
