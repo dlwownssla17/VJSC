@@ -57,7 +57,7 @@ public class DBTools {
 	
 	/* * */
 	
-	public static void open() {
+	public synchronized static void open() {
 		client = new MongoClient(HOST, PORT);
 		database = client.getDatabase(DATABASE_NAME);
 		
@@ -67,11 +67,11 @@ public class DBTools {
 		competitions = database.getCollection(COMPETITIONDB);
 	}
 	
-	public static void close() {
+	public synchronized static void close() {
 		client.close();
 	}
 	
-	public static void init() {
+	public synchronized static void init() {
 		open();
 		
 		Document dummy = new Document();
@@ -88,22 +88,22 @@ public class DBTools {
 	
 	/* * */
 	
-	public static Document readIDCounter() {
+	public synchronized static Document readIDCounter() {
 		return idCounters.find().first();
 	}
 	
-	public static void writeIDCounter(IDCounter idCounter) {
+	public synchronized static void writeIDCounter(IDCounter idCounter) {
 		idCounters.replaceOne(exists("team-id-counter"), idCounterDB.toDocument(idCounter));
 	}
 	
 	/* * */
 	
-	public static User findUser(String username) {
+	public synchronized static User findUser(String username) {
 		Document existingUserDocument = users.find(eq("username", username)).first();
 		return existingUserDocument == null ? null : userDB.fromDocument(existingUserDocument);
 	}
 	
-	public static User createUser(String username, String password) {
+	public synchronized static User createUser(String username, String password) {
 		// user with username already exists
 		if (users.count(eq("username", username)) > 0) return null;
 		
@@ -112,26 +112,26 @@ public class DBTools {
 		return newUser;
 	}
 	
-	public static void updateUser(User user) {
+	public synchronized static void updateUser(User user) {
 		users.replaceOne(eq("username", user.getUsername()), userDB.toDocument(user));
 	}
 	
-	public static void updateUserTeamId(User user) {
+	public synchronized static void updateUserTeamId(User user) {
 		Document newUserTeamId = new Document("team-id", user.getTeamId());
 		users.updateOne(eq("username", user.getUsername()), new Document("$set", newUserTeamId));
 	}
 	
-	public static void updateUserTeamInvitations(User user) {
+	public synchronized static void updateUserTeamInvitations(User user) {
 		Document newUserTeamInvitations = new Document("team-invitations", userDB.teamInvitationsToDocument(user));
 		users.updateOne(eq("username", user.getUsername()), new Document("$set", newUserTeamInvitations));
 	}
 	
-	public static void updateUserSchedule(User user) {
+	public synchronized static void updateUserSchedule(User user) {
 		Document newUserSchedule = new Document("schedule", userScheduleDB.toDocument(user.getSchedule()));
 		users.updateOne(eq("username", user.getUsername()), new Document("$set", newUserSchedule));
 	}
 	
-	public static void updateUserFitBitAccount(User user) {
+	public synchronized static void updateUserFitBitAccount(User user) {
 		Document newUserFitBitAccount =
 				new Document("fitbit-account", fitBitAccountDB.toDocument(user.getFitBitAccount()));
 		users.updateOne(eq("username", user.getUsername()),  new Document("$set", newUserFitBitAccount));
@@ -139,17 +139,17 @@ public class DBTools {
 	
 	/* * */
 	
-	public static Team findTeam(long teamId) {
+	public synchronized static Team findTeam(long teamId) {
 		Document existingTeamDocument = teams.find(eq("team-id", teamId)).first();
 		return existingTeamDocument == null ? null : teamDB.fromDocument(existingTeamDocument);
 	}
 	
-	public static Team findTeam(String teamName) {
+	public synchronized static Team findTeam(String teamName) {
 		Document existingTeamDocument = teams.find(eq("team-name", teamName)).first();
 		return existingTeamDocument == null ? null : teamDB.fromDocument(existingTeamDocument);
 	}
 	
-	public static Team createTeam(long teamId, String teamName, String leaderUsername, int maxTeamSize) {
+	public synchronized static Team createTeam(long teamId, String teamName, String leaderUsername, int maxTeamSize) {
 		// team with team id or team name already exists
 		if (teams.count(eq("team-id", teamId)) > 0 || teams.count(eq("team-name", teamName)) > 0) return null;
 		
@@ -158,37 +158,37 @@ public class DBTools {
 		return newTeam;
 	}
 	
-	public static void updateTeam(Team team) {
+	public synchronized static void updateTeam(Team team) {
 		teams.replaceOne(eq("team-id", team.getTeamId()), teamDB.toDocument(team));
 	}
 	
-	public static void updateTeamLeaderUsername(Team team) {
+	public synchronized static void updateTeamLeaderUsername(Team team) {
 		Document newTeamLeaderUsername = new Document("leader-username", team.getLeaderUsername());
 		teams.updateOne(eq("team-id", team.getTeamId()), new Document("$set", newTeamLeaderUsername));
 	}
 	
-	public static void updateTeamMemberUsernames(Team team) {
+	public synchronized static void updateTeamMemberUsernames(Team team) {
 		Document newTeamMemberUsernames = new Document("member-usernames", teamDB.memberUsernamesToDocument(team));
 		teams.updateOne(eq("team-id", team.getTeamId()), new Document("$set", newTeamMemberUsernames));
 	}
 	
-	public static void updateTeamUsersInvited(Team team) {
+	public synchronized static void updateTeamUsersInvited(Team team) {
 		Document newTeamUsersInvited = new Document("users-invited", teamDB.usersInvitedToDocument(team));
 		teams.updateOne(eq("team-id", team.getTeamId()), new Document("$set", newTeamUsersInvited));
 	}
 	
-	public static void updateTeamCompetitionId(Team team) {
+	public synchronized static void updateTeamCompetitionId(Team team) {
 		Document newTeamCompetitionId = new Document("competition-id", team.getCompetitionId());
 		teams.updateOne(eq("team-id", team.getTeamId()), new Document("$set", newTeamCompetitionId));
 	}
 	
-	public static void updateTeamCompetitionInvitations(Team team) {
+	public synchronized static void updateTeamCompetitionInvitations(Team team) {
 		Document newTeamCompetitionInvitations =
 				new Document("competition-invitations", teamDB.competitionInvitationsToDocument(team));
 		teams.updateOne(eq("team-id", team.getTeamId()), new Document("$set", newTeamCompetitionInvitations));
 	}
 	
-	public static void updateTeamCompetitionHistories(Team team) {
+	public synchronized static void updateTeamCompetitionHistories(Team team) {
 		Document newTeamCompetitionHistories =
 				new Document("competition-histories", teamDB.competitionHistoriesToDocument(team));
 		teams.updateOne(eq("team-id", team.getTeamId()), new Document("$set", newTeamCompetitionHistories));
@@ -196,12 +196,12 @@ public class DBTools {
 	
 	/* * */
 	
-	public static Competition findCompetition(long competitionId) {
+	public synchronized static Competition findCompetition(long competitionId) {
 		Document existingCompetitionDocument = competitions.find(eq("competition-id", competitionId)).first();
 		return existingCompetitionDocument == null ? null : competitionDB.fromDocument(existingCompetitionDocument);
 	}
 	
-	public static Set<Competition> findAllCompetitions() {
+	public synchronized static Set<Competition> findAllCompetitions() {
 		Set<Competition> competitionsSet = new HashSet<>();
 		MongoCursor<Document> itr = competitions.find().iterator();
 		while (itr.hasNext()) {
@@ -210,7 +210,7 @@ public class DBTools {
 		return competitionsSet;
 	}
 	
-	public static Competition createCompetition(String competitionName, long competitionId,
+	public synchronized static Competition createCompetition(String competitionName, long competitionId,
 			Date competitionStartDate, Date competitionEndDate, long teamRedId, long teamBlueId,
 			String teamRedName, String teamBlueName, String teamRedLeaderUsername, String teamBlueLeaderUsername,
 			boolean showTeamMembers) {
@@ -225,7 +225,7 @@ public class DBTools {
 		return newCompetition;
 	}
 	
-	public static void updateCompetition(Competition competition) {
+	public synchronized static void updateCompetition(Competition competition) {
 		competitions.replaceOne(eq("competition-id", competition.getCompetitionId()),
 																			competitionDB.toDocument(competition));
 	}

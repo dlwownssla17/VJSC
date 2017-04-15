@@ -8,29 +8,29 @@ public class IDCounter {
 		this.competitionIdCounter = 0;
 	}
 	
-	synchronized public long getTeamIdCounter() {
+	public synchronized long getTeamIdCounter() {
 		return this.teamIdCounter;
 	}
 	
-	synchronized public long setTeamIdCounter(long teamIdCounter) {
+	public synchronized long setTeamIdCounter(long teamIdCounter) {
 		this.teamIdCounter = teamIdCounter;
 		return this.teamIdCounter;
 	}
 	
-	synchronized public long nextTeamIdCounter() {
+	public synchronized long nextTeamIdCounter() {
 		return this.teamIdCounter++;
 	}
 	
-	synchronized public long getCompetitionIdCounter() {
+	public synchronized long getCompetitionIdCounter() {
 		return this.competitionIdCounter;
 	}
 	
-	synchronized public long setCompetitionIdCounter(long competitionIdCounter) {
+	public synchronized long setCompetitionIdCounter(long competitionIdCounter) {
 		this.competitionIdCounter = competitionIdCounter;
 		return this.competitionIdCounter;
 	}
 	
-	synchronized public long nextCompetitionIdCounter() {
+	public synchronized long nextCompetitionIdCounter() {
 		return this.competitionIdCounter++;
 	}
 }
