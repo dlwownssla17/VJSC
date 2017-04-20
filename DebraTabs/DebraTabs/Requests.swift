@@ -124,6 +124,109 @@ class Requests {
         return [JSONProtocolNames.passwordHeaderName: password]
     }
     
+    static func kickOutUser(username:String, id:Int)->[String:Any] {
+        let itemInformation: [String: Any] = [
+            JSONProtocolNames.memberUsernameHeaderName: username,
+            JSONProtocolNames.teamIDHeaderName: id
+        ]
+        return itemInformation
+    }
+    
+    static func removeTeam(id:Int)->[String:Any] {
+        let itemInformation: [String: Any] = [
+            JSONProtocolNames.teamIDHeaderName: id
+        ]
+        return itemInformation
+    }
+    
+    static func joinTeam(id:Int)->[String:Any] {
+        let itemInformation: [String: Any] = [
+            JSONProtocolNames.teamIDHeaderName: id
+        ]
+        return itemInformation
+    }
+    
+    static func declineTeamInvite(id:Int)->[String:Any] {
+        let itemInformation: [String: Any] = [
+            JSONProtocolNames.teamIDHeaderName: id
+        ]
+        return itemInformation
+    }
+    
+    static func inviteUserToTeam(username:String, id:Int)->[String:Any] {
+        let itemInformation: [String: Any] = [
+            JSONProtocolNames.memberUsernameHeaderName: username,
+            JSONProtocolNames.teamIDHeaderName: id
+        ]
+        return itemInformation
+    }
+    
+    static func createNewTeam(name:String, size:Int)->[String:Any] {
+        let itemInformation: [String: Any] = [
+            JSONProtocolNames.teamNameHeaderName: name,
+            JSONProtocolNames.maxTeamSizeHeaderName: size
+        ]
+        return itemInformation
+    }
+    
+    static func leaveTeam(id:Int)->[String:Any] {
+        let itemInformation: [String: Any] = [
+            JSONProtocolNames.teamIDHeaderName: id
+        ]
+        return itemInformation
+    }
+    
+    static func leaveCompetition(id:Int)->[String:Any] {
+        let itemInformation: [String: Any] = [
+            JSONProtocolNames.teamIDHeaderName: id
+        ]
+        return itemInformation
+    }
+    
+    static func cancelCompetition(teamId:Int, competitionId:Int)->[String:Any] {
+        let itemInformation: [String: Any] = [
+            JSONProtocolNames.teamIDHeaderName: teamId,
+            JSONProtocolNames.competitionIDHeaderName: competitionId
+        ]
+        return itemInformation
+    }
+    
+    static func declineCompetition(teamId:Int, competitionId:Int)->[String:Any] {
+        let itemInformation: [String: Any] = [
+            JSONProtocolNames.teamIDHeaderName: teamId,
+            JSONProtocolNames.competitionIDHeaderName: competitionId
+        ]
+        return itemInformation
+    }
+    
+    static func joinCompetition(teamId:Int, competitionId:Int)->[String:Any] {
+        let itemInformation: [String: Any] = [
+            JSONProtocolNames.teamIDHeaderName: teamId,
+            JSONProtocolNames.competitionIDHeaderName: competitionId
+        ]
+        return itemInformation
+    }
+    
+    static func createCompetition(teamId:Int, competitionName:String, teamName:String, start:String, end:String, color:String, show:Bool)->[String:Any] {
+        let itemInformation: [String: Any] = [
+            JSONProtocolNames.teamIDHeaderName: teamId,
+            JSONProtocolNames.competitionNameHeaderName: competitionName,
+            JSONProtocolNames.competitionStartDateHeaderName: start,
+            JSONProtocolNames.competitionEndDateHeaderName: end,
+            JSONProtocolNames.teamColorHeaderName: color,
+            JSONProtocolNames.showTeamMembersHeaderName: show,
+            JSONProtocolNames.otherTeamNameHeaderName: teamName
+        ]
+        return itemInformation
+    }
+    
+    static func competitionInvitation(teamId:Int)->[String:Any] {
+        let itemInformation: [String: Any] = [
+            JSONProtocolNames.teamIDHeaderName: teamId
+        ]
+        return itemInformation
+    }
+    
     static func getDayViewRoot()->Array<ScheduleItem> {
 //        Alamofire.request("http://130.91.134.209:8000/test").responseJSON { response in
 //            print("START")

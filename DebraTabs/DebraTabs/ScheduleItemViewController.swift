@@ -319,7 +319,11 @@ class ScheduleItemViewController: UIViewController, UITableViewDelegate, UITable
         }
         alertController.addTextField { (textField : UITextField!) -> Void in
             let dateFormatter: DateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "hh:mm a"
+            if Settings.displayAMPM {
+                dateFormatter.dateFormat = "hh:mm a"
+            } else {
+                dateFormatter.dateFormat = "HH:mm"
+            }
             let dateString: String = dateFormatter.string(from: self.ObjectsArray[indexPath.row].scheduleItemStart)
             textField.text = "Time: \(dateString)"
             textField.isEnabled = false

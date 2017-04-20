@@ -30,11 +30,17 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
     var scheduleTitle: UITextField = UITextField()
     var scheduleDesc: UITextField = UITextField()
     var segmentedControl: UISegmentedControl = UISegmentedControl()
+    public var selectedIndex:Int = 1
+    
+    
+    var toolBar = UIToolbar()
     
     
     // Exercise Picker
     var exercisePicker: UIPickerView! = UIPickerView()
     var exerciseValues = ["Exercise Duration (minutes):","5","10","15","20", "25", "30", "35", "40", "45", "50", "55", "60"]
+    var medicationPicker: UIPickerView! = UIPickerView()
+    var medicationValues = ["Select Medication:"] + Medications.medicationList
     var scheduleDuration: UITextField = UITextField()
     
     // UIPickerView 1
@@ -104,6 +110,10 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         self.scrollView.addSubview(containerView)
         self.view.addSubview(scrollView)
         
+        medicationPicker = UIPickerView()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
+        medicationPicker.delegate = self
+        medicationPicker.dataSource = self
+        
         scheduleTitle = UITextField(frame: CGRect(x: 0, y: barHeight, width: displayWidth, height: 50))
         scheduleTitle.textAlignment = NSTextAlignment.center
         scheduleTitle.textColor = blueColor
@@ -112,6 +122,7 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         scheduleTitle.layer.borderWidth = 1
         scheduleTitle.layer.borderColor = blueColor.cgColor
         scheduleTitle.autocapitalizationType = UITextAutocapitalizationType.words // If you need any capitalization
+        //self.scheduleTitle.inputView = self.medicationPicker
         self.view.addSubview(scheduleTitle)
         
         
@@ -129,7 +140,7 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         segmentedControl = UISegmentedControl(items: items)
         segmentedControl.frame = CGRect(x: 0, y: barHeight + 100, width: displayWidth, height: 50)
         segmentedControl.addTarget(self, action: #selector(actTypeTapped(_:)), for: .valueChanged)
-        segmentedControl.selectedSegmentIndex = 1
+        segmentedControl.selectedSegmentIndex = self.selectedIndex
         view.addSubview(segmentedControl)
         
         exercisePicker = UIPickerView()//(frame: CGRect(x: 0, y: barHeight + 150, width: displayWidth, height: 280.0))
@@ -403,7 +414,7 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         scheduleStartTime.isHidden = false
         self.view.addSubview(scheduleStartTime)
         
-        let toolBar = UIToolbar()
+        toolBar = UIToolbar()
         toolBar.barStyle = UIBarStyle.default
         toolBar.isTranslucent = true
         toolBar.tintColor = blueColor //UIColor(red: 76/255, green: 217/255, blue: 100/255, alpha: 1)
@@ -420,6 +431,7 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         scheduleEndingField.inputAccessoryView = toolBar
         scheduleEndingField2a.inputAccessoryView = toolBar
         scheduleEndingField2b.inputAccessoryView = toolBar
+        //scheduleTitle.inputAccessoryView = toolBar
         
         
         // Save Button
@@ -458,6 +470,7 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         scheduleEndingField2a.resignFirstResponder()
         scheduleEndingField2b.resignFirstResponder()
         scheduleStartTime.resignFirstResponder()
+        scheduleTitle.resignFirstResponder()
         
     }
     
@@ -691,7 +704,16 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
                 switch response.result {
                 case .success(let _):
                     print("TEST SPIRO")
-                    self.dismiss(animated: true, completion: nil)
+                    if Medications.medicationsWithFood.contains(newScheduleItem.scheduleItemTitle) {
+                        let message:String = newScheduleItem.scheduleItemTitle + " must be taken with food."
+                        let addFoodAction = UIAlertController(title: "Add Food", message: message, preferredStyle: UIAlertControllerStyle.alert)
+                        addFoodAction.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+                            self.dismiss(animated: true, completion: nil)
+                        }))
+                        self.present(addFoodAction, animated: true, completion: nil)
+                    } else {
+                        self.dismiss(animated: true, completion: nil)
+                    }
                 case .failure(let error):
                     print("Request failed with error: \(error)")
                     let alert = UIAlertController(title: "Alert", message: "Could not add Schedule Item", preferredStyle: UIAlertControllerStyle.alert)
@@ -836,6 +858,10 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
             return endingValues2a.count
         }
         
+        if (medicationPicker == pickerView) {
+            return medicationValues.count
+        }
+        
         return 1
     }
     
@@ -868,6 +894,10 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
         if (endingPicker2a == pickerView) {
             return endingValues2a[row]
         }
+        
+        if (medicationPicker == pickerView) {
+            return medicationValues[row]
+        }
         return ""
     }
     
@@ -880,6 +910,15 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
                 scheduleDuration.text = exerciseValues[1]
             }
         
+        }
+        
+        if (medicationPicker == pickerView) {
+            scheduleTitle.text = medicationValues[row]
+            if (row == 0) {
+                pickerView.selectRow(row + 1, inComponent:component, animated:true)
+                scheduleTitle.text = medicationValues[1]
+            }
+            
         }
         
         
@@ -1013,6 +1052,16 @@ class AddNewItem: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource
             scheduleDuration.isHidden = false
         } else {
             scheduleDuration.isHidden = true
+        }
+        
+        if (sender.selectedSegmentIndex == 0) {
+            self.scheduleTitle.inputView = self.medicationPicker
+            self.scheduleTitle.inputAccessoryView = self.toolBar
+            self.scheduleTitle.reloadInputViews()
+        } else {
+            self.scheduleTitle.inputView = nil
+            self.scheduleTitle.inputAccessoryView = nil
+            self.scheduleTitle.reloadInputViews()
         }
         print(sender.selectedSegmentIndex)
         

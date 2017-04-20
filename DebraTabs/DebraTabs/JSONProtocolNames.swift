@@ -102,9 +102,78 @@ class JSONProtocolNames {
     static let progressHeaderName:String = "Progress"
     static let lastDayCHeckedHeaderName:String = "Last-Day-Checked"
     static let userScoreHeaderName:String = "User-Score"
-    static let todayScoreSoFarName:String = "Today-Score-So-Far"
+    static let todayScoreSoFarHeaderName:String = "Today-Score-So-Far"
     
     static let scheduleItemTitleMaxLength:Int = 128
     static let scheduleItemDescriptionLength:Int = 1024
+    
+    static let inTeamHeaderName:String = "In-Team"
+    static let invitationsHeaderName:String = "Invitations"
+    static let teamHeaderName:String = "Team"
+    static let teamNameHeaderName:String = "Team-Name"
+    static let teamIDHeaderName:String = "Team-ID"
+    static let teamLeaderHeaderName:String = "Team-Leader"
+    static let teamCreatedHeaderName:String = "Team-Created"
+    static let isLeaderHeaderName:String = "Is-Leader"
+    static let maxTeamSizeHeaderName:String = "Max-Team-Size"
+    static let teanSizeHeaderName:String = "Team-Size"
+    static let teamMembersHeaderName:String = "Team-Members"
+    static let inTeamSinceHeaderName:String = "In-Team-Since"
+    static let teamHistoryHeaderName:String = "Team-History"
+    
+    static let competitionNameHeaderName:String = "Competition-Name"
+    static let competitionResultHeaderName:String = "Competition-Result"
+    static let statsHeaderName:String = "Stats"
+    static let teamRedNameHeaderName:String = "Team-Red-Name"
+    static let teamRedScoreHeaderName:String = "Team-Red-Score"
+    static let teamRedLeftHeaderName:String = "Team-Red-Left"
+    static let teamBlueNameHeaderName:String = "Team-Blue-Name"
+    static let teamBlueScoreHeaderName:String = "Team-Blue-Score"
+    static let teamBlueLeftHeaderName:String = "Team-Blue-Left"
+    static let competitionStartDateHeaderName:String = "Competition-Start-Date"
+    static let competitionEndDateHeaderName:String = "Competition-End-Date"
+    static let competitionStatusHeaderName:String = "Competition-Status"
+    static let competitionIDHeaderName:String = "Competition-ID"
+    static let competitionInvitationsHeaderName:String = "Competition-Invitations"
+    static let otherTeamNameHeaderName:String = "Other-Team-Name"
+    static let otherTeamSizeHeaderName:String = "Other-Team-Size"
+    static let otherTeamLeaderHeaderName:String = "Other-Team-Leader"
+    static let otherTeamColorHeaderName:String = "Other-Team-Color"
+    static let usersInvitedHeaderName:String = "Users-Invited"
+    static let memberUsernameHeaderName:String = "Member-Username"
+    static let teamRedIDHeaderName:String = "Team-Red-ID"
+    static let teamRedMemberScoresHeaderName:String = "Team-Red-Member-Scores"
+    static let teamBlueIDHeaderName:String = "Team-Blue-Score"
+    static let teamBlueMemberScoresHeaderName:String = "Team-Blue-Member-Scores"
+    static let userCompetitionScoreHeaderName:String = "User-Competition-Score"
+    static let showTeamMembersHeaderName:String = "Show-Team-Members"
+    static let teamColorHeaderName:String = "Team-Color"
+    static let stepsHeaderName:String = "Steps"
+    
+    static let noneCompetition:String = "none"
+    static let pendingCompetition:String = "pending"
+    static let activeCompetition:String = "active"
+    
+    static let competitionStatusMap:Dictionary<CompetitionStatus, String> =
+        [.None: noneCompetition,
+         .Pending: pendingCompetition,
+         .Active: activeCompetition]
+    
+    static let red:String = "red"
+    static let blue:String = "blue"
+    
+    static let teamColorMap:Dictionary<TeamColor, String> =
+        [.Red: red,
+         .Blue: blue]
+    
+    static let won:String = "won"
+    static let tied:String = "tied"
+    static let lost:String = "lost"
+    
+    static let competitionResult:Dictionary<CompetitionResult, String> =
+        [.Won: won,
+         .Tied: tied,
+         .Lost: lost]
+    
     
 }

@@ -19,17 +19,18 @@ class FirstViewController: UIViewController {
     var todayScoreLabel = UILabel()
     var scoreTextLabel = UILabel()
     var todayScoreTextLabel = UILabel()
+    var usernameLabel = UILabel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        scoreLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 21))
+        scoreLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 21))
         scoreLabel.center = CGPoint(x: 160, y: 285)
         scoreLabel.textAlignment = .center
         scoreLabel.text = "Retrieving Score"
         self.view.addSubview(scoreLabel)
         
-        todayScoreLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 21))
+        todayScoreLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 21))
         todayScoreLabel.center = CGPoint(x: 160, y: 185)
         todayScoreLabel.textAlignment = .center
         todayScoreLabel.text = "Retrieving Score"
@@ -44,6 +45,13 @@ class FirstViewController: UIViewController {
         todayScoreTextLabel.center.x = self.view.center.x
         todayScoreTextLabel.text = "Your Current Score For Today"
         self.view.addSubview(todayScoreTextLabel)
+        
+        usernameLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
+        usernameLabel.center = CGPoint(x: self.view.center.x, y: 50)
+        usernameLabel.textAlignment = .center
+        usernameLabel.text = Settings.usernameString
+        self.usernameLabel.font = UIFont(name: self.usernameLabel.font.fontName, size: 30)
+        self.view.addSubview(usernameLabel)
         
         // Do any additional setup after loading the view, typically from a nib.
         
@@ -63,12 +71,12 @@ class FirstViewController: UIViewController {
             case .success(let data):
                 let json = JSON(data)
                 let score:Int = json[JSONProtocolNames.userScoreHeaderName].intValue
-                let todayScore:Int = json[JSONProtocolNames.todayScoreSoFarName].intValue
+                let todayScore:Int = json[JSONProtocolNames.todayScoreSoFarHeaderName].intValue
                 print("SCORE: \(score)")
                 print("UPDATING HOME SCREEN")
                 self.scoreLabel.removeFromSuperview()
                 //self.scoreLabel.isHidden = true
-                self.scoreLabel = UILabel(frame: CGRect(x: 0, y: self.view.frame.height * 0.5, width: 150, height: 150))
+                self.scoreLabel = UILabel(frame: CGRect(x: 0, y: self.view.frame.height * 0.5, width: self.view.frame.width, height: 150))
                 self.scoreLabel.text = String(score)
                 self.scoreLabel.center.x = self.view.center.x
                 self.scoreLabel.font = UIFont(name: self.scoreLabel.font.fontName, size: 80)
@@ -79,7 +87,7 @@ class FirstViewController: UIViewController {
                 
                 self.todayScoreLabel.removeFromSuperview()
                 //self.scoreLabel.isHidden = true
-                self.todayScoreLabel = UILabel(frame: CGRect(x: 0, y: 150, width: 150, height: 100))
+                self.todayScoreLabel = UILabel(frame: CGRect(x: 0, y: 150, width: self.view.frame.width, height: 100))
                 self.todayScoreLabel.text = String(todayScore)
                 self.todayScoreLabel.center.x = self.view.center.x
                 self.todayScoreLabel.font = UIFont(name: self.todayScoreLabel.font.fontName, size: 80)

@@ -51,9 +51,9 @@ class CustomTabBar: UITabBarController, CustomTabBarDataSource, CustomTabBarDele
         self.view.addSubview(menuButton)
         
         func showAlert(_ title: String) {
-            let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+            //let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+            //alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+            //self.present(alert, animated: true, completion: nil)
             
             if (title == "Log Out") {
                 Settings.usernameString = ""
@@ -116,6 +116,16 @@ class CustomTabBar: UITabBarController, CustomTabBarDataSource, CustomTabBarDele
 //                    print("Error with request: \(error)")
 //                }
                 
+            } else if (title == "Help") {
+                let secondViewController:HelpPage = HelpPage()
+                self.present(secondViewController, animated: true, completion: nil)
+            } else if (title == "Settings") {
+                let secondViewController:SettingsPage = SettingsPage()
+                self.present(secondViewController, animated: true, completion: nil)
+            } else if (title == "Steps") {
+                let secondViewController:GetSteps = GetSteps()
+                self.present(secondViewController, animated: true, completion: nil)
+
             }
         }
         
@@ -123,23 +133,23 @@ class CustomTabBar: UITabBarController, CustomTabBarDataSource, CustomTabBarDele
             showAlert("Music")
         }
         
-        let item2 = ExpandingMenuItem(size: menuButtonSize, title: "Place", image: UIImage(named: "chooser-moment-icon-place")!, highlightedImage: UIImage(named: "chooser-moment-icon-place-highlighted")!, backgroundImage: UIImage(named: "chooser-moment-button"), backgroundHighlightedImage: UIImage(named: "chooser-moment-button-highlighted")) { () -> Void in
-            showAlert("Place")
+        let item2 = ExpandingMenuItem(size: menuButtonSize, title: "Steps", image: UIImage(named: "chooser-moment-icon-place")!, highlightedImage: UIImage(named: "chooser-moment-icon-place-highlighted")!, backgroundImage: UIImage(named: "chooser-moment-button"), backgroundHighlightedImage: UIImage(named: "chooser-moment-button-highlighted")) { () -> Void in
+            showAlert("Steps")
         }
         
-        let item3 = ExpandingMenuItem(size: menuButtonSize, title: "Camera", image: UIImage(named: "chooser-moment-icon-camera")!, highlightedImage: UIImage(named: "chooser-moment-icon-camera-highlighted")!, backgroundImage: UIImage(named: "chooser-moment-button"), backgroundHighlightedImage: UIImage(named: "chooser-moment-button-highlighted")) { () -> Void in
-            showAlert("Camera")
+        let item3 = ExpandingMenuItem(size: menuButtonSize, title: "Settings", image: UIImage(named: "chooser-moment-icon-camera")!, highlightedImage: UIImage(named: "chooser-moment-icon-camera-highlighted")!, backgroundImage: UIImage(named: "chooser-moment-button"), backgroundHighlightedImage: UIImage(named: "chooser-moment-button-highlighted")) { () -> Void in
+            showAlert("Settings")
         }
         
-        let item4 = ExpandingMenuItem(size: menuButtonSize, title: "Thought", image: UIImage(named: "chooser-moment-icon-thought")!, highlightedImage: UIImage(named: "chooser-moment-icon-thought-highlighted")!, backgroundImage: UIImage(named: "chooser-moment-button"), backgroundHighlightedImage: UIImage(named: "chooser-moment-button-highlighted")) { () -> Void in
-            showAlert("Thought")
+        let item4 = ExpandingMenuItem(size: menuButtonSize, title: "Help", image: UIImage(named: "questionMark")!, highlightedImage: UIImage(named: "questionMark")!, backgroundImage: UIImage(named: "chooser-moment-button"), backgroundHighlightedImage: UIImage(named: "questionMark")) { () -> Void in
+            showAlert("Help")
         }
         
         let item5 = ExpandingMenuItem(size: menuButtonSize, title: "Log Out", image: UIImage(named: "chooser-moment-icon-sleep")!, highlightedImage: UIImage(named: "chooser-moment-icon-sleep-highlighted")!, backgroundImage: UIImage(named: "chooser-moment-button"), backgroundHighlightedImage: UIImage(named: "chooser-moment-button-highlighted")) { () -> Void in
             showAlert("Log Out")
         }
         
-        menuButton.addMenuItems([item1, item2, item3, item4, item5])
+        menuButton.addMenuItems([item2, item3, item4, item5])
         
         menuButton.willPresentMenuItems = { (menu) -> Void in
             print("MenuItems will present.")

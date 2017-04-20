@@ -33,6 +33,9 @@
 		D110B7E31E2D681300621294 /* PathMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D110B7DF1E2D681300621294 /* PathMenu.swift */; };
 		D110B7E41E2D681300621294 /* PathMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D110B7E01E2D681300621294 /* PathMenuItem.swift */; };
 		D110B7E51E2D681300621294 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D110B7E21E2D681300621294 /* Info.plist */; };
+		D11E4C1B1E8FA08F00323198 /* AddMemberToTeam.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11E4C1A1E8FA08F00323198 /* AddMemberToTeam.swift */; };
+		D11E4C241E8FB16A00323198 /* TeamHistoryPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11E4C231E8FB16A00323198 /* TeamHistoryPage.swift */; };
+		D11E4C261E8FB63000323198 /* CompetitionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11E4C251E8FB63000323198 /* CompetitionResult.swift */; };
 		D135B5391E66F3200039718F /* JSONParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D135B5381E66F3200039718F /* JSONParser.swift */; };
 		D135B53B1E67119E0039718F /* ScheduleItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D135B53A1E67119E0039718F /* ScheduleItem.swift */; };
 		D135B53D1E6713690039718F /* ScheduleItemType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D135B53C1E6713690039718F /* ScheduleItemType.swift */; };
@@ -46,13 +49,28 @@
 		D193DC7B1E8CEFA60032139E /* UserNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = D193DC7A1E8CEFA60032139E /* UserNotifications.swift */; };
 		D193DC841E8D03DF0032139E /* NotificationItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D193DC831E8D03DF0032139E /* NotificationItem.swift */; };
 		D193DC881E8E54CE0032139E /* CreateNewTeam.swift in Sources */ = {isa = PBXBuildFile; fileRef = D193DC871E8E54CE0032139E /* CreateNewTeam.swift */; };
+		D193DC911E8F3DBF0032139E /* TeamInvitation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D193DC901E8F3DBF0032139E /* TeamInvitation.swift */; };
+		D193DC931E8F54FC0032139E /* Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = D193DC921E8F54FC0032139E /* Team.swift */; };
+		D193DC951E8F576C0032139E /* TeamMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = D193DC941E8F576C0032139E /* TeamMember.swift */; };
+		D193DC971E8F58CA0032139E /* TeamHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D193DC961E8F58CA0032139E /* TeamHistory.swift */; };
+		D193DC991E8F5B740032139E /* CompetitionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = D193DC981E8F5B740032139E /* CompetitionStatus.swift */; };
+		D193DC9B1E8F619F0032139E /* CompetitionInvitation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D193DC9A1E8F619F0032139E /* CompetitionInvitation.swift */; };
+		D193DC9D1E8F62AD0032139E /* TeamColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D193DC9C1E8F62AD0032139E /* TeamColor.swift */; };
 		D1D21B041E62FB6600D6BF69 /* CheckInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D21B031E62FB6600D6BF69 /* CheckInViewController.swift */; };
 		D1D21B6B1E6405CB00D6BF69 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D21B691E6405CB00D6BF69 /* MasterViewController.swift */; };
 		D1D21B6C1E6405CB00D6BF69 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D21B6A1E6405CB00D6BF69 /* DetailViewController.swift */; };
 		D1D21B6E1E64068100D6BF69 /* NewScheduleItemForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D21B6D1E64068100D6BF69 /* NewScheduleItemForm.swift */; };
+		D1E1FE2C1E98D38700747EE0 /* Competition.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E1FE2B1E98D38700747EE0 /* Competition.swift */; };
+		D1E1FE351E98DC9700747EE0 /* CompetitionPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E1FE341E98DC9700747EE0 /* CompetitionPage.swift */; };
+		D1E1FE371E991DEC00747EE0 /* SetCompetitionPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E1FE361E991DEC00747EE0 /* SetCompetitionPage.swift */; };
+		D1E1FE391E99267400747EE0 /* CreateCompetition.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E1FE381E99267400747EE0 /* CreateCompetition.swift */; };
 		D1E5655C1E73AAE600DC9D1C /* DayItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E5655B1E73AAE600DC9D1C /* DayItem.swift */; };
 		D1E565651E73B79100DC9D1C /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E565641E73B79100DC9D1C /* CalendarViewController.swift */; };
 		D1E565671E73BC6200DC9D1C /* CurrentDayInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E565661E73BC6200DC9D1C /* CurrentDayInfo.swift */; };
+		D1F543821EA7E23500F31B55 /* SettingsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F543811EA7E23500F31B55 /* SettingsPage.swift */; };
+		D1F5438B1EA7EE2300F31B55 /* HelpPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F5438A1EA7EE2300F31B55 /* HelpPage.swift */; };
+		D1F5438D1EA89D5C00F31B55 /* Medications.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F5438C1EA89D5C00F31B55 /* Medications.swift */; };
+		D1F5438F1EA8B53300F31B55 /* GetSteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F5438E1EA8B53300F31B55 /* GetSteps.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -157,6 +175,9 @@
 		D110B7DF1E2D681300621294 /* PathMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathMenu.swift; sourceTree = "<group>"; };
 		D110B7E01E2D681300621294 /* PathMenuItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathMenuItem.swift; sourceTree = "<group>"; };
 		D110B7E21E2D681300621294 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D11E4C1A1E8FA08F00323198 /* AddMemberToTeam.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddMemberToTeam.swift; sourceTree = "<group>"; };
+		D11E4C231E8FB16A00323198 /* TeamHistoryPage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamHistoryPage.swift; sourceTree = "<group>"; };
+		D11E4C251E8FB63000323198 /* CompetitionResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompetitionResult.swift; sourceTree = "<group>"; };
 		D135B5381E66F3200039718F /* JSONParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONParser.swift; sourceTree = "<group>"; };
 		D135B53A1E67119E0039718F /* ScheduleItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleItem.swift; sourceTree = "<group>"; };
 		D135B53C1E6713690039718F /* ScheduleItemType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleItemType.swift; sourceTree = "<group>"; };
@@ -170,13 +191,28 @@
 		D193DC7A1E8CEFA60032139E /* UserNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserNotifications.swift; sourceTree = "<group>"; };
 		D193DC831E8D03DF0032139E /* NotificationItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationItem.swift; sourceTree = "<group>"; };
 		D193DC871E8E54CE0032139E /* CreateNewTeam.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateNewTeam.swift; sourceTree = "<group>"; };
+		D193DC901E8F3DBF0032139E /* TeamInvitation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamInvitation.swift; sourceTree = "<group>"; };
+		D193DC921E8F54FC0032139E /* Team.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Team.swift; sourceTree = "<group>"; };
+		D193DC941E8F576C0032139E /* TeamMember.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamMember.swift; sourceTree = "<group>"; };
+		D193DC961E8F58CA0032139E /* TeamHistory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamHistory.swift; sourceTree = "<group>"; };
+		D193DC981E8F5B740032139E /* CompetitionStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompetitionStatus.swift; sourceTree = "<group>"; };
+		D193DC9A1E8F619F0032139E /* CompetitionInvitation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompetitionInvitation.swift; sourceTree = "<group>"; };
+		D193DC9C1E8F62AD0032139E /* TeamColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamColor.swift; sourceTree = "<group>"; };
 		D1D21B031E62FB6600D6BF69 /* CheckInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckInViewController.swift; sourceTree = "<group>"; };
 		D1D21B691E6405CB00D6BF69 /* MasterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 		D1D21B6A1E6405CB00D6BF69 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		D1D21B6D1E64068100D6BF69 /* NewScheduleItemForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewScheduleItemForm.swift; sourceTree = "<group>"; };
+		D1E1FE2B1E98D38700747EE0 /* Competition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Competition.swift; sourceTree = "<group>"; };
+		D1E1FE341E98DC9700747EE0 /* CompetitionPage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompetitionPage.swift; sourceTree = "<group>"; };
+		D1E1FE361E991DEC00747EE0 /* SetCompetitionPage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetCompetitionPage.swift; sourceTree = "<group>"; };
+		D1E1FE381E99267400747EE0 /* CreateCompetition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateCompetition.swift; sourceTree = "<group>"; };
 		D1E5655B1E73AAE600DC9D1C /* DayItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DayItem.swift; sourceTree = "<group>"; };
 		D1E565641E73B79100DC9D1C /* CalendarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		D1E565661E73BC6200DC9D1C /* CurrentDayInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentDayInfo.swift; sourceTree = "<group>"; };
+		D1F543811EA7E23500F31B55 /* SettingsPage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsPage.swift; sourceTree = "<group>"; };
+		D1F5438A1EA7EE2300F31B55 /* HelpPage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelpPage.swift; sourceTree = "<group>"; };
+		D1F5438C1EA89D5C00F31B55 /* Medications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Medications.swift; sourceTree = "<group>"; };
+		D1F5438E1EA8B53300F31B55 /* GetSteps.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetSteps.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -268,6 +304,24 @@
 				D193DC7A1E8CEFA60032139E /* UserNotifications.swift */,
 				D193DC831E8D03DF0032139E /* NotificationItem.swift */,
 				D193DC871E8E54CE0032139E /* CreateNewTeam.swift */,
+				D193DC901E8F3DBF0032139E /* TeamInvitation.swift */,
+				D193DC921E8F54FC0032139E /* Team.swift */,
+				D193DC941E8F576C0032139E /* TeamMember.swift */,
+				D193DC961E8F58CA0032139E /* TeamHistory.swift */,
+				D193DC981E8F5B740032139E /* CompetitionStatus.swift */,
+				D193DC9A1E8F619F0032139E /* CompetitionInvitation.swift */,
+				D193DC9C1E8F62AD0032139E /* TeamColor.swift */,
+				D11E4C1A1E8FA08F00323198 /* AddMemberToTeam.swift */,
+				D11E4C231E8FB16A00323198 /* TeamHistoryPage.swift */,
+				D11E4C251E8FB63000323198 /* CompetitionResult.swift */,
+				D1E1FE2B1E98D38700747EE0 /* Competition.swift */,
+				D1E1FE341E98DC9700747EE0 /* CompetitionPage.swift */,
+				D1E1FE361E991DEC00747EE0 /* SetCompetitionPage.swift */,
+				D1E1FE381E99267400747EE0 /* CreateCompetition.swift */,
+				D1F543811EA7E23500F31B55 /* SettingsPage.swift */,
+				D1F5438A1EA7EE2300F31B55 /* HelpPage.swift */,
+				D1F5438C1EA89D5C00F31B55 /* Medications.swift */,
+				D1F5438E1EA8B53300F31B55 /* GetSteps.swift */,
 			);
 			path = DebraTabs;
 			sourceTree = "<group>";
@@ -434,36 +488,54 @@
 				63323F681E6EFC600003F088 /* ScheduleItemViewController.swift in Sources */,
 				D100C0A21E52FD4C00E464D8 /* DataViewController.swift in Sources */,
 				D135B53B1E67119E0039718F /* ScheduleItem.swift in Sources */,
+				D193DC931E8F54FC0032139E /* Team.swift in Sources */,
 				63323FCF1E6F2E970003F088 /* AddNewItem.swift in Sources */,
+				D1F543821EA7E23500F31B55 /* SettingsPage.swift in Sources */,
+				D11E4C261E8FB63000323198 /* CompetitionResult.swift in Sources */,
 				D110B7E41E2D681300621294 /* PathMenuItem.swift in Sources */,
+				D11E4C1B1E8FA08F00323198 /* AddMemberToTeam.swift in Sources */,
 				D100C0CE1E55129200E464D8 /* ExpandingMenuButton.swift in Sources */,
 				D100C09C1E52E1ED00E464D8 /* CustomTabBar.swift in Sources */,
+				D1E1FE351E98DC9700747EE0 /* CompetitionPage.swift in Sources */,
 				D110B7BF1E2D61D300621294 /* AppDelegate.swift in Sources */,
 				D135B5511E7345120039718F /* AppSettings.swift in Sources */,
 				D100C0A41E52FE5400E464D8 /* MoreViewController.swift in Sources */,
 				D193DC7B1E8CEFA60032139E /* UserNotifications.swift in Sources */,
 				D1E565651E73B79100DC9D1C /* CalendarViewController.swift in Sources */,
+				D193DC9B1E8F619F0032139E /* CompetitionInvitation.swift in Sources */,
 				D110B7E31E2D681300621294 /* PathMenu.swift in Sources */,
 				D193DC881E8E54CE0032139E /* CreateNewTeam.swift in Sources */,
 				D1E5655C1E73AAE600DC9D1C /* DayItem.swift in Sources */,
+				D11E4C241E8FB16A00323198 /* TeamHistoryPage.swift in Sources */,
 				D100C09E1E52E33F00E464D8 /* CustomTabs.swift in Sources */,
 				D135B5391E66F3200039718F /* JSONParser.swift in Sources */,
 				D135B5411E6724CB0039718F /* JSONProtocolNames.swift in Sources */,
 				D100C0CC1E55126C00E464D8 /* ExpandingMenuItem.swift in Sources */,
+				D1E1FE391E99267400747EE0 /* CreateCompetition.swift in Sources */,
 				D135B53F1E671CBF0039718F /* RecurringType.swift in Sources */,
 				D110B7C11E2D61D300621294 /* FirstViewController.swift in Sources */,
 				D135B5491E6FF37C0039718F /* Requests.swift in Sources */,
 				D1D21B6C1E6405CB00D6BF69 /* DetailViewController.swift in Sources */,
 				63CB40731E73100100182C8F /* LogInViewController.swift in Sources */,
+				D1F5438D1EA89D5C00F31B55 /* Medications.swift in Sources */,
 				63024AF91E73DC630006E44C /* dataLayer.swift in Sources */,
 				63CB407C1E7318A800182C8F /* RegisterViewController.swift in Sources */,
+				D193DC9D1E8F62AD0032139E /* TeamColor.swift in Sources */,
 				D135B5471E6F26820039718F /* SwiftyJSON.swift in Sources */,
+				D193DC951E8F576C0032139E /* TeamMember.swift in Sources */,
 				D135B53D1E6713690039718F /* ScheduleItemType.swift in Sources */,
 				D1D21B6B1E6405CB00D6BF69 /* MasterViewController.swift in Sources */,
 				D135B5451E6F1BEF0039718F /* ProgressType.swift in Sources */,
+				D1E1FE2C1E98D38700747EE0 /* Competition.swift in Sources */,
+				D1F5438B1EA7EE2300F31B55 /* HelpPage.swift in Sources */,
 				D1D21B6E1E64068100D6BF69 /* NewScheduleItemForm.swift in Sources */,
+				D193DC911E8F3DBF0032139E /* TeamInvitation.swift in Sources */,
 				D1E565671E73BC6200DC9D1C /* CurrentDayInfo.swift in Sources */,
+				D193DC971E8F58CA0032139E /* TeamHistory.swift in Sources */,
+				D1E1FE371E991DEC00747EE0 /* SetCompetitionPage.swift in Sources */,
 				63323FD11E70B1070003F088 /* EditItemViewController.swift in Sources */,
+				D1F5438F1EA8B53300F31B55 /* GetSteps.swift in Sources */,
+				D193DC991E8F5B740032139E /* CompetitionStatus.swift in Sources */,
 				D135B5431E6730570039718F /* EndingType.swift in Sources */,
 				D100C0A01E52E64800E464D8 /* CustomTabBarItem.swift in Sources */,
 			);

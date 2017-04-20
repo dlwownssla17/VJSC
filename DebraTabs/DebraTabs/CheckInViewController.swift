@@ -71,6 +71,45 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
         
     }
     
+    func askForGlucoseLevel() {
+        var view = UIViewController();
+        view.preferredContentSize = CGSize(width: 250,height: 100)
+        var myFrame = CGRect(x: 10.0, y: 10.0, width: 250.0, height: 10.0)
+        var slider = UISlider(frame: myFrame)
+        
+        let alertController = UIAlertController(title: "Blood Glucode Level", message: "What was your blood glucose level?", preferredStyle: UIAlertControllerStyle.alert)
+        
+        let okAction = UIAlertAction(title: "Done", style: UIAlertActionStyle.default)
+        {
+            (result : UIAlertAction) -> Void in
+            return
+        }
+        //                        view.view.frame = CGRect(x: 0, y:0 , width: 250.0, height: 250.0)
+        //var myFrame = CGRect(x: 10.0, y: 10.0, width: 250.0, height: 10.0)
+        //var slider = UISlider(frame: myFrame)
+        slider.minimumValue = 0
+        slider.maximumValue = Float(250)
+        slider.value = 0
+        slider.addTarget(self, action:#selector(self.glucoseSliderValueDidChange), for: .valueChanged)
+        view.view.addSubview(slider)
+        
+        self.codedLabel.frame = CGRect(x: 0, y: 15, width: 250, height: 55)
+        self.codedLabel.textAlignment = .center
+        self.codedLabel.text = "Level: 0"
+        self.codedLabel.numberOfLines = 5
+        self.codedLabel.textColor = UIColor.black
+        self.codedLabel.font=UIFont.systemFont(ofSize: 15)
+        self.codedLabel.backgroundColor=UIColor.clear
+        
+        view.view.addSubview(self.codedLabel)
+        
+        alertController.setValue(view, forKey: "contentViewController")
+        alertController.addAction(okAction)
+        self.present(alertController, animated: true, completion: nil)
+        print("CHECK GLUCOSE LEVEL")
+        
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.myTableView.deselectRow(at: indexPath, animated: true)
         print("Num: \(indexPath.row)")
@@ -194,6 +233,9 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
                             (result : UIAlertAction) -> Void in
                             print("You pressed OK BOOLEAN")
                             self.viewDidAppear(true)
+                            if Settings.askForGlucoseLevel && self.ObjectsArray[indexPath.row].scheduleItemType == .GlucoseLevel {
+                                self.askForGlucoseLevel()
+                            }
                         }
                         alertController2.addAction(okAction)
                         
@@ -267,6 +309,10 @@ class CheckInViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func sliderValueDidChange(sender:UISlider!) {
         self.codedLabel.text = "Minutes Completed: \(sender.value)"
+    }
+    
+    func glucoseSliderValueDidChange(sender:UISlider!) {
+        self.codedLabel.text = "Level: \(Int(sender.value))"
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
