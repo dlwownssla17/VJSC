@@ -21,6 +21,9 @@ import com.sun.net.httpserver.HttpServer;
 
 import db.DBTools;
 import fitbit.FitbitAccount;
+import fitbit.FitbitActivity;
+import fitbit.FitbitPeriod;
+import fitbit.FitbitTools;
 import model.BooleanProgress;
 import model.Competition;
 import model.CompetitionHistory;
@@ -100,6 +103,11 @@ public class Server {
         server.createContext("/competition/leader/join", new CompetitionJoinHandler());
         server.createContext("/competition/leader/decline", new CompetitionDeclineHandler());
         server.createContext("/competition/leader/leave", new CompetitionLeaveHandler());
+        
+        /* Fitbit */
+        
+        server.createContext("/fitbit/save-metadata", new FitbitSaveMetadataHandler());
+        server.createContext("/fitbit/get-steps", new FitbitGetStepsHandler());
         
         /* Server Stop */
         
@@ -1731,6 +1739,60 @@ public class Server {
 				String scope = requestJSON.getString("Scope");
 				
 				FitbitAccount fitbitAccount = new FitbitAccount(username, accessToken, refreshToken, scope);
+				fitbitAccount.persistAccountData();
+				
+				String response = "";
+				t.sendResponseHeaders(200, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else {
+				
+			}
+		}
+		
+	}
+	
+	static class FitbitGetStepsHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				Headers headers = t.getRequestHeaders();
+				String username = headers.getFirst("Username");
+				
+				User user = DBTools.findUser(username);
+				
+				JSONObject responseJSON = new JSONObject();
+				
+				int rc = user.hasFitbitAccount() ? 200 : 401;
+				
+				if (rc == 200) {
+					JSONObject stepsJSON = new JSONObject(FitbitTools.getActivityForPeriod(user.getFitbitAccount(),
+												FitbitActivity.STEPS, DateAndCalendar.newDateGMT(), FitbitPeriod.DAY));
+					JSONArray stepsJSONArray = stepsJSON.getJSONArray("activities-steps");
+					int steps = stepsJSONArray.length() > 0 ? stepsJSONArray.getJSONObject(0).getInt("value") : 0;
+					responseJSON.put("Steps", steps);
+				}
+				
+				String response = responseJSON.toString(JSON_INDENT);
+				t.sendResponseHeaders(rc, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else if (requestMethod.equals("POST")) {
+				Headers headers = t.getRequestHeaders();
+				String username = headers.getFirst("Username");
+				
+				JSONObject requestJSON = toJSON(t.getRequestBody());
+				
+				String accessToken = requestJSON.getString("Access-Token");
+				String refreshToken = requestJSON.getString("Refresh-Token");
+				String scope = requestJSON.getString("Scope");
+				
+				FitbitAccount fitbitAccount = new FitbitAccount(username, accessToken, refreshToken, scope);
+				fitbitAccount.persistAccountData();
 				
 				String response = "";
 				t.sendResponseHeaders(200, response.getBytes().length);

@@ -71,8 +71,8 @@ public class CompetitionProcessor {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         long millisecondsUntilMidnight = calendar.getTimeInMillis() - System.currentTimeMillis();
-        System.out.printf("millisecondUntilMidnight: %d\n", millisecondsUntilMidnight);
-        System.out.printf("hours until midnight: %f\n", millisecondsUntilMidnight / (1000. * 60 * 60));
+//        System.out.printf("millisecondUntilMidnight: %d\n", millisecondsUntilMidnight);
+//        System.out.printf("hours until midnight: %f\n", millisecondsUntilMidnight / (1000. * 60 * 60));
         
 		this.handle = scheduler.scheduleAtFixedRate(processor, millisecondsUntilMidnight,
 																		24 * 60 * 60 * 1000, TimeUnit.MILLISECONDS);

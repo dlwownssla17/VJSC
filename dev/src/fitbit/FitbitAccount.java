@@ -51,6 +51,7 @@ public class FitbitAccount {
 	
 	public boolean persistAccountData() throws IOException {
 		User user = DBTools.findUser(this.associatedUsername);
+		user.setFitbitAccount(this);
 		DBTools.updateUserFitbitAccount(user);
 		return true;
 	}

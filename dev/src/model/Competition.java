@@ -272,7 +272,7 @@ public class Competition {
 			default:
 				return -1;
 		}
-		return teamScores.get(memberUsername) == null ? teamScores.get(memberUsername) : -1;
+		return teamScores.get(memberUsername) != null ? teamScores.get(memberUsername) : -1;
 	}
 	
 	public synchronized int setTeamMemberScore(CompetitionTeamColor color, String memberUsername, int score) {
