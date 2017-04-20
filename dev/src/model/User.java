@@ -3,7 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.Date;
 
-import fitbit.FitBitAccount;
+import fitbit.FitbitAccount;
 import util.DateAndCalendar;
 
 public class User {
@@ -23,7 +23,7 @@ public class User {
 	
 	private UserSchedule schedule;
 	
-	private FitBitAccount fitBitAccount;
+	private FitbitAccount fitbitAccount;
 	
 	public User(String username, String password) {
 		this.username = username;
@@ -155,17 +155,17 @@ public class User {
 		return this.schedule;
 	}
 	
-	public boolean hasFitBitAccount() {
-		return this.fitBitAccount != null;
+	public boolean hasFitbitAccount() {
+		return this.fitbitAccount != null;
 	}
 	
-	public FitBitAccount getFitBitAccount() {
-		return this.fitBitAccount;
+	public FitbitAccount getFitbitAccount() {
+		return this.fitbitAccount;
 	}
 	
-	public FitBitAccount setFitBitAccount(FitBitAccount fitBitAccount) {
-		this.fitBitAccount = fitBitAccount;
-		return this.fitBitAccount;
+	public FitbitAccount setFitbitAccount(FitbitAccount fitbitAccount) {
+		this.fitbitAccount = fitbitAccount;
+		return this.fitbitAccount;
 	}
 	
 	public int getTotalRunningScore() {

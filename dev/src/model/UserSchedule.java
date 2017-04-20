@@ -428,7 +428,7 @@ public class UserSchedule {
 	// POST /update-daily-scores
 	public void updateDailyScores(Date lastDayCheckedDate) {
 		Calendar lastDayChecked = DateAndCalendar.dateToCalendar(lastDayCheckedDate);
-		Calendar oneDayAgo = Calendar.getInstance();
+		Calendar oneDayAgo = DateAndCalendar.newCalendarGMT();
 		oneDayAgo.add(Calendar.DAY_OF_MONTH, -1);
 
 		Calendar calendar = (Calendar) lastDayChecked.clone();
@@ -446,7 +446,7 @@ public class UserSchedule {
 			calendarYesterday.add(Calendar.DAY_OF_MONTH, 1);
 		}
 		
-		this.lastDayChecked = DateAndCalendar.calendarToDate(Calendar.getInstance());
+		this.lastDayChecked = DateAndCalendar.newDateGMT();
 	}
 
 	public synchronized ProgressColor getProgressColor(int year, int month, int day) {
@@ -516,7 +516,7 @@ public class UserSchedule {
 
 	public static Date scheduleItemStartDateTimeFromStartTimeString(int year, int month, int day,
 			String startTimeString) {
-		Calendar calendar = Calendar.getInstance();
+		Calendar calendar = DateAndCalendar.newCalendarGMT();
 		calendar.clear();
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, month);

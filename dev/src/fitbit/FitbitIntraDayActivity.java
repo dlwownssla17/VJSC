@@ -1,17 +1,17 @@
 package fitbit;
 
 /**
- * FitBit IntraDay Activities are activities that can return data during the
+ * Fitbit IntraDay Activities are activities that can return data during the
  * progression of the day.
  *
  */
 
-public enum FitBitIntraDayActivity {
+public enum FitbitIntraDayActivity {
 	CALORIES("calories"), STEPS("steps"), DISTANCE("distance"), FLOORS("floors"), ELEVATION("elevation");
 	
 	private String name;
 	
-	private FitBitIntraDayActivity(String name) {
+	private FitbitIntraDayActivity(String name) {
 		this.name = name;
 	}
 	

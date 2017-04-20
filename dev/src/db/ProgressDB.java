@@ -12,7 +12,7 @@ public class ProgressDB implements DB<Progress> {
 	public Document toDocument(Progress progress) {
 		// level progress type not implemented yet
 		String progressType = progress instanceof BooleanProgress ?
-				"boolean" : (progress instanceof PercentageProgress ? "percnetage" : null);
+				"boolean" : (progress instanceof PercentageProgress ? "percentage" : null);
 		
 		return new Document("progress-type", progressType)
 					.append("progress-value", progress.getProgress());

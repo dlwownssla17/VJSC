@@ -6,7 +6,7 @@ import java.util.TimeZone;
 
 public class DateAndCalendar {
 	public static Calendar dateToCalendar(Date date) {
-		Calendar calendar = Calendar.getInstance();
+		Calendar calendar = newCalendarGMT();
 		calendar.setTime(date);
 		return calendar;
 
@@ -22,9 +22,13 @@ public class DateAndCalendar {
 		return calendarToDate(calendar);
 	}
 	
-	public static Date newDateGMT() {
+	public static Calendar newCalendarGMT() {
 		TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
-		Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+		return Calendar.getInstance(TimeZone.getDefault());
+	}
+	
+	public static Date newDateGMT() {
+		Calendar calendar = newCalendarGMT();
 		return calendar.getTime();
 	}
 }

@@ -227,7 +227,7 @@ public class ScheduleItem {
 		Calendar modifiableAfterCreated = DateAndCalendar.dateToCalendar(this.createdDateTime);
 		modifiableAfterCreated.add(Calendar.MINUTE, ModelTools.MODIFIABLE_AFTER_CREATE);
 		
-		Calendar now = Calendar.getInstance();
+		Calendar now = DateAndCalendar.newCalendarGMT();
 		if (now.before(modifiableAfterCreated)) return true;
 		
 		Calendar notModifiableBeforeStart = DateAndCalendar.dateToCalendar(this.startDateTime);

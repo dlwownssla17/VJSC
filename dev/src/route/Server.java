@@ -20,6 +20,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import db.DBTools;
+import fitbit.FitbitAccount;
 import model.BooleanProgress;
 import model.Competition;
 import model.CompetitionHistory;
@@ -205,16 +206,24 @@ public class Server {
 		return dailyItemsJSON;
 	}
 	
-	public static void leaderCheck(String username, Team team) {
-		if (!team.isLeader(username)) throw new IllegalStateException("User is not a leader.");
+	public static boolean leaderCheck(String username, Team team) {
+		return team.isLeader(username);
 	}
 	
-	public static void inTeamCheck(User user) {
-		if (!user.inTeam()) throw new IllegalStateException("User is not in team.");
+	public static boolean inTeamCheck(User user) {
+		return user.inTeam();
 	}
 	
-	public static void hasCompetitionCheck(Team team) {
-		if (!team.hasCompetition()) throw new IllegalStateException("Team does not have competition.");
+	public static boolean inTeamCheck(User user, long teamId) {
+		return user.getTeamId() == teamId;
+	}
+	
+	public static boolean hasCompetitionCheck(Team team) {
+		return team.hasCompetition();
+	}
+	
+	public static boolean hasCompetitionInvitationCheck(Team team, long competitionId) {
+		return team.hasCompetitionInvitation(competitionId);
 	}
 	
 	public static void clearTeamInvitations(User user) {
@@ -900,38 +909,40 @@ public class Server {
 				Headers headers = t.getRequestHeaders();
 				String username = headers.getFirst("Username");
 				
-				JSONObject requestJSON = toJSON(t.getRequestBody());
-				
-				long teamId = requestJSON.getLong("Team-ID");
-				
-				Team team = DBTools.findTeam(teamId);
-				leaderCheck(username, team);
-				
 				JSONObject responseJSON = new JSONObject();
 				
-				JSONArray competitionInvitationsJSON = new JSONArray();
-				for (CompetitionInvitation competitionInvitation : team.getCompetitionInvitations()) {
-					JSONObject competitionInvitationJSON = new JSONObject();
-					competitionInvitationJSON.put("Competition-Name", competitionInvitation.getCompetitionName());
-					competitionInvitationJSON.put("Competition-ID", competitionInvitation.getCompetitionId());
-					competitionInvitationJSON.put("Competition-Start-Date",
-							DateFormat.getFormattedString(competitionInvitation.getCompetitionStartDate(),
-																						ModelTools.DATE_FORMAT));
-					competitionInvitationJSON.put("Competition-End-Date",
-							DateFormat.getFormattedString(competitionInvitation.getCompetitionEndDate(),
-																						ModelTools.DATE_FORMAT));
-					competitionInvitationJSON.put("Other-Team-Name", competitionInvitation.getOtherTeamName());
-					competitionInvitationJSON.put("Other-Team-Leader",
-															competitionInvitation.getOtherTeamLeaderUsername());
-					competitionInvitationJSON.put("Other-Team-Color",
-															competitionInvitation.getOtherTeamColor().toString());
-					
-					competitionInvitationsJSON.put(competitionInvitationJSON);
+				User user = DBTools.findUser(username);
+				boolean legal = inTeamCheck(user);
+				Team team = legal ? DBTools.findTeam(user.getTeamId()) : null;
+				legal = legal ? leaderCheck(username, team) : legal;
+				
+				int rc = legal ? 200 : 455;
+				
+				if (rc == 200) {
+					JSONArray competitionInvitationsJSON = new JSONArray();
+					for (CompetitionInvitation competitionInvitation : team.getCompetitionInvitations()) {
+						JSONObject competitionInvitationJSON = new JSONObject();
+						competitionInvitationJSON.put("Competition-Name", competitionInvitation.getCompetitionName());
+						competitionInvitationJSON.put("Competition-ID", competitionInvitation.getCompetitionId());
+						competitionInvitationJSON.put("Competition-Start-Date",
+								DateFormat.getFormattedString(competitionInvitation.getCompetitionStartDate(),
+																							ModelTools.DATE_FORMAT));
+						competitionInvitationJSON.put("Competition-End-Date",
+								DateFormat.getFormattedString(competitionInvitation.getCompetitionEndDate(),
+																							ModelTools.DATE_FORMAT));
+						competitionInvitationJSON.put("Other-Team-Name", competitionInvitation.getOtherTeamName());
+						competitionInvitationJSON.put("Other-Team-Leader",
+																competitionInvitation.getOtherTeamLeaderUsername());
+						competitionInvitationJSON.put("Other-Team-Color",
+																competitionInvitation.getOtherTeamColor().toString());
+						
+						competitionInvitationsJSON.put(competitionInvitationJSON);
+					}
+					responseJSON.put("Competition-Invitations", competitionInvitationsJSON);
 				}
-				responseJSON.put("Competition-Invitations", competitionInvitationsJSON);
 				
 				String response = responseJSON.toString(JSON_INDENT);
-				t.sendResponseHeaders(200, response.getBytes().length);
+				t.sendResponseHeaders(rc, response.getBytes().length);
 	            OutputStream os = t.getResponseBody();
 	            os.write(response.getBytes());
 	            os.close();
@@ -1010,59 +1021,67 @@ public class Server {
 				long teamId = requestJSON.getLong("Team-ID");
 				
 				Team team = DBTools.findTeam(teamId);
-				leaderCheck(username, team);
+				boolean legal = leaderCheck(username, team);
 				
-				// leave competition if team has competition
-				if (team.hasCompetition()) {
-					Competition competition = DBTools.findCompetition(team.getCompetitionId());
-					Team otherTeam = DBTools.findTeam(competition.otherTeamId(teamId));
+				int rc = legal ? 200 : 455;
+				
+				if (rc == 200) {
+					// leave competition if team has competition
+					if (team.hasCompetition()) {
+						Competition competition = DBTools.findCompetition(team.getCompetitionId());
+						Team otherTeam = DBTools.findTeam(competition.otherTeamId(teamId));
+						
+						endCompetition(team, otherTeam, competition, team);
+						
+						DBTools.updateTeamCompetitionHistories(otherTeam);
+						DBTools.updateTeamCompetitionId(otherTeam);
+						DBTools.updateCompetition(competition);
+					}
 					
-					endCompetition(team, otherTeam, competition, team);
+					// decline all competition invitations
+					Iterator<CompetitionInvitation> competitionInvitationsItr = team.getCompetitionInvitations().iterator();
+					while (competitionInvitationsItr.hasNext()) {
+						CompetitionInvitation competitionInvitation = competitionInvitationsItr.next();
+						Competition competition = DBTools.findCompetition(competitionInvitation.getCompetitionId());
+						Team teamInviting = DBTools.findTeam(competitionInvitation.getOtherTeamName());
+						
+						competition.setValid(false);
+						teamInviting.setCompetitionId(-1);
+						competitionInvitationsItr.remove();
+						
+						DBTools.updateTeamCompetitionId(teamInviting);
+						DBTools.updateCompetition(competition);
+					}
 					
-					DBTools.updateTeamCompetitionHistories(otherTeam);
-					DBTools.updateTeamCompetitionId(otherTeam);
-					DBTools.updateCompetition(competition);
+					// undo all team invitations to users
+					Iterator<String> usersInvitedItr = team.getUsersInvited().iterator();
+					while (usersInvitedItr.hasNext()) {
+						String usernameInvited = usersInvitedItr.next();
+						User userInvited = DBTools.findUser(usernameInvited);
+						
+						usersInvitedItr.remove();
+						userInvited.removeTeamInvitation(teamId);
+						
+						DBTools.updateUserTeamInvitations(userInvited);
+					}
+					
+					// remove reference to this team for all current members
+					for (String memberUsername : team.getMemberUsernames()) {
+						User member = DBTools.findUser(memberUsername);
+						
+						member.setTeamId(-1);
+						
+						DBTools.updateUserTeamId(member);
+					}
+					
+					// set valid to false
+					team.setValid(false);
+					
+					DBTools.updateTeam(team);
 				}
-				
-				// decline all competition invitations
-				for (CompetitionInvitation competitionInvitation : team.getCompetitionInvitations()) {
-					Competition competition = DBTools.findCompetition(competitionInvitation.getCompetitionId());
-					Team teamInviting = DBTools.findTeam(competitionInvitation.getOtherTeamName());
-					
-					declineCompetition(team, teamInviting, competition);
-					
-					DBTools.updateTeamCompetitionId(teamInviting);
-					DBTools.updateCompetition(competition);
-				}
-				
-				// undo all team invitations to users
-				Iterator<String> usersInvitedItr = team.getUsersInvited().iterator();
-				while (usersInvitedItr.hasNext()) {
-					String usernameInvited = usersInvitedItr.next();
-					User userInvited = DBTools.findUser(usernameInvited);
-					
-					usersInvitedItr.remove();
-					userInvited.removeTeamInvitation(teamId);
-					
-					DBTools.updateUserTeamInvitations(userInvited);
-				}
-				
-				// remove reference to this team for all current members
-				for (String memberUsername : team.getMemberUsernames()) {
-					User member = DBTools.findUser(memberUsername);
-					
-					member.setTeamId(-1);
-					
-					DBTools.updateUserTeamId(member);
-				}
-				
-				// set valid to false
-				team.setValid(false);
-				
-				DBTools.updateTeam(team);
 				
 				String response = "";
-				t.sendResponseHeaders(200, response.getBytes().length);
+				t.sendResponseHeaders(rc, response.getBytes().length);
 	            OutputStream os = t.getResponseBody();
 	            os.write(response.getBytes());
 	            os.close();
@@ -1094,13 +1113,14 @@ public class Server {
 				String usernameInvited = requestJSON.getString("Member-Username");
 				
 				Team team = DBTools.findTeam(teamId);
-				leaderCheck(username, team);
-				User userInvited = DBTools.findUser(usernameInvited);
+				boolean legal = leaderCheck(username, team);
+				User userInvited = legal ? DBTools.findUser(usernameInvited) : null;
 				
-				int rc = userInvited == null ? 401 :
+				int rc = legal ?
+					(userInvited == null ? 401 :
 					(userInvited.getTeamId() == teamId ? 402 :
 					(userInvited.inTeam() ? 403 : 
-					(team.getUsersInvited().contains(usernameInvited) ? 404 : 200)));
+					(team.getUsersInvited().contains(usernameInvited) ? 404 : 200)))) : 455;
 				if (rc == 200) {
 					team.getUsersInvited().add(usernameInvited);
 					userInvited.addTeamInvitation(team.toTeamInvitation());
@@ -1234,25 +1254,30 @@ public class Server {
 				String usernameDismissed = requestJSON.getString("Member-Username");
 				
 				Team team = DBTools.findTeam(teamId);
-				leaderCheck(username, team);
-				User userDismissed = DBTools.findUser(usernameDismissed);
+				boolean legal = leaderCheck(username, team);
+				User userDismissed = legal ? DBTools.findUser(usernameDismissed) : null;
+				legal = legal ? inTeamCheck(userDismissed, teamId) : legal;
 				
-				if (team.hasCompetition()) {
-					Competition competition = DBTools.findCompetition(team.getCompetitionId());
-
-					competition.removeTeamMemberScore(competition.getTeamColor(teamId), usernameDismissed);
+				int rc = legal ? 200 : 455;
+				
+				if (rc == 200) {
+					if (team.hasCompetition()) {
+						Competition competition = DBTools.findCompetition(team.getCompetitionId());
+	
+						competition.removeTeamMemberScore(competition.getTeamColor(teamId), usernameDismissed);
+						
+						DBTools.updateCompetition(competition);
+					}
 					
-					DBTools.updateCompetition(competition);
+					team.removeMemberUsername(usernameDismissed);
+					userDismissed.setTeamId(-1);
+					
+					DBTools.updateUserTeamId(userDismissed);
+					DBTools.updateTeamMemberUsernames(team);
 				}
 				
-				team.removeMemberUsername(usernameDismissed);
-				userDismissed.setTeamId(-1);
-				
-				DBTools.updateUserTeamId(userDismissed);
-				DBTools.updateTeamMemberUsernames(team);
-				
 				String response = "";
-				t.sendResponseHeaders(200, response.getBytes().length);
+				t.sendResponseHeaders(rc, response.getBytes().length);
 	            OutputStream os = t.getResponseBody();
 	            os.write(response.getBytes());
 	            os.close();
@@ -1283,25 +1308,29 @@ public class Server {
 				long teamId = requestJSON.getLong("Team-ID");
 				
 				User user = DBTools.findUser(username);
-				inTeamCheck(user);
-				Team team = DBTools.findTeam(teamId);
+				boolean legal = inTeamCheck(user, teamId);
+				Team team = legal ? DBTools.findTeam(teamId) : null;
 				
-				if (team.hasCompetition()) {
-					Competition competition = DBTools.findCompetition(team.getCompetitionId());
-
-					competition.removeTeamMemberScore(competition.getTeamColor(teamId), username);
+				int rc = legal ? 200 : 455;
+				
+				if (rc == 200) {
+					if (team.hasCompetition()) {
+						Competition competition = DBTools.findCompetition(team.getCompetitionId());
+	
+						competition.removeTeamMemberScore(competition.getTeamColor(teamId), username);
+						
+						DBTools.updateCompetition(competition);
+					}
 					
-					DBTools.updateCompetition(competition);
+					team.removeMemberUsername(username);
+					user.setTeamId(-1);
+					
+					DBTools.updateUserTeamId(user);
+					DBTools.updateTeamMemberUsernames(team);
 				}
 				
-				team.removeMemberUsername(username);
-				user.setTeamId(-1);
-				
-				DBTools.updateUserTeamId(user);
-				DBTools.updateTeamMemberUsernames(team);
-				
 				String response = "";
-				t.sendResponseHeaders(200, response.getBytes().length);
+				t.sendResponseHeaders(rc, response.getBytes().length);
 	            OutputStream os = t.getResponseBody();
 	            os.write(response.getBytes());
 	            os.close();
@@ -1328,62 +1357,66 @@ public class Server {
 				JSONObject responseJSON = new JSONObject();
 				
 				User user = DBTools.findUser(username);
-				inTeamCheck(user);
-				Team team = DBTools.findTeam(user.getTeamId());
-				hasCompetitionCheck(team);
-				Competition competition = DBTools.findCompetition(team.getCompetitionId());
+				boolean legal = inTeamCheck(user);
+				Team team = legal ? DBTools.findTeam(user.getTeamId()) : null;
+				legal = legal ? hasCompetitionCheck(team) : legal;
+				Competition competition = legal ? DBTools.findCompetition(team.getCompetitionId()) : null;
 				
-				responseJSON.put("Competition-Name", competition.getCompetitionName());
-				responseJSON.put("Competition-ID", competition.getCompetitionId());
+				int rc = legal ? 200 : 455;
 				
-				JSONObject statsJSON = new JSONObject();
-				
-				statsJSON.put("Team-Red-Name", competition.getTeamName(CompetitionTeamColor.RED));
-				statsJSON.put("Team-Red-ID", competition.getTeamId(CompetitionTeamColor.RED));
-				statsJSON.put("Team-Red-Score", competition.getTeamTotalScore(CompetitionTeamColor.RED));
-				
-				JSONArray teamRedMemberScoresJSON = new JSONArray();
-				for (String teamRedMemberUsername : competition.getTeamMembers(CompetitionTeamColor.RED)) {
-					JSONObject teamRedMemberScoreJSON = new JSONObject();
-					teamRedMemberScoreJSON.put("Username", teamRedMemberUsername);
-					teamRedMemberScoreJSON.put("User-Competition-Score",
-							competition.getTeamMemberScore(CompetitionTeamColor.RED, teamRedMemberUsername));
-					teamRedMemberScoreJSON.put("Is-Leader",
-							competition.isTeamLeader(CompetitionTeamColor.RED, teamRedMemberUsername));
-					teamRedMemberScoresJSON.put(teamRedMemberScoreJSON);
+				if (rc == 200) {
+					responseJSON.put("Competition-Name", competition.getCompetitionName());
+					responseJSON.put("Competition-ID", competition.getCompetitionId());
+					
+					JSONObject statsJSON = new JSONObject();
+					
+					statsJSON.put("Team-Red-Name", competition.getTeamName(CompetitionTeamColor.RED));
+					statsJSON.put("Team-Red-ID", competition.getTeamId(CompetitionTeamColor.RED));
+					statsJSON.put("Team-Red-Score", competition.getTeamTotalScore(CompetitionTeamColor.RED));
+					
+					JSONArray teamRedMemberScoresJSON = new JSONArray();
+					for (String teamRedMemberUsername : competition.getTeamMembers(CompetitionTeamColor.RED)) {
+						JSONObject teamRedMemberScoreJSON = new JSONObject();
+						teamRedMemberScoreJSON.put("Username", teamRedMemberUsername);
+						teamRedMemberScoreJSON.put("User-Competition-Score",
+								competition.getTeamMemberScore(CompetitionTeamColor.RED, teamRedMemberUsername));
+						teamRedMemberScoreJSON.put("Is-Leader",
+								competition.isTeamLeader(CompetitionTeamColor.RED, teamRedMemberUsername));
+						teamRedMemberScoresJSON.put(teamRedMemberScoreJSON);
+					}
+					statsJSON.put("Team-Red-Member-Scores", teamRedMemberScoresJSON);
+					
+					statsJSON.put("Team-Blue-Name", competition.getTeamName(CompetitionTeamColor.BLUE));
+					statsJSON.put("Team-Blue-ID", competition.getTeamId(CompetitionTeamColor.BLUE));
+					statsJSON.put("Team-Blue-Score", competition.getTeamTotalScore(CompetitionTeamColor.BLUE));
+					
+					JSONArray teamBlueMemberScoresJSON = new JSONArray();
+					for (String teamBlueMemberUsername : competition.getTeamMembers(CompetitionTeamColor.BLUE)) {
+						JSONObject teamBlueMemberScoreJSON = new JSONObject();
+						teamBlueMemberScoreJSON.put("Username", teamBlueMemberUsername);
+						teamBlueMemberScoreJSON.put("User-Competition-Score",
+								competition.getTeamMemberScore(CompetitionTeamColor.BLUE, teamBlueMemberUsername));
+						teamBlueMemberScoreJSON.put("Is-Leader",
+								competition.isTeamLeader(CompetitionTeamColor.BLUE, teamBlueMemberUsername));
+						teamBlueMemberScoresJSON.put(teamBlueMemberScoreJSON);
+					}
+					statsJSON.put("Team-Blue-Member-Scores", teamBlueMemberScoresJSON);
+					responseJSON.put("Stats", statsJSON);
+					
+					responseJSON.put("Competition-Start-Date",
+							DateFormat.getFormattedString(competition.getCompetitionStartDate(), ModelTools.DATE_FORMAT));
+					responseJSON.put("Competition-End-Date",
+							DateFormat.getFormattedString(competition.getCompetitionEndDate(), ModelTools.DATE_FORMAT));
+					
+					CompetitionTeamColor teamColor = competition.getTeamColor(team.getTeamId());
+					responseJSON.put("Team-Color", teamColor == null ? null : teamColor.toString());
+					
+					responseJSON.put("Show-Team-Members", competition.getShowTeamMembers());
+					responseJSON.put("Competition-Status", competition.getStatus());
 				}
-				statsJSON.put("Team-Red-Member-Scores", teamRedMemberScoresJSON);
-				
-				statsJSON.put("Team-Blue-Name", competition.getTeamName(CompetitionTeamColor.BLUE));
-				statsJSON.put("Team-Blue-ID", competition.getTeamId(CompetitionTeamColor.BLUE));
-				statsJSON.put("Team-Blue-Score", competition.getTeamTotalScore(CompetitionTeamColor.BLUE));
-				
-				JSONArray teamBlueMemberScoresJSON = new JSONArray();
-				for (String teamBlueMemberUsername : competition.getTeamMembers(CompetitionTeamColor.BLUE)) {
-					JSONObject teamBlueMemberScoreJSON = new JSONObject();
-					teamBlueMemberScoreJSON.put("Username", teamBlueMemberUsername);
-					teamBlueMemberScoreJSON.put("User-Competition-Score",
-							competition.getTeamMemberScore(CompetitionTeamColor.BLUE, teamBlueMemberUsername));
-					teamBlueMemberScoreJSON.put("Is-Leader",
-							competition.isTeamLeader(CompetitionTeamColor.BLUE, teamBlueMemberUsername));
-					teamBlueMemberScoresJSON.put(teamBlueMemberScoreJSON);
-				}
-				statsJSON.put("Team-Blue-Member-Scores", teamBlueMemberScoresJSON);
-				responseJSON.put("Stats", statsJSON);
-				
-				responseJSON.put("Competition-Start-Date",
-						DateFormat.getFormattedString(competition.getCompetitionStartDate(), ModelTools.DATE_FORMAT));
-				responseJSON.put("Competition-End-Date",
-						DateFormat.getFormattedString(competition.getCompetitionEndDate(), ModelTools.DATE_FORMAT));
-				
-				CompetitionTeamColor teamColor = competition.getTeamColor(team.getTeamId());
-				responseJSON.put("Team-Color", teamColor == null ? null : teamColor.toString());
-				
-				responseJSON.put("Show-Team-Members", competition.getShowTeamMembers());
-				responseJSON.put("Competition-Status", competition.getStatus());
 				
 				String response = responseJSON.toString(JSON_INDENT);
-				t.sendResponseHeaders(200, response.getBytes().length);
+				t.sendResponseHeaders(rc, response.getBytes().length);
 	            OutputStream os = t.getResponseBody();
 	            os.write(response.getBytes());
 	            os.close();
@@ -1413,15 +1446,17 @@ public class Server {
 				
 				JSONObject requestJSON = toJSON(t.getRequestBody());
 				
+				long teamId = requestJSON.getLong("Team-ID");
 				String otherTeamName = requestJSON.getString("Other-Team-Name");
+				
+				Team team = DBTools.findTeam(teamId);
 				Team otherTeam = DBTools.findTeam(otherTeamName);
-				int rc = otherTeam == null ? 401 : (otherTeam.hasCompetition() ? 402 : 200);
+				
+				boolean legal = leaderCheck(username, team);
+				
+				int rc = legal ? (otherTeam == null ? 401 : (otherTeam.hasCompetition() ? 402 : 200)) : 455;
+				
 				if (rc == 200) {
-					long teamId = requestJSON.getLong("Team-ID");
-					
-					Team team = DBTools.findTeam(teamId);
-					leaderCheck(username, team);
-					
 					String competitionName = requestJSON.getString("Competition-Name");
 					Date competitionStartDate = DateFormat.getDate(requestJSON.getString("Competition-Start-Date"),
 																								ModelTools.DATE_FORMAT);
@@ -1451,6 +1486,9 @@ public class Server {
 					
 					team.setCompetitionId(competition.getCompetitionId());
 					
+					otherTeam.addCompetitionInvitation(competition.toCompetitionInvitation(team.getTeamId()));
+					
+					DBTools.updateTeamCompetitionInvitations(otherTeam);
 					DBTools.updateTeamCompetitionId(team);
 					DBTools.updateCompetition(competition);
 					DBTools.writeIDCounter(ID_COUNTER);
@@ -1489,11 +1527,12 @@ public class Server {
 				long competitionId = requestJSON.getLong("Competition-ID");
 				
 				Team team = DBTools.findTeam(teamId);
-				leaderCheck(username, team);
-				hasCompetitionCheck(team);
-				Competition competition = DBTools.findCompetition(competitionId);
+				boolean legal = leaderCheck(username, team);
+				legal = legal ? hasCompetitionCheck(team) : legal;
+				Competition competition = legal ? DBTools.findCompetition(competitionId) : null;
 				
-				int rc = competition.getStatus() ? 401 : 200; // 401 if no longer pending
+				int rc = legal ? (competition.getStatus() ? 401 : 200) : 455; // 401 if no longer pending
+				
 				if (rc == 200) {
 					long teamInvitedId = competition.otherTeamId(teamId);
 					
@@ -1539,11 +1578,11 @@ public class Server {
 				long competitionId = requestJSON.getLong("Competition-ID");
 				
 				Team team = DBTools.findTeam(teamId);
-				leaderCheck(username, team);
-				hasCompetitionCheck(team);
-				Competition competition = DBTools.findCompetition(competitionId);
+				boolean legal = leaderCheck(username, team);
+				legal = legal ? hasCompetitionInvitationCheck(team, competitionId) : legal;
+				Competition competition = legal ? DBTools.findCompetition(competitionId) : null;
 				
-				int rc = competition == null ? 401 : 200;
+				int rc = legal ? (competition == null ? 401 : 200) : 455;
 				
 				if (rc == 200) {
 					for (String memberUsername : team.getMemberUsernames()) {
@@ -1591,22 +1630,26 @@ public class Server {
 				long competitionId = requestJSON.getLong("Competition-ID");
 				
 				Team team = DBTools.findTeam(teamId);
-				leaderCheck(username, team);
-				hasCompetitionCheck(team);
-				Competition competition = DBTools.findCompetition(competitionId);
+				boolean legal = leaderCheck(username, team);
+				legal = legal ? hasCompetitionInvitationCheck(team, competitionId) : legal;
+				Competition competition = legal ? DBTools.findCompetition(competitionId) : null;
 				
-				long teamInvitingId = competition.otherTeamId(teamId);
+				int rc = legal ? 200 : 455;
 				
-				Team teamInviting = DBTools.findTeam(teamInvitingId);
-				
-				declineCompetition(team, teamInviting, competition);
-				
-				DBTools.updateTeamCompetitionInvitations(team);
-				DBTools.updateTeamCompetitionId(teamInviting);
-				DBTools.updateCompetition(competition);
-				
+				if (rc == 200) {
+					long teamInvitingId = competition.otherTeamId(teamId);
+					
+					Team teamInviting = DBTools.findTeam(teamInvitingId);
+					
+					declineCompetition(team, teamInviting, competition);
+					
+					DBTools.updateTeamCompetitionInvitations(team);
+					DBTools.updateTeamCompetitionId(teamInviting);
+					DBTools.updateCompetition(competition);
+				}
+					
 				String response = "";
-				t.sendResponseHeaders(200, response.getBytes().length);
+				t.sendResponseHeaders(rc, response.getBytes().length);
 	            OutputStream os = t.getResponseBody();
 	            os.write(response.getBytes());
 	            os.close();
@@ -1637,18 +1680,57 @@ public class Server {
 				long teamId = requestJSON.getLong("Team-ID");
 				
 				Team team = DBTools.findTeam(teamId);
-				leaderCheck(username, team);
-				hasCompetitionCheck(team);
-				Competition competition = DBTools.findCompetition(team.getCompetitionId());
-				Team otherTeam = DBTools.findTeam(competition.otherTeamId(teamId));
+				boolean legal = leaderCheck(username, team);
+				legal = legal ? hasCompetitionCheck(team) : legal;
+				Competition competition = legal ? DBTools.findCompetition(team.getCompetitionId()) : null;
+				Team otherTeam = legal ? DBTools.findTeam(competition.otherTeamId(teamId)) : null;
 				
-				endCompetition(team, otherTeam, competition, team);
+				int rc = legal ? 200 : 455;
 				
-				DBTools.updateTeamCompetitionHistories(team);
-				DBTools.updateTeamCompetitionId(team);
-				DBTools.updateTeamCompetitionHistories(otherTeam);
-				DBTools.updateTeamCompetitionId(otherTeam);
-				DBTools.updateCompetition(competition);
+				if (rc == 200) {
+					endCompetition(team, otherTeam, competition, team);
+					
+					DBTools.updateTeamCompetitionHistories(team);
+					DBTools.updateTeamCompetitionId(team);
+					DBTools.updateTeamCompetitionHistories(otherTeam);
+					DBTools.updateTeamCompetitionId(otherTeam);
+					DBTools.updateCompetition(competition);
+				}
+				
+				String response = "";
+				t.sendResponseHeaders(rc, response.getBytes().length);
+	            OutputStream os = t.getResponseBody();
+	            os.write(response.getBytes());
+	            os.close();
+			} else {
+				
+			}
+			
+			System.out.println("handled competition leave");
+		}
+		
+	}
+	
+	/* * */
+	
+	static class FitbitSaveMetadataHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			String requestMethod = t.getRequestMethod();
+			if (requestMethod.equals("GET")) {
+				
+			} else if (requestMethod.equals("POST")) {
+				Headers headers = t.getRequestHeaders();
+				String username = headers.getFirst("Username");
+				
+				JSONObject requestJSON = toJSON(t.getRequestBody());
+				
+				String accessToken = requestJSON.getString("Access-Token");
+				String refreshToken = requestJSON.getString("Refresh-Token");
+				String scope = requestJSON.getString("Scope");
+				
+				FitbitAccount fitbitAccount = new FitbitAccount(username, accessToken, refreshToken, scope);
 				
 				String response = "";
 				t.sendResponseHeaders(200, response.getBytes().length);
@@ -1658,8 +1740,6 @@ public class Server {
 			} else {
 				
 			}
-			
-			System.out.println("handled competition leave");
 		}
 		
 	}

@@ -24,51 +24,55 @@ public class CompetitionProcessor {
 	public void start() {
 		Runnable processor = new Runnable() {
 			public void run() {
-				Calendar calendarToday = Calendar.getInstance();
+				Calendar calendarToday = DateAndCalendar.newCalendarGMT();
 				int todayYear = calendarToday.get(Calendar.YEAR);
 				int todayMonth = calendarToday.get(Calendar.MONTH);
 				int todayDay = calendarToday.get(Calendar.DAY_OF_MONTH);
 				
 				Set<Competition> competitions = DBTools.findAllCompetitions();
 				for (Competition competition : competitions) {
-					Calendar calendarEndDate = DateAndCalendar.dateToCalendar(competition.getCompetitionEndDate());
-					
-					if (todayYear > calendarEndDate.get(Calendar.YEAR) ||
-						todayMonth > calendarEndDate.get(Calendar.MONTH) ||
-						todayDay > calendarEndDate.get(Calendar.DAY_OF_MONTH)) {
-						Team teamRed = DBTools.findTeam(competition.getTeamId(CompetitionTeamColor.RED));
-						Team teamBlue = DBTools.findTeam(competition.getTeamId(CompetitionTeamColor.BLUE));
+					if (competition.getValid()) {
+						Calendar calendarEndDate = DateAndCalendar.dateToCalendar(competition.getCompetitionEndDate());
 						
-						if (competition.getStatus()) { // was active
-							Server.endCompetition(teamRed, teamBlue, competition, null);
+						if (todayYear > calendarEndDate.get(Calendar.YEAR) ||
+							todayMonth > calendarEndDate.get(Calendar.MONTH) ||
+							todayDay > calendarEndDate.get(Calendar.DAY_OF_MONTH)) {
+							Team teamRed = DBTools.findTeam(competition.getTeamId(CompetitionTeamColor.RED));
+							Team teamBlue = DBTools.findTeam(competition.getTeamId(CompetitionTeamColor.BLUE));
 							
-							DBTools.updateTeamCompetitionHistories(teamRed);
-							DBTools.updateTeamCompetitionId(teamBlue);
-							DBTools.updateTeamCompetitionHistories(teamRed);
-							DBTools.updateTeamCompetitionId(teamBlue);
-							DBTools.updateCompetition(competition);
-						} else { // was pending
-							Team teamDeclining = competition.joinedCompetition(CompetitionTeamColor.RED) ?
-																								teamBlue : teamRed;
-							Team teamInviting = teamDeclining == teamRed ? teamBlue : teamRed;
-							Server.declineCompetition(teamDeclining, teamInviting, competition);
-							
-							DBTools.updateTeamCompetitionInvitations(teamDeclining);
-							DBTools.updateTeamCompetitionId(teamInviting);
-							DBTools.updateCompetition(competition);
+							if (competition.getStatus()) { // was active
+								Server.endCompetition(teamRed, teamBlue, competition, null);
+								
+								DBTools.updateTeamCompetitionHistories(teamRed);
+								DBTools.updateTeamCompetitionId(teamRed);
+								DBTools.updateTeamCompetitionHistories(teamBlue);
+								DBTools.updateTeamCompetitionId(teamBlue);
+								DBTools.updateCompetition(competition);
+							} else { // was pending
+								Team teamDeclining = competition.joinedCompetition(CompetitionTeamColor.RED) ?
+																									teamBlue : teamRed;
+								Team teamInviting = teamDeclining == teamRed ? teamBlue : teamRed;
+								Server.declineCompetition(teamDeclining, teamInviting, competition);
+								
+								DBTools.updateTeamCompetitionInvitations(teamDeclining);
+								DBTools.updateTeamCompetitionId(teamInviting);
+								DBTools.updateCompetition(competition);
+							}
 						}
 					}
 				}
 			}
 		};
 		
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
+		Calendar calendar = DateAndCalendar.newCalendarGMT();
+		calendar.add(Calendar.DAY_OF_MONTH, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 1);
+        calendar.set(Calendar.MINUTE, 3);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         long millisecondsUntilMidnight = calendar.getTimeInMillis() - System.currentTimeMillis();
+        System.out.printf("millisecondUntilMidnight: %d\n", millisecondsUntilMidnight);
+        System.out.printf("hours until midnight: %f\n", millisecondsUntilMidnight / (1000. * 60 * 60));
         
 		this.handle = scheduler.scheduleAtFixedRate(processor, millisecondsUntilMidnight,
 																		24 * 60 * 60 * 1000, TimeUnit.MILLISECONDS);

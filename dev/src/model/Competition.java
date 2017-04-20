@@ -29,8 +29,7 @@ public class Competition {
 		this.competitionName = competitionName;
 		this.competitionId = competitionId;
 		
-		if (CreateLookupDate.getInstance(new Date()).after(competitionStartDate) ||
-				competitionStartDate.after(competitionEndDate))
+		if (competitionStartDate.after(competitionEndDate))
 			throw new IllegalArgumentException("Invalid start/end dates.");
 		this.competitionStartDate = competitionStartDate;
 		this.competitionEndDate = competitionEndDate;

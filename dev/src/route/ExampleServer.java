@@ -24,8 +24,7 @@ public class ExampleServer {
         @Override
         public void handle(HttpExchange t) throws IOException {
         	SingleFileUserDB spiroDB = SingleFileDBTools.getUserDB("spiromaster");
-    		String spiroFitBitDisplayName = spiroDB.getFitBitDisplayName();
-    		String response = String.format("%s\n", spiroFitBitDisplayName);
+    		String response = String.format("%s\n", spiroDB.getFitbitAccessToken());
             t.sendResponseHeaders(200, response.getBytes().length);
             OutputStream os = t.getResponseBody();
             os.write(response.getBytes());

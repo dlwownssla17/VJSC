@@ -18,15 +18,9 @@ public class SingleFileUserDB {
 	
 	private int userScheduleCapacity;
 	
-	private String fitBitAccessToken;
-	private String fitBitRefreshToken;
-	private String fitBitUserId;
-	private String fitBitScope;
-	private String fitBitTokenType;
-	private String fitBitExpiresIn;
-	
-	// TODO this is temporary (remove this later)
-	private String fitBitDisplayName;
+	private String fitbitAccessToken;
+	private String fitbitRefreshToken;
+	private String fitbitScope;
 	
 	public SingleFileUserDB(String username, String password, String memberSince, int userScheduleCapacity) {
 		this.username = username;
@@ -65,75 +59,36 @@ public class SingleFileUserDB {
 		return this.memberSince;
 	}
 	
-	public String getFitBitAccessToken() {
-		return this.fitBitAccessToken == null ? "{NULL}" : this.fitBitAccessToken;
+	public String getFitbitAccessToken() {
+		return this.fitbitAccessToken == null ? "{NULL}" : this.fitbitAccessToken;
 	}
 	
-	public String setFitBitAccessToken(String fitBitAccessToken) {
-		this.fitBitAccessToken = fitBitAccessToken;
-		return this.fitBitAccessToken;
+	public String setFitbitAccessToken(String fitbitAccessToken) {
+		this.fitbitAccessToken = fitbitAccessToken;
+		return this.fitbitAccessToken;
 	}
 	
-	public String getFitBitRefreshToken() {
-		return this.fitBitRefreshToken == null ? "{NULL}" : this.fitBitRefreshToken;
+	public String getFitbitRefreshToken() {
+		return this.fitbitRefreshToken == null ? "{NULL}" : this.fitbitRefreshToken;
 	}
 	
-	public String setFitBitRefreshToken(String fitBitRefreshToken) {
-		this.fitBitRefreshToken = fitBitRefreshToken;
-		return this.fitBitRefreshToken;
+	public String setFitbitRefreshToken(String fitbitRefreshToken) {
+		this.fitbitRefreshToken = fitbitRefreshToken;
+		return this.fitbitRefreshToken;
 	}
 	
-	public String getFitBitUserId() {
-		return this.fitBitUserId == null ? "{NULL}" : this.fitBitUserId;
+	public String getFitbitScope() {
+		return this.fitbitScope == null ? "{NULL}" : this.fitbitScope;
 	}
 	
-	public String setFitBitUserId(String fitBitUserId) {
-		this.fitBitUserId = fitBitUserId;
-		return this.fitBitUserId;
-	}
-	
-	public String getFitBitScope() {
-		return this.fitBitScope == null ? "{NULL}" : this.fitBitScope;
-	}
-	
-	public String setFitBitScope(String fitBitScope) {
-		this.fitBitScope = fitBitScope;
-		return this.fitBitScope;
-	}
-	
-	public String getFitBitTokenType() {
-		return this.fitBitTokenType == null ? "{NULL}" : this.fitBitTokenType;
-	}
-	
-	public String setFitBitTokenType(String fitBitTokenType) {
-		this.fitBitTokenType = fitBitTokenType;
-		return this.fitBitTokenType;
-	}
-	
-	public String getFitBitExpiresIn() {
-		return this.fitBitExpiresIn == null ? "{NULL}" : this.fitBitExpiresIn;
-	}
-	
-	public String setFitBitExpiresIn(String fitBitExpiresIn) {
-		this.fitBitExpiresIn = fitBitExpiresIn;
-		return this.fitBitExpiresIn;
-	}
-	
-	// TODO this is temporary (remove this later)
-	public String getFitBitDisplayName() {
-		return this.fitBitDisplayName == null ? "{NULL}" : this.fitBitDisplayName;
-	}
-	
-	// TODO this is temporary (remove this later)
-	public String setFitBitDisplayName(String fitBitDisplayName) {
-		this.fitBitDisplayName = fitBitDisplayName;
-		return this.fitBitDisplayName;
+	public String setFitbitScope(String fitbitScope) {
+		this.fitbitScope = fitbitScope;
+		return this.fitbitScope;
 	}
 	
 	public static void main(String[] args) {
 		long epoch = Long.parseLong("1081157732");
 		SingleFileUserDB userDB = new SingleFileUserDB("spiro", "metaxas95", new Date(epoch * 1000), ModelTools.DEFAULT_CAPACITY);
-		userDB.setFitBitDisplayName("SpiroTheMantaxas");
 		System.out.println(SingleFileDBTools.toJSON(userDB).toString(4));
 	}
 }

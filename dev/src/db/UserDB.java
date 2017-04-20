@@ -25,7 +25,7 @@ public class UserDB implements DB<User> {
 					.append("team-id", user.getTeamId())
 					.append("team-invitations", this.teamInvitationsToDocument(user))
 					.append("schedule", DBTools.userScheduleDB.toDocument(user.getSchedule()))
-					.append("fitbit-account", DBTools.fitBitAccountDB.toDocument(user.getFitBitAccount()));
+					.append("fitbit-account", DBTools.fitbitAccountDB.toDocument(user.getFitbitAccount()));
 	}
 	
 	@Override
@@ -41,7 +41,7 @@ public class UserDB implements DB<User> {
 		user.setTeamId(document.getLong("team-id"));
 		user.setTeamInvitations(this.teamInvitationsFromDocument(document));
 		user.setSchedule(DBTools.userScheduleDB.fromDocument((Document) document.get("schedule")));
-		user.setFitBitAccount(DBTools.fitBitAccountDB.fromDocument((Document) document.get("fitbit-account")));
+		user.setFitbitAccount(DBTools.fitbitAccountDB.fromDocument((Document) document.get("fitbit-account")));
 		
 		return user;
 	}

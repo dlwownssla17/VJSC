@@ -8,8 +8,8 @@ import java.util.Date;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import fitbit.FitBitAccount;
-import fitbit.FitBitTools;
+import fitbit.FitbitAccount;
+import fitbit.FitbitTools;
 import model.Team;
 import model.User;
 import util.DateFormat;
@@ -23,17 +23,12 @@ public class SingleFileDBTools {
 	public static SingleFileUserDB toUserDB(User user) {
 		SingleFileUserDB userDB = new SingleFileUserDB(user);
 		
-		if (user.hasFitBitAccount()) {
-			userDB.setFitBitAccessToken(user.getFitBitAccount().getAccessToken());
-			userDB.setFitBitRefreshToken(user.getFitBitAccount().getRefreshToken());
-			userDB.setFitBitUserId(user.getFitBitAccount().getUserId());
-			userDB.setFitBitScope(user.getFitBitAccount().getScope());
-			userDB.setFitBitTokenType(user.getFitBitAccount().getTokenType());
-			userDB.setFitBitExpiresIn(Long.toString(user.getFitBitAccount().getExpiresIn()));
+		if (user.hasFitbitAccount()) {
+			userDB.setFitbitAccessToken(user.getFitbitAccount().getAccessToken());
+			userDB.setFitbitRefreshToken(user.getFitbitAccount().getRefreshToken());
+			userDB.setFitbitScope(user.getFitbitAccount().getScope());
 			
-			JSONObject fitBitAccountProfileJSON = new JSONObject(FitBitTools.getProfile(user.getFitBitAccount()));
-			String fitBitDisplayName = fitBitAccountProfileJSON.getJSONObject("user").getString("displayName");
-			userDB.setFitBitDisplayName(fitBitDisplayName); // remove this later
+			JSONObject fitbitAccountProfileJSON = new JSONObject(FitbitTools.getProfile(user.getFitbitAccount()));
 		}
 		
 		return userDB;
@@ -55,16 +50,13 @@ public class SingleFileDBTools {
 		Date memberSince = DateFormat.getDate(userDB.getMemberSince(), MemberSinceDateTimeFormat);
 		user.setMemberSince(memberSince);
 		
-		String fitBitAccessToken = userDB.getFitBitAccessToken();
-		String fitBitRefreshToken = userDB.getFitBitRefreshToken();
-		String fitBitUserId = userDB.getFitBitUserId();
-		String fitBitScope = userDB.getFitBitScope();
-		String fitBitTokenType = userDB.getFitBitTokenType();
-		long fitBitExpiresIn = Long.parseLong(userDB.getFitBitExpiresIn());
+		String fitbitAccessToken = userDB.getFitbitAccessToken();
+		String fitbitRefreshToken = userDB.getFitbitRefreshToken();
+		String fitbitScope = userDB.getFitbitScope();
 		
-		FitBitAccount fitBitAccount = new FitBitAccount(fitBitAccessToken, fitBitRefreshToken, fitBitUserId,
-				fitBitScope, fitBitTokenType, fitBitExpiresIn);
-		user.setFitBitAccount(fitBitAccount);
+		FitbitAccount fitbitAccount = new FitbitAccount(user.getUsername(), fitbitAccessToken,
+																					fitbitRefreshToken, fitbitScope);
+		user.setFitbitAccount(fitbitAccount);
 		
 		return user;
 	}
@@ -76,13 +68,9 @@ public class SingleFileDBTools {
 		userJSON.put("username", userDB.getUsername());
 		userJSON.put("password",  userDB.getPassword());
 		userJSON.put("member_since", userDB.getMemberSince());
-		userJSON.put("fitbit_access_token", userDB.getFitBitAccessToken());
-		userJSON.put("fitbit_refresh_token", userDB.getFitBitRefreshToken());
-		userJSON.put("fitbit_user_id", userDB.getFitBitUserId());
-		userJSON.put("fitbit_scope", userDB.getFitBitScope());
-		userJSON.put("fitbit_token_type", userDB.getFitBitTokenType());
-		userJSON.put("fitbit_expires_in", userDB.getFitBitExpiresIn());
-		userJSON.put("fitbit_display_name", userDB.getFitBitDisplayName()); // remove this later
+		userJSON.put("fitbit_access_token", userDB.getFitbitAccessToken());
+		userJSON.put("fitbit_refresh_token", userDB.getFitbitRefreshToken());
+		userJSON.put("fitbit_scope", userDB.getFitbitScope());
 		return userJSON;
 	}
 	
@@ -98,22 +86,14 @@ public class SingleFileDBTools {
 		String password = userDBJSON.getString("password");
 		String memberSince = userDBJSON.getString("member_since");
 		int scheduleCapacity = Integer.parseInt(userDBJSON.getString("schedule_capacity"));
-		String fitBitAccessToken = userDBJSON.getString("fitbit_access_token");
-		String fitBitRefreshToken = userDBJSON.getString("fitbit_refresh_token");
-		String fitBitUserId = userDBJSON.getString("fitbit_user_id");
-		String fitBitScope = userDBJSON.getString("fitbit_scope");
-		String fitBitTokenType = userDBJSON.getString("fitbit_token_type");
-		String fitBitExpiresIn = userDBJSON.getString("fitbit_expires_in");
-		String fitBitDisplayName = userDBJSON.getString("fitbit_display_name"); // remove this later
+		String fitbitAccessToken = userDBJSON.getString("fitbit_access_token");
+		String fitbitRefreshToken = userDBJSON.getString("fitbit_refresh_token");
+		String fitbitScope = userDBJSON.getString("fitbit_scope");
 		
 		SingleFileUserDB userDB = new SingleFileUserDB(username, password, memberSince, scheduleCapacity);
-		userDB.setFitBitAccessToken(fitBitAccessToken);
-		userDB.setFitBitRefreshToken(fitBitRefreshToken);
-		userDB.setFitBitUserId(fitBitUserId);
-		userDB.setFitBitScope(fitBitScope);
-		userDB.setFitBitTokenType(fitBitTokenType);
-		userDB.setFitBitExpiresIn(fitBitExpiresIn);
-		userDB.setFitBitDisplayName(fitBitDisplayName); // remove this later
+		userDB.setFitbitAccessToken(fitbitAccessToken);
+		userDB.setFitbitRefreshToken(fitbitRefreshToken);
+		userDB.setFitbitScope(fitbitScope);
 		return userDB;
 	}
 	

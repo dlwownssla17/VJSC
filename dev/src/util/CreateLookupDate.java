@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class CreateLookupDate {
 	public static Date getInstance(int year, int month, int day) {
-		Calendar calendar = Calendar.getInstance();
+		Calendar calendar = DateAndCalendar.newCalendarGMT();
 		calendar.clear();
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, month - 1);

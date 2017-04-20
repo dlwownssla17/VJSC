@@ -8,7 +8,7 @@ package fitbit;
  *
  */
 
-public enum FitBitActivity {
+public enum FitbitActivity {
 	CALORIES("calories"), CALORIES_BMR("caloriesBMR"),
 	STEPS("steps"), DISTANCE("distance"), FLOORS("floors"), ELEVATION("elevation"),
 	MINUTES_SEDENTARY("minutesSedentary"), MINUTES_LIGHTLY_ACTIVE("minutesLightlyActive"),
@@ -17,7 +17,7 @@ public enum FitBitActivity {
 	
 	private String name;
 	
-	private FitBitActivity(String name) {
+	private FitbitActivity(String name) {
 		this.name = name;
 	}
 	

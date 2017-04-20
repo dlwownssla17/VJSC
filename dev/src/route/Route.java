@@ -17,11 +17,11 @@ public class Route {
 	}
 	
 	// TODO flush this fitbit situation out
-	public static void postFitBitAccount(User user) {
+	public static void postFitbitAccount(User user) {
 		
 	}
 	
-	public static void postFitBitDisplayName(User user) {
+	public static void postFitbitDisplayName(User user) {
 		
 	}
 	

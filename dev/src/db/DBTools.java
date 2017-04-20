@@ -39,7 +39,7 @@ public class DBTools {
 	public static CompetitionDB competitionDB = new CompetitionDB();
 	public static CompetitionHistoryDB competitionHistoryDB = new CompetitionHistoryDB();
 	public static CompetitionInvitationDB competitionInvitationDB = new CompetitionInvitationDB();
-	public static FitBitAccountDB fitBitAccountDB = new FitBitAccountDB();
+	public static FitbitAccountDB fitbitAccountDB = new FitbitAccountDB();
 	public static IDCounterDB idCounterDB = new IDCounterDB();
 	public static ProgressDB progressDB = new ProgressDB();
 	public static ScheduleItemDB scheduleItemDB = new ScheduleItemDB();
@@ -131,10 +131,10 @@ public class DBTools {
 		users.updateOne(eq("username", user.getUsername()), new Document("$set", newUserSchedule));
 	}
 	
-	public synchronized static void updateUserFitBitAccount(User user) {
-		Document newUserFitBitAccount =
-				new Document("fitbit-account", fitBitAccountDB.toDocument(user.getFitBitAccount()));
-		users.updateOne(eq("username", user.getUsername()),  new Document("$set", newUserFitBitAccount));
+	public synchronized static void updateUserFitbitAccount(User user) {
+		Document newUserFitbitAccount =
+				new Document("fitbit-account", fitbitAccountDB.toDocument(user.getFitbitAccount()));
+		users.updateOne(eq("username", user.getUsername()),  new Document("$set", newUserFitbitAccount));
 	}
 	
 	/* * */

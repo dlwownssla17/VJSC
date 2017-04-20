@@ -203,6 +203,13 @@ public class Team {
 				this.competitionInvitations.remove(competitionInvitationToRemove) : false;
 	}
 	
+	public boolean hasCompetitionInvitation(long competitionId) {
+		for (CompetitionInvitation competitionInvitation : this.competitionInvitations) {
+			if (competitionInvitation.getCompetitionId() == competitionId) return true;
+		}
+		return false;
+	}
+	
 	public void clearCompetitionInvitations() {
 		this.competitionInvitations.clear();
 	}
