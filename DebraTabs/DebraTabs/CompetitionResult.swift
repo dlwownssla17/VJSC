@@ -2,7 +2,7 @@
 //  CompetitionResult.swift
 //  DebraTabs
 //
-//  Created by Spiro Metaxas on 4/1/17.
+//  Created by Spiro Metaxas on 3/1/17.
 //  Copyright © 2017 Spiro Metaxas. All rights reserved.
 //
 
