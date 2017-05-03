@@ -1,0 +1,33 @@
+Full name:  Spiro Metaxas
+SEAS login: smetaxas
+
+Which features did you implement? 
+  (list features, or write 'Entire assignment')
+Entire Assignment
+
+Did you complete any extra-credit tasks? If so, which ones?
+  (list extra-credit tasks)
+User subscribe to channels
+
+Any special instructions for building and running your solution?
+  (include detailed instructions, or write 'None')
+cd into the HW2 directory, and run ant build.  Then copy the servlet.war file into the Jetty webapps foler, and run it through Jetty. 
+
+My starting servlet is at the url pattern 'xpath'.  
+
+The source files are: GrammarTokenizer.java, States.java, XPathEngine.java, XPathEngineImpl.java, EvaluateTests.java, IsValidTests.java, RunAllTests.java, ServletTest.java, XPathServlet.java, XPathServletHandler.java
+
+When the user clicks submit in the servlet in the browser, my handler servlet is invoked and opens in a new tab in the browser. The results are displayed in the new tab.  The web.xml file in the conf folder has th url-mapping for the handler servlet.  
+
+Did you personally write _all_ the code you are submitting
+(other than code from the course web page)?
+  [x ] Yes
+  [ ] No
+
+Did you copy any code from the Internet, or from classmates?
+  [ ] Yes
+  [x ] No
+
+Did you collaborate with anyone on this assignment?
+  [ ] Yes
+  [x ] No
